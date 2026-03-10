@@ -1,0 +1,9 @@
+{
+  "name": "Cyderes Design System Generator",
+  "id": "cyderes-design-system-generator",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": ["figma"]
+}
