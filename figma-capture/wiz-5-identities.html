@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Cyderes — Identities</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#080C18;color:#ECECF0;width:1440px;min-height:100vh;}
+
+/* TOP NAV */
+.topnav{display:flex;align-items:center;height:56px;background:#0D1220;border-bottom:1px solid #2A3055;padding:0 24px;position:sticky;top:0;z-index:20;}
+.logo{font-size:18px;font-weight:700;color:#39B985;letter-spacing:4px;margin-right:32px;white-space:nowrap;}
+.nav-links{display:flex;gap:4px;}
+.nav-link{padding:8px 16px;font-size:13px;font-weight:500;color:#9898A0;border-radius:6px;cursor:pointer;text-decoration:none;white-space:nowrap;}
+.nav-link:hover{color:#ECECF0;background:rgba(28,35,64,0.5);}
+.nav-link.active{color:#ECECF0;background:#1C2340;}
+.nav-spacer{flex:1;}
+.search-bar{display:flex;align-items:center;gap:8px;padding:7px 14px;background:#1C2340;border:1px solid #2A3055;border-radius:8px;font-size:12px;color:#6B6B75;cursor:pointer;min-width:220px;}
+.search-bar kbd{background:#2A3055;padding:2px 6px;border-radius:4px;font-size:11px;font-family:'Inter',sans-serif;margin-left:auto;}
+.topnav-right{display:flex;align-items:center;gap:14px;margin-left:16px;}
+.env-pill{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid #2A3055;border-radius:20px;font-size:12px;color:#ECECF0;white-space:nowrap;}
+.env-dot{width:8px;height:8px;border-radius:50%;background:#39B985;flex-shrink:0;}
+.time-pill{padding:6px 14px;border:1px solid #2A3055;border-radius:20px;font-size:12px;color:#ECECF0;cursor:pointer;white-space:nowrap;}
+.bell-icon{position:relative;color:#9898A0;font-size:18px;cursor:pointer;line-height:1;}
+.bell-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#FF7394;border-radius:50%;}
+.avatar{width:32px;height:32px;border-radius:50%;background:#39B985;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#080C18;flex-shrink:0;}
+
+/* MAIN CONTENT */
+.content{padding:24px 32px;}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:baseline;gap:12px;margin-bottom:24px;}
+.page-title{font-size:24px;font-weight:700;color:#ECECF0;}
+.page-count{font-size:14px;color:#6B6B75;font-weight:400;}
+
+/* KPI ROW */
+.kpi-row{display:flex;gap:16px;margin-bottom:24px;}
+.kpi-card{flex:1;background:#151A2D;border:1px solid #2A3055;border-radius:12px;padding:20px 24px;}
+.kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#9898A0;margin-bottom:10px;}
+.kpi-value{font-size:32px;font-weight:700;line-height:1;margin-bottom:6px;}
+.kpi-sub{font-size:12px;color:#6B6B75;}
+.kpi-value.red{color:#FF7394;}
+.kpi-value.orange{color:#DD6E1E;}
+.kpi-value.yellow{color:#FFDB36;}
+.kpi-value.blue{color:#B3E0FF;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;background:#151A2D;border:1px solid #2A3055;border-radius:10px;padding:12px 16px;}
+.filter-search{display:flex;align-items:center;gap:8px;flex:1;background:#1C2340;border:1px solid #2A3055;border-radius:8px;padding:8px 14px;font-size:13px;color:#6B6B75;}
+.filter-search svg{flex-shrink:0;}
+.filter-divider{width:1px;height:24px;background:#2A3055;}
+.filter-select{display:flex;align-items:center;gap:6px;padding:8px 14px;background:#1C2340;border:1px solid #2A3055;border-radius:8px;font-size:12px;color:#ECECF0;cursor:pointer;white-space:nowrap;}
+.filter-select-arrow{color:#6B6B75;font-size:10px;margin-left:4px;}
+.filter-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.filter-btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:500;background:#1C2340;border:1px solid #2A3055;color:#9898A0;cursor:pointer;}
+.filter-btn.alert{background:rgba(255,115,148,0.1);border-color:rgba(255,115,148,0.3);color:#FF7394;}
+
+/* TABLE */
+.table-wrap{background:#151A2D;border:1px solid #2A3055;border-radius:12px;overflow:hidden;margin-bottom:24px;}
+table{width:100%;border-collapse:collapse;}
+thead th{background:#1C2340;font-size:11px;font-weight:600;text-transform:uppercase;color:#6B6B75;padding:11px 16px;text-align:left;white-space:nowrap;letter-spacing:0.5px;border-bottom:1px solid #2A3055;}
+tbody td{padding:13px 16px;font-size:13px;color:#ECECF0;border-bottom:1px solid rgba(42,48,85,0.5);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:rgba(28,35,64,0.35);}
+
+/* IDENTITY CELL */
+.identity-name{font-weight:500;color:#39B985;cursor:pointer;}
+.identity-sub{font-size:11px;color:#9898A0;margin-top:2px;}
+
+/* TYPE BADGE */
+.type-badge{font-size:11px;padding:3px 8px;border-radius:6px;display:inline-block;font-weight:500;}
+.type-user{background:rgba(97,201,211,0.1);color:#61C9D3;}
+.type-svc{background:rgba(161,84,228,0.1);color:#A154E4;}
+.type-role{background:rgba(57,185,133,0.1);color:#39B985;}
+
+/* ROLE TEXT */
+.role-text{font-size:13px;color:#ECECF0;}
+
+/* MFA PILLS */
+.mfa-pill{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;display:inline-block;}
+.mfa-enabled{background:rgba(57,185,133,0.12);color:#39B985;}
+.mfa-disabled{background:rgba(255,115,148,0.12);color:#FF7394;}
+.mfa-na{color:#6B6B75;font-size:12px;}
+
+/* RISK SCORES */
+.score-critical{color:#FF7394;font-weight:600;}
+.score-high{color:#DD6E1E;font-weight:600;}
+.score-medium{color:#FFDB36;font-weight:600;}
+.score-low{color:#39B985;font-weight:600;}
+.score-label{font-size:11px;font-weight:600;margin-left:4px;}
+
+/* PERMISSIONS */
+.perm-count{font-size:13px;color:#ECECF0;}
+.perm-high{color:#DD6E1E;}
+.perm-label{font-size:11px;color:#6B6B75;margin-left:4px;}
+
+/* LAST LOGIN */
+.login-time{font-size:12px;color:#9898A0;}
+.login-stale{color:#FFDB36;}
+.login-dormant{color:#DD6E1E;}
+.login-always{font-size:11px;color:#6B6B75;font-style:italic;}
+
+/* STATUS PILLS */
+.status-pill{padding:4px 10px;border-radius:10px;font-size:11px;font-weight:600;display:inline-block;}
+.status-active{background:rgba(57,185,133,0.12);color:#39B985;}
+.status-compromised{background:rgba(255,115,148,0.15);color:#FF7394;}
+.status-dormant{background:rgba(221,110,30,0.12);color:#DD6E1E;}
+.status-stale{background:rgba(255,219,54,0.12);color:#FFDB36;}
+
+/* PAGINATION */
+.table-footer{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid #2A3055;background:#151A2D;font-size:12px;color:#6B6B75;}
+.page-btns{display:flex;gap:4px;}
+.page-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#1C2340;color:#9898A0;font-size:12px;border:1px solid #2A3055;cursor:pointer;font-family:'Inter',sans-serif;}
+.page-btn.active-page{background:#39B985;color:#080C18;border-color:#39B985;font-weight:600;}
+.page-info{color:#6B6B75;}
+
+/* ALERT BANNER */
+.alert-banner{display:flex;align-items:center;gap:14px;background:rgba(255,115,148,0.07);border:1px solid rgba(255,115,148,0.2);border-radius:10px;padding:14px 20px;margin-bottom:20px;}
+.alert-icon{font-size:18px;flex-shrink:0;}
+.alert-text{flex:1;}
+.alert-title{font-size:13px;font-weight:600;color:#FF7394;margin-bottom:2px;}
+.alert-desc{font-size:12px;color:#9898A0;}
+.alert-cta{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;background:#FF7394;color:#080C18;border:none;cursor:pointer;white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="logo">CYDERES</div>
+  <div class="nav-links">
+    <a class="nav-link">Overview</a>
+    <a class="nav-link">Issues</a>
+    <a class="nav-link">Attack Paths</a>
+    <a class="nav-link">Assets</a>
+    <a class="nav-link active">Identities</a>
+    <a class="nav-link">Investigations</a>
+  </div>
+  <div class="nav-spacer"></div>
+  <div class="search-bar">Search identities, roles, accounts&hellip; <kbd>&#8984;K</kbd></div>
+  <div class="topnav-right">
+    <div class="time-pill">&#128197; Last 30 Days &#9660;</div>
+    <div class="env-pill"><div class="env-dot"></div> Production &#9660;</div>
+    <div class="bell-icon">&#128276;<div class="bell-dot"></div></div>
+    <div class="avatar">CM</div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <span class="page-title">Identities</span>
+    <span class="page-count">4,231 total</span>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Privileged Without MFA</div>
+      <div class="kpi-value red">23</div>
+      <div class="kpi-sub">Admin accounts, no MFA enforced</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Dormant Admins</div>
+      <div class="kpi-value orange">41</div>
+      <div class="kpi-sub">No login in 90+ days</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Excessive Permissions</div>
+      <div class="kpi-value yellow">156</div>
+      <div class="kpi-sub">30%+ permissions unused</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Shared Service Accounts</div>
+      <div class="kpi-value blue">12</div>
+      <div class="kpi-sub">Multiple owners, audit risk</div>
+    </div>
+  </div>
+
+  <!-- ALERT BANNER -->
+  <div class="alert-banner">
+    <div class="alert-icon">&#9888;</div>
+    <div class="alert-text">
+      <div class="alert-title">Critical: svc-backup is marked Compromised</div>
+      <div class="alert-desc">Service account svc-backup shows signs of credential theft. 23 permissions remain active. Immediate remediation recommended.</div>
+    </div>
+    <button class="alert-cta">Investigate Now</button>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-search">
+      <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" stroke="#6B6B75" stroke-width="1.5"/><path d="M11 11l3 3" stroke="#6B6B75" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Search by name, email, role&hellip;
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-select">Role: All <span class="filter-select-arrow">&#9660;</span></div>
+    <div class="filter-select">MFA Status: All <span class="filter-select-arrow">&#9660;</span></div>
+    <div class="filter-select">Risk Level: All <span class="filter-select-arrow">&#9660;</span></div>
+    <div class="filter-right">
+      <div class="filter-btn alert">&#9888; Compromised Only</div>
+      <div class="filter-btn">Export CSV</div>
+    </div>
+  </div>
+
+  <!-- IDENTITY TABLE -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Identity</th>
+          <th>Type</th>
+          <th>Role</th>
+          <th>MFA</th>
+          <th>Risk Score</th>
+          <th>Permissions</th>
+          <th>Last Login</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Row 1 -->
+        <tr>
+          <td>
+            <div class="identity-name">jason.mitchell@acme-corp.com</div>
+            <div class="identity-sub">UID: jmitchell &middot; AD User</div>
+          </td>
+          <td><span class="type-badge type-user">User</span></td>
+          <td><span class="role-text">Domain Admin</span></td>
+          <td><span class="mfa-pill mfa-disabled">Disabled</span></td>
+          <td><span class="score-critical">9.2</span><span class="score-label score-critical">Critical</span></td>
+          <td><span class="perm-count perm-high">47</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-time">2h ago</span></td>
+          <td><span class="status-pill status-active">Active</span></td>
+        </tr>
+        <!-- Row 2 -->
+        <tr>
+          <td>
+            <div class="identity-name">svc-backup</div>
+            <div class="identity-sub">Service Principal &middot; AWS IAM</div>
+          </td>
+          <td><span class="type-badge type-svc">Service Account</span></td>
+          <td><span class="role-text">Backup Admin</span></td>
+          <td><span class="mfa-na">N/A</span></td>
+          <td><span class="score-critical">8.8</span><span class="score-label score-critical">Critical</span></td>
+          <td><span class="perm-count perm-high">23</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-always">Always</span></td>
+          <td><span class="status-pill status-compromised">Compromised</span></td>
+        </tr>
+        <!-- Row 3 -->
+        <tr>
+          <td>
+            <div class="identity-name">admin-ops</div>
+            <div class="identity-sub">Service Principal &middot; Azure AD</div>
+          </td>
+          <td><span class="type-badge type-svc">Service Account</span></td>
+          <td><span class="role-text">Operations</span></td>
+          <td><span class="mfa-na">N/A</span></td>
+          <td><span class="score-high">7.4</span><span class="score-label score-high">High</span></td>
+          <td><span class="perm-count perm-high">31</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-time">12h ago</span></td>
+          <td><span class="status-pill status-active">Active</span></td>
+        </tr>
+        <!-- Row 4 -->
+        <tr>
+          <td>
+            <div class="identity-name">sarah.chen@acme-corp.com</div>
+            <div class="identity-sub">UID: schen &middot; AD User</div>
+          </td>
+          <td><span class="type-badge type-user">User</span></td>
+          <td><span class="role-text">Security Analyst</span></td>
+          <td><span class="mfa-pill mfa-enabled">Enabled</span></td>
+          <td><span class="score-low">3.1</span><span class="score-label score-low">Low</span></td>
+          <td><span class="perm-count">12</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-time">1h ago</span></td>
+          <td><span class="status-pill status-active">Active</span></td>
+        </tr>
+        <!-- Row 5 -->
+        <tr>
+          <td>
+            <div class="identity-name">svc-deploy-ci</div>
+            <div class="identity-sub">Service Principal &middot; GitHub Actions</div>
+          </td>
+          <td><span class="type-badge type-svc">Service Account</span></td>
+          <td><span class="role-text">CI/CD</span></td>
+          <td><span class="mfa-na">N/A</span></td>
+          <td><span class="score-medium">6.9</span><span class="score-label score-medium">Medium</span></td>
+          <td><span class="perm-count">18</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-time">5m ago</span></td>
+          <td><span class="status-pill status-active">Active</span></td>
+        </tr>
+        <!-- Row 6 -->
+        <tr>
+          <td>
+            <div class="identity-name">role-cross-acct</div>
+            <div class="identity-sub">arn:aws:iam::123456789:role/CrossAcct</div>
+          </td>
+          <td><span class="type-badge type-role">IAM Role</span></td>
+          <td><span class="role-text">Cross-Account</span></td>
+          <td><span class="mfa-na">N/A</span></td>
+          <td><span class="score-high">7.8</span><span class="score-label score-high">High</span></td>
+          <td><span class="perm-count perm-high">42</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-time">1d ago</span></td>
+          <td><span class="status-pill status-active">Active</span></td>
+        </tr>
+        <!-- Row 7 -->
+        <tr>
+          <td>
+            <div class="identity-name">svc-legacy-01</div>
+            <div class="identity-sub">Service Principal &middot; Local AD</div>
+          </td>
+          <td><span class="type-badge type-svc">Service Account</span></td>
+          <td><span class="role-text">Legacy App</span></td>
+          <td><span class="mfa-na">N/A</span></td>
+          <td><span class="score-medium">5.5</span><span class="score-label score-medium">Medium</span></td>
+          <td><span class="perm-count">8</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-time login-dormant">180d ago</span></td>
+          <td><span class="status-pill status-dormant">Dormant</span></td>
+        </tr>
+        <!-- Row 8 -->
+        <tr>
+          <td>
+            <div class="identity-name">mike.johnson@acme-corp.com</div>
+            <div class="identity-sub">UID: mjohnson &middot; AD User</div>
+          </td>
+          <td><span class="type-badge type-user">User</span></td>
+          <td><span class="role-text">IT Admin</span></td>
+          <td><span class="mfa-pill mfa-enabled">Enabled</span></td>
+          <td><span class="score-medium">4.2</span><span class="score-label score-medium">Medium</span></td>
+          <td><span class="perm-count">22</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-time">3h ago</span></td>
+          <td><span class="status-pill status-active">Active</span></td>
+        </tr>
+        <!-- Row 9 -->
+        <tr>
+          <td>
+            <div class="identity-name">guest-contractor-07</div>
+            <div class="identity-sub">UID: gcontractor07 &middot; AD Guest</div>
+          </td>
+          <td><span class="type-badge type-user">User</span></td>
+          <td><span class="role-text">Contractor</span></td>
+          <td><span class="mfa-pill mfa-disabled">Disabled</span></td>
+          <td><span class="score-medium">6.1</span><span class="score-label score-medium">Medium</span></td>
+          <td><span class="perm-count">15</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-time login-stale">45d ago</span></td>
+          <td><span class="status-pill status-stale">Stale</span></td>
+        </tr>
+        <!-- Row 10 -->
+        <tr>
+          <td>
+            <div class="identity-name">svc-monitoring</div>
+            <div class="identity-sub">Service Principal &middot; Datadog</div>
+          </td>
+          <td><span class="type-badge type-svc">Service Account</span></td>
+          <td><span class="role-text">Monitoring</span></td>
+          <td><span class="mfa-na">N/A</span></td>
+          <td><span class="score-low">2.3</span><span class="score-label score-low">Low</span></td>
+          <td><span class="perm-count">5</span><span class="perm-label">permissions</span></td>
+          <td><span class="login-time">1m ago</span></td>
+          <td><span class="status-pill status-active">Active</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- PAGINATION FOOTER -->
+    <div class="table-footer">
+      <span class="page-info">Showing 1–10 of 4,231 identities</span>
+      <div class="page-btns">
+        <button class="page-btn">&#8592;</button>
+        <button class="page-btn active-page">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">&#8230;</button>
+        <button class="page-btn">424</button>
+        <button class="page-btn">&#8594;</button>
+      </div>
+      <span class="page-info">10 per page</span>
+    </div>
+  </div>
+
+</div><!-- end .content -->
+
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Exposure Management — Cyderes Darkstar</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #080C18;
+    color: #ECECF0;
+    width: 1440px;
+    min-height: 100vh;
+    display: flex;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: #0D1220;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 10;
+  }
+  .sidebar-logo {
+    padding: 20px 24px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #39B985;
+    letter-spacing: 4px;
+  }
+  .nav-sections { flex: 1; overflow-y: auto; padding: 0 0 16px; }
+  .nav-section { margin-bottom: 8px; }
+  .nav-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6B6B75;
+    padding: 16px 24px 6px;
+    letter-spacing: 0.5px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #9898A0;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { color: #ECECF0; background: rgba(28,35,64,0.5); }
+  .nav-item.active {
+    color: #ECECF0;
+    border-left-color: #39B985;
+    background: #1C2340;
+  }
+  .sidebar-bottom {
+    padding: 16px 24px;
+    border-top: 1px solid #2A3055;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sidebar-bottom .nav-item { padding: 8px 0; border-left: none; }
+  .sidebar-avatar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0 4px;
+  }
+  .avatar-circle {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #39B985;
+    color: #fff;
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Main Area ── */
+  .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+
+  /* ── Top Bar ── */
+  .topbar {
+    height: 56px;
+    background: #0D1220;
+    border-bottom: 1px solid #2A3055;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    flex-shrink: 0;
+  }
+  .breadcrumb { font-size: 13px; color: #9898A0; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .search-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    font-size: 12px; color: #6B6B75;
+    cursor: pointer;
+  }
+  .search-pill kbd {
+    background: #1C2340;
+    border: 1px solid #2A3055;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    color: #6B6B75;
+  }
+  .icon-btn {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    background: transparent;
+    border: 1px solid #2A3055;
+    color: #9898A0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative; font-size: 14px;
+  }
+  .icon-btn .dot {
+    position: absolute; top: 4px; right: 4px;
+    width: 7px; height: 7px;
+    background: #FF7394;
+    border-radius: 50%;
+    border: 1.5px solid #0D1220;
+  }
+  .env-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    border-radius: 14px;
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    font-size: 12px; font-weight: 500; color: #9898A0;
+  }
+  .env-pill .dot-green { width: 6px; height: 6px; border-radius: 50%; background: #39B985; }
+  .export-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: #1C2340;
+    border: 1px solid #2A3055;
+    font-size: 12px; font-weight: 500; color: #ECECF0;
+    cursor: pointer;
+  }
+
+  /* ── Content ── */
+  .content { padding: 24px; }
+  .row { display: flex; gap: 16px; margin-bottom: 16px; }
+  .card {
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .card-header {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ECECF0;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-subtitle { font-size: 12px; color: #9898A0; margin-top: 4px; }
+
+  /* ── KPI Cards ── */
+  .kpi-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+  .kpi-card {
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+  }
+  .kpi-dot {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .kpi-label { font-size: 13px; font-weight: 500; color: #9898A0; margin-bottom: 8px; }
+  .kpi-value { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+  .kpi-change { font-size: 12px; }
+
+  /* ── Heatmap ── */
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: 90px repeat(4, 56px);
+    gap: 4px;
+    align-items: center;
+    margin-top: 12px;
+  }
+  .heatmap-ylabel { font-size: 12px; color: #9898A0; text-align: right; padding-right: 8px; }
+  .heatmap-cell {
+    width: 56px; height: 40px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: #fff;
+  }
+  .heatmap-xlabel { font-size: 12px; color: #9898A0; text-align: center; }
+
+  /* ── Bar Chart ── */
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .bar-label { font-size: 12px; color: #9898A0; width: 100px; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 20px; background: #1C2340; border-radius: 4px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-value { font-size: 12px; font-weight: 600; color: #ECECF0; width: 50px; text-align: right; flex-shrink: 0; }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: #1C2340;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase;
+    color: #6B6B75;
+    padding: 10px 12px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #ECECF0;
+    border-bottom: 1px solid #1C2340;
+    white-space: nowrap;
+  }
+  tbody tr:hover { background: rgba(28,35,64,0.4); }
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .pill-critical { background: rgba(255,115,148,0.15); color: #FF7394; }
+  .pill-high { background: rgba(221,110,30,0.15); color: #DD6E1E; }
+  .pill-medium { background: rgba(255,219,54,0.15); color: #FFDB36; }
+  .pill-low { background: rgba(57,185,133,0.15); color: #39B985; }
+  .pill-info { background: rgba(179,224,255,0.15); color: #B3E0FF; }
+  .pill-emerald { background: rgba(57,185,133,0.15); color: #39B985; }
+
+  .badge-emerald {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 2px 10px;
+    border-radius: 10px;
+    background: rgba(57,185,133,0.15);
+    color: #39B985;
+    font-size: 12px; font-weight: 600;
+    margin-left: 8px;
+  }
+
+  .filter-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .filter-pill {
+    padding: 5px 12px;
+    border-radius: 14px;
+    font-size: 12px; font-weight: 500;
+    background: #1C2340;
+    border: 1px solid #2A3055;
+    color: #9898A0;
+    cursor: pointer;
+  }
+  .filter-pill.active {
+    background: rgba(57,185,133,0.15);
+    border-color: #39B985;
+    color: #39B985;
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0 0;
+    font-size: 12px;
+    color: #6B6B75;
+  }
+  .page-numbers { display: flex; gap: 4px; }
+  .page-num {
+    width: 28px; height: 28px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #9898A0;
+    cursor: pointer;
+  }
+  .page-num.active { background: #39B985; color: #fff; }
+
+  .link-green { font-size: 12px; font-weight: 500; color: #39B985; cursor: pointer; }
+
+  /* ── Donut ── */
+  .donut-wrap { display: flex; flex-direction: column; align-items: center; }
+  .donut-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; justify-content: center; }
+  .donut-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #9898A0; }
+  .donut-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">CYDERES</div>
+  <div class="nav-sections">
+    <div class="nav-section">
+      <div class="nav-section-label">Command Center</div>
+      <div class="nav-item">Dashboard</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Detect &amp; Respond</div>
+      <div class="nav-item">Incidents</div>
+      <div class="nav-item">Detections</div>
+      <div class="nav-item">Investigations</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Exposure</div>
+      <div class="nav-item active">Overview</div>
+      <div class="nav-item">Findings</div>
+      <div class="nav-item">Attack Paths</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Inventory</div>
+      <div class="nav-item">Assets</div>
+      <div class="nav-item">Identities</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Analysis</div>
+      <div class="nav-item">Issue Map</div>
+      <div class="nav-item">Reports</div>
+    </div>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="nav-item">Settings</div>
+    <div class="sidebar-avatar">
+      <div class="avatar-circle">CM</div>
+      <span style="font-size:13px;color:#9898A0">Curtis M.</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<div class="main">
+  <header class="topbar">
+    <span class="breadcrumb">Exposure / Overview</span>
+    <div class="topbar-right">
+      <div class="search-pill"><span>Search</span><kbd>&#8984;K</kbd></div>
+      <div class="icon-btn">&#128276;<span class="dot"></span></div>
+      <div class="env-pill"><span class="dot-green"></span>Production</div>
+      <button class="export-btn">Export</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Row 1: KPI Cards -->
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-dot" style="background:#FF7394"></div>
+        <div class="kpi-label">Critical Exposures</div>
+        <div class="kpi-value" style="color:#FF7394">342</div>
+        <div class="kpi-change" style="color:#FF7394">&uarr; 12 from last week</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-dot" style="background:#DD6E1E"></div>
+        <div class="kpi-label">High Severity</div>
+        <div class="kpi-value" style="color:#DD6E1E">1,024</div>
+        <div class="kpi-change" style="color:#39B985">&darr; 3.6% from last period</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-dot" style="background:#FFDB36"></div>
+        <div class="kpi-label">Medium Severity</div>
+        <div class="kpi-value" style="color:#FFDB36">4,891</div>
+        <div class="kpi-change" style="color:#9898A0">No change</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-dot" style="background:#ECECF0"></div>
+        <div class="kpi-label">Total Exposed Assets</div>
+        <div class="kpi-value" style="color:#ECECF0">12,847</div>
+        <div class="kpi-change" style="color:#DD6E1E">&uarr; 3.2% from last period</div>
+      </div>
+    </div>
+
+    <!-- Row 2: Heatmap + Attack Path -->
+    <div class="row">
+      <!-- Left: Risk Heatmap -->
+      <div class="card" style="flex:55">
+        <div class="card-header">Risk Heatmap &mdash; Asset Category &times; Severity</div>
+        <div class="heatmap-grid">
+          <!-- Header row -->
+          <div></div>
+          <div class="heatmap-xlabel">Critical</div>
+          <div class="heatmap-xlabel">High</div>
+          <div class="heatmap-xlabel">Medium</div>
+          <div class="heatmap-xlabel">Low</div>
+          <!-- Network -->
+          <div class="heatmap-ylabel">Network</div>
+          <div class="heatmap-cell" style="background:#FF7394">87</div>
+          <div class="heatmap-cell" style="background:rgba(221,110,30,0.8)">234</div>
+          <div class="heatmap-cell" style="background:rgba(255,219,54,0.6)">456</div>
+          <div class="heatmap-cell" style="background:rgba(57,185,133,0.4)">1200</div>
+          <!-- Cloud -->
+          <div class="heatmap-ylabel">Cloud</div>
+          <div class="heatmap-cell" style="background:rgba(255,115,148,0.7)">64</div>
+          <div class="heatmap-cell" style="background:#DD6E1E">312</div>
+          <div class="heatmap-cell" style="background:rgba(255,219,54,0.5)">589</div>
+          <div class="heatmap-cell" style="background:rgba(57,185,133,0.35)">980</div>
+          <!-- Endpoint -->
+          <div class="heatmap-ylabel">Endpoint</div>
+          <div class="heatmap-cell" style="background:rgba(255,115,148,0.5)">42</div>
+          <div class="heatmap-cell" style="background:rgba(221,110,30,0.6)">178</div>
+          <div class="heatmap-cell" style="background:#FFDB36">891</div>
+          <div class="heatmap-cell" style="background:rgba(57,185,133,0.5)">1540</div>
+          <!-- Application -->
+          <div class="heatmap-ylabel">Application</div>
+          <div class="heatmap-cell" style="background:rgba(255,115,148,0.55)">53</div>
+          <div class="heatmap-cell" style="background:rgba(221,110,30,0.5)">145</div>
+          <div class="heatmap-cell" style="background:rgba(255,219,54,0.55)">412</div>
+          <div class="heatmap-cell" style="background:rgba(57,185,133,0.45)">890</div>
+          <!-- Database -->
+          <div class="heatmap-ylabel">Database</div>
+          <div class="heatmap-cell" style="background:rgba(255,115,148,0.4)">28</div>
+          <div class="heatmap-cell" style="background:rgba(221,110,30,0.45)">98</div>
+          <div class="heatmap-cell" style="background:rgba(255,219,54,0.4)">267</div>
+          <div class="heatmap-cell" style="background:rgba(57,185,133,0.3)">620</div>
+        </div>
+      </div>
+
+      <!-- Right: Attack Path -->
+      <div class="card" style="flex:45">
+        <div class="card-header">
+          <div>
+            <span>&#9670; Attack Path Visualization</span>
+            <div class="card-subtitle">Highest-risk path: Internet &rarr; Prod DB &middot; CVSS 9.8</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <span class="link-green">+ All Paths (22)</span>
+            <span class="link-green">Expand &rarr;</span>
+          </div>
+        </div>
+        <svg width="100%" height="240" viewBox="0 0 500 240">
+          <defs>
+            <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6" fill="#39B985"/>
+            </marker>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <!-- Zone backgrounds -->
+          <rect x="10" y="15" width="115" height="210" rx="8" fill="none" stroke="#2A3055" stroke-dasharray="4,4" opacity="0.5"/>
+          <text x="68" y="32" fill="#6B6B75" font-size="9" text-anchor="middle" font-family="Inter">EXTERNAL</text>
+          <rect x="135" y="15" width="165" height="210" rx="8" fill="none" stroke="#2A3055" stroke-dasharray="4,4" opacity="0.5"/>
+          <text x="218" y="32" fill="#6B6B75" font-size="9" text-anchor="middle" font-family="Inter">DMZ</text>
+          <rect x="310" y="15" width="180" height="210" rx="8" fill="none" stroke="#2A3055" stroke-dasharray="4,4" opacity="0.5"/>
+          <text x="400" y="32" fill="#6B6B75" font-size="9" text-anchor="middle" font-family="Inter">INTERNAL</text>
+
+          <!-- Edges -->
+          <line x1="90" y1="120" x2="145" y2="100" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrow)" filter="url(#glow)"/>
+          <line x1="195" y1="100" x2="245" y2="120" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrow)" filter="url(#glow)"/>
+          <line x1="295" y1="120" x2="345" y2="100" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrow)" filter="url(#glow)"/>
+          <line x1="395" y1="100" x2="430" y2="140" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrow)" filter="url(#glow)"/>
+          <line x1="430" y1="180" x2="460" y2="170" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrow)" filter="url(#glow)"/>
+
+          <!-- Edge labels -->
+          <text x="115" y="98" fill="#6B6B75" font-size="9" text-anchor="middle" font-family="Inter">PORT 443</text>
+          <text x="220" y="120" fill="#6B6B75" font-size="9" text-anchor="middle" font-family="Inter">API</text>
+          <text x="320" y="100" fill="#6B6B75" font-size="9" text-anchor="middle" font-family="Inter">LATERAL</text>
+          <text x="420" y="112" fill="#6B6B75" font-size="9" text-anchor="middle" font-family="Inter">PRIV ESC</text>
+          <text x="455" y="165" fill="#6B6B75" font-size="9" text-anchor="middle" font-family="Inter">DB CONN</text>
+
+          <!-- Nodes -->
+          <!-- Internet -->
+          <circle cx="60" cy="120" r="22" fill="#B3E0FF" opacity="0.9"/>
+          <text x="60" y="124" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">NET</text>
+          <text x="60" y="155" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Internet</text>
+
+          <!-- Public Web Server -->
+          <circle cx="170" cy="95" r="22" fill="#61C9D3" opacity="0.9"/>
+          <text x="170" y="99" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">WEB</text>
+          <text x="170" y="130" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Pub Web Srv</text>
+
+          <!-- Content Mgmt -->
+          <circle cx="270" cy="120" r="20" fill="#61C9D3" opacity="0.85"/>
+          <text x="270" y="124" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">CMS</text>
+          <text x="270" y="153" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Content Mgmt</text>
+
+          <!-- Exposed API -->
+          <circle cx="370" cy="95" r="22" fill="#DD6E1E" opacity="0.9"/>
+          <text x="370" y="99" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">API</text>
+          <text x="370" y="130" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Exposed API</text>
+
+          <!-- Privileged Identity -->
+          <circle cx="430" cy="160" r="22" fill="#39B985" opacity="0.9"/>
+          <text x="430" y="164" fill="#080C18" font-size="8" font-weight="600" text-anchor="middle" font-family="Inter">PRIV</text>
+          <text x="430" y="195" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Priv Identity</text>
+
+          <!-- Prod Database -->
+          <circle cx="470" cy="160" r="22" fill="#A154E4" opacity="0.9" transform="translate(0,40)"/>
+          <text x="470" y="204" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">DB</text>
+          <text x="470" y="225" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Prod DB</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Row 3: Three charts -->
+    <div class="row">
+      <!-- Vulnerabilities by Severity -->
+      <div class="card" style="flex:1">
+        <div class="card-header">Vulnerabilities by Severity</div>
+        <div>
+          <div class="bar-row">
+            <div class="bar-label">Critical</div>
+            <div class="bar-track"><div class="bar-fill" style="width:5.5%;background:#FF7394"></div></div>
+            <div class="bar-value">342</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">High</div>
+            <div class="bar-track"><div class="bar-fill" style="width:16.5%;background:#DD6E1E"></div></div>
+            <div class="bar-value">1,024</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Medium</div>
+            <div class="bar-track"><div class="bar-fill" style="width:79%;background:#FFDB36"></div></div>
+            <div class="bar-value">4,891</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Low</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#39B985"></div></div>
+            <div class="bar-value">6,190</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset Exposure Distribution (Donut) -->
+      <div class="card" style="flex:1">
+        <div class="card-header">Asset Exposure Distribution</div>
+        <div class="donut-wrap">
+          <svg width="180" height="180" viewBox="0 0 180 180">
+            <circle cx="90" cy="90" r="70" fill="none" stroke="#1C2340" stroke-width="24"/>
+            <!-- Cloud 4496/12754 = 35.3% => 127deg -->
+            <circle cx="90" cy="90" r="70" fill="none" stroke="#61C9D3" stroke-width="24"
+              stroke-dasharray="221.5 218.5" stroke-dashoffset="110" transform="rotate(-90 90 90)"/>
+            <!-- Endpoints 3507/12754 = 27.5% => 99deg -->
+            <circle cx="90" cy="90" r="70" fill="none" stroke="#39B985" stroke-width="24"
+              stroke-dasharray="172.8 267.2" stroke-dashoffset="-111.5" transform="rotate(-90 90 90)"/>
+            <!-- Identities 2825/12754 = 22.1% => 79.8deg -->
+            <circle cx="90" cy="90" r="70" fill="none" stroke="#B3E0FF" stroke-width="24"
+              stroke-dasharray="139.4 300.6" stroke-dashoffset="-284.3" transform="rotate(-90 90 90)"/>
+            <!-- Applications 1926/12754 = 15.1% -->
+            <circle cx="90" cy="90" r="70" fill="none" stroke="#A154E4" stroke-width="24"
+              stroke-dasharray="95 345" stroke-dashoffset="-423.7" transform="rotate(-90 90 90)"/>
+            <!-- Center text -->
+            <text x="90" y="85" text-anchor="middle" fill="#ECECF0" font-size="24" font-weight="700" font-family="Inter">12.8k</text>
+            <text x="90" y="102" text-anchor="middle" fill="#9898A0" font-size="11" font-family="Inter">total assets</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#61C9D3"></div>Cloud 4,496</div>
+            <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#39B985"></div>Endpoints 3,507</div>
+            <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#B3E0FF"></div>Identities 2,825</div>
+            <div class="donut-legend-item"><div class="donut-legend-dot" style="background:#A154E4"></div>Applications 1,926</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Identity Risk Distribution -->
+      <div class="card" style="flex:1">
+        <div class="card-header">Identity Risk Distribution</div>
+        <div>
+          <div class="bar-row">
+            <div class="bar-label">Over-privileged</div>
+            <div class="bar-track"><div class="bar-fill" style="width:8.4%;background:#FF7394"></div></div>
+            <div class="bar-value">80</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Stale creds</div>
+            <div class="bar-track"><div class="bar-fill" style="width:16.3%;background:#DD6E1E"></div></div>
+            <div class="bar-value">156</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">No MFA</div>
+            <div class="bar-track"><div class="bar-fill" style="width:7%;background:#FFDB36"></div></div>
+            <div class="bar-value">67</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">External access</div>
+            <div class="bar-track"><div class="bar-fill" style="width:4.3%;background:#B3E0FF"></div></div>
+            <div class="bar-value">41</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Compliant</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#39B985"></div></div>
+            <div class="bar-value">958</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 4: Exposure Findings Table -->
+    <div class="card">
+      <div class="card-header">
+        <div style="display:flex;align-items:center">
+          Exposure Findings
+          <span class="badge-emerald">342</span>
+        </div>
+        <div class="filter-bar" style="margin-bottom:0">
+          <div class="filter-pill active">Critical First</div>
+          <div class="filter-pill">All Types</div>
+          <span style="font-size:14px;color:#6B6B75;cursor:pointer">&#8645;</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Exposure</th>
+              <th>Severity</th>
+              <th>Asset</th>
+              <th>Category</th>
+              <th>CVSS</th>
+              <th>Age</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="font-weight:600">CVE-2024-21762</div>
+                <div style="font-size:11px;color:#6B6B75">FortiOS Out-of-Bound Write</div>
+              </td>
+              <td><span class="pill pill-critical">Critical</span></td>
+              <td style="color:#61C9D3">fw-edge-01</td>
+              <td>Network</td>
+              <td style="font-weight:600">9.8</td>
+              <td>14d</td>
+              <td><span class="pill pill-critical">Open</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-weight:600">CVE-2024-3400</div>
+                <div style="font-size:11px;color:#6B6B75">PAN-OS Command Injection</div>
+              </td>
+              <td><span class="pill pill-critical">Critical</span></td>
+              <td style="color:#61C9D3">pan-gw-us-west</td>
+              <td>Firewall</td>
+              <td style="font-weight:600">10.0</td>
+              <td>7d</td>
+              <td><span class="pill pill-high">Remediate</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-weight:600">CVE-2024-1709</div>
+                <div style="font-size:11px;color:#6B6B75">ConnectWise Auth Bypass</div>
+              </td>
+              <td><span class="pill pill-critical">Critical</span></td>
+              <td style="color:#61C9D3">rmm-server-prod</td>
+              <td>Application</td>
+              <td style="font-weight:600">10.0</td>
+              <td>21d</td>
+              <td><span class="pill pill-critical">Open</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-weight:600">Exposed S3 Bucket</div>
+                <div style="font-size:11px;color:#6B6B75">Public ACL Misconfiguration</div>
+              </td>
+              <td><span class="pill pill-high">High</span></td>
+              <td style="color:#61C9D3">s3-prod-data</td>
+              <td>Cloud</td>
+              <td style="font-weight:600">8.5</td>
+              <td>3d</td>
+              <td><span class="pill pill-info">Review</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-weight:600">Weak TLS</div>
+                <div style="font-size:11px;color:#6B6B75">TLS 1.0 Enabled on API Gateway</div>
+              </td>
+              <td><span class="pill pill-medium">Medium</span></td>
+              <td style="color:#61C9D3">api-gateway-east</td>
+              <td>Network</td>
+              <td style="font-weight:600">5.3</td>
+              <td>60d</td>
+              <td><span class="pill pill-emerald">Planned</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-weight:600">Stale Admin Credentials</div>
+                <div style="font-size:11px;color:#6B6B75">Service Account Over-privileged</div>
+              </td>
+              <td><span class="pill pill-medium">Medium</span></td>
+              <td style="color:#39B985">svc-deploy-ci</td>
+              <td>Identity</td>
+              <td style="font-weight:600">6.1</td>
+              <td>21d</td>
+              <td><span class="pill pill-info">Review</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span>Showing 1&ndash;6 of 342</span>
+        <div class="page-numbers">
+          <div class="page-num active">1</div>
+          <div class="page-num">2</div>
+          <div class="page-num">3</div>
+          <div class="page-num">...</div>
+          <div class="page-num">57</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

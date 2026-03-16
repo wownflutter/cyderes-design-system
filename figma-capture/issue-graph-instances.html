@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440, initial-scale=1.0">
+  <title>Issue Map — Page Instances</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #080C18;
+      color: #ECECF0;
+      width: 1440px;
+      padding: 24px;
+    }
+
+    /* ── Page context wrapper ── */
+    .page-instance {
+      margin-bottom: 64px;
+    }
+
+    .page-instance__header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #151928;
+    }
+
+    .page-instance__badge {
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #0F2E22;
+      color: #39B985;
+      box-shadow: 0 0 0 0.5px #39B985;
+    }
+
+    .page-instance__title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ECECF0;
+      letter-spacing: -0.02em;
+    }
+
+    .page-instance__desc {
+      font-size: 13px;
+      color: #5C5C66;
+      margin-left: auto;
+    }
+
+    /* ── Breadcrumb context ── */
+    .page-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #5C5C66;
+    }
+    .page-breadcrumb span { color: #9898A0; }
+    .page-breadcrumb .bc-sep { color: #242944; }
+
+    /* ══════════════════════════════════════
+       ISSUE MAP — BASE STYLES (REFINED)
+       ══════════════════════════════════════ */
+    .issue-graph {
+      background: #080C18;
+      border: 1px solid #1A1F3A;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .issue-graph__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .issue-graph__title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .issue-graph__icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .issue-graph__icon svg { width: 12px; height: 12px; }
+    .issue-graph__title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ECECF0;
+      letter-spacing: 0.02em;
+    }
+    .issue-graph__subtitle {
+      font-size: 10px;
+      color: #5C5C66;
+      margin-top: 1px;
+    }
+    .issue-graph__controls {
+      display: flex;
+      gap: 4px;
+      background: #0A0E1A;
+      border-radius: 6px;
+      padding: 3px;
+    }
+    .graph-ctrl-btn {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      background: transparent;
+      color: #5C5C66;
+    }
+    .graph-ctrl-btn--active {
+      background: #0F2E22;
+      color: #39B985;
+      box-shadow: 0 0 0 0.5px #39B985;
+    }
+
+    .issue-graph__canvas {
+      position: relative;
+      width: 100%;
+      height: 340px;
+      background: #060A14;
+      border-radius: 8px;
+      border: 1px solid #151928;
+      overflow: hidden;
+    }
+    .graph-grid {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image:
+        linear-gradient(rgba(36, 41, 68, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(36, 41, 68, 0.15) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Clusters */
+    .cluster {
+      position: absolute;
+      border-radius: 14px;
+      border: 1px dashed;
+    }
+    .cluster__label {
+      position: absolute;
+      top: 6px;
+      left: 10px;
+      font-size: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.7;
+    }
+    .cluster--vuln { background: rgba(255, 115, 148, 0.04); border-color: rgba(255, 115, 148, 0.12); }
+    .cluster--vuln .cluster__label { color: #FF7394; }
+    .cluster--identity { background: rgba(57, 185, 133, 0.04); border-color: rgba(57, 185, 133, 0.12); }
+    .cluster--identity .cluster__label { color: #39B985; }
+    .cluster--exposure { background: rgba(221, 110, 30, 0.04); border-color: rgba(221, 110, 30, 0.12); }
+    .cluster--exposure .cluster__label { color: #DD6E1E; }
+    .cluster--data { background: rgba(161, 84, 228, 0.04); border-color: rgba(161, 84, 228, 0.12); }
+    .cluster--data .cluster__label { color: #A154E4; }
+    .cluster--asset { background: rgba(97, 201, 211, 0.04); border-color: rgba(97, 201, 211, 0.12); }
+    .cluster--asset .cluster__label { color: #61C9D3; }
+
+    .graph-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .edge { stroke-width: 1.5; fill: none; }
+    .edge--default { stroke: #1A1F3A; stroke-width: 1; }
+    .edge--vuln { stroke: #FF7394; stroke-opacity: 0.45; }
+    .edge--identity { stroke: #39B985; stroke-opacity: 0.45; }
+    .edge--exposure { stroke: #DD6E1E; stroke-opacity: 0.45; }
+    .edge--data { stroke: #A154E4; stroke-opacity: 0.45; }
+    .edge--asset { stroke: #61C9D3; stroke-opacity: 0.45; }
+    .edge--highlight { stroke-width: 2.5; stroke-opacity: 0.85; filter: drop-shadow(0 0 3px currentColor); }
+    .edge--dashed { stroke-dasharray: 6 4; stroke-opacity: 0.2; stroke-width: 1; }
+    .arrow-marker { fill-opacity: 0.6; }
+
+    .gnode {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      z-index: 2;
+    }
+    .gnode__circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 600;
+      border: 2px solid;
+      position: relative;
+    }
+    .gnode__circle--center {
+      width: 54px;
+      height: 54px;
+      font-size: 12px;
+      font-weight: 700;
+      border-width: 2.5px;
+    }
+    .gnode__circle--sm {
+      width: 34px;
+      height: 34px;
+      font-size: 8px;
+    }
+    .gnode__circle--asset { background: #0C1F22; border-color: #61C9D3; color: #61C9D3; box-shadow: 0 0 10px rgba(97, 201, 211, 0.15); }
+    .gnode__circle--identity { background: #0C2218; border-color: #39B985; color: #39B985; box-shadow: 0 0 10px rgba(57, 185, 133, 0.15); }
+    .gnode__circle--vuln { background: #1A0D10; border-color: #FF7394; color: #FF7394; box-shadow: 0 0 10px rgba(255, 115, 148, 0.15); }
+    .gnode__circle--exposure { background: #1A100A; border-color: #DD6E1E; color: #DD6E1E; box-shadow: 0 0 10px rgba(221, 110, 30, 0.15); }
+    .gnode__circle--database { background: #100A16; border-color: #A154E4; color: #A154E4; box-shadow: 0 0 10px rgba(161, 84, 228, 0.15); }
+    .gnode__circle--env { background: #061721; border-color: #B3E0FF; color: #B3E0FF; box-shadow: 0 0 10px rgba(179, 224, 255, 0.15); }
+    .gnode__circle--center.gnode__circle--asset { box-shadow: 0 0 20px rgba(97, 201, 211, 0.25), 0 0 40px rgba(97, 201, 211, 0.08); }
+    .gnode__circle--center.gnode__circle--identity { box-shadow: 0 0 20px rgba(57, 185, 133, 0.25), 0 0 40px rgba(57, 185, 133, 0.08); }
+    .gnode__circle--center.gnode__circle--env { box-shadow: 0 0 20px rgba(179, 224, 255, 0.25), 0 0 40px rgba(179, 224, 255, 0.08); }
+
+    .gnode__ring {
+      position: absolute;
+      top: -5px; left: -5px; right: -5px; bottom: -5px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+    }
+    .gnode__ring--critical { border-color: rgba(255, 115, 148, 0.45); box-shadow: 0 0 8px rgba(255, 115, 148, 0.2); }
+    .gnode__ring--high { border-color: rgba(221, 110, 30, 0.45); box-shadow: 0 0 8px rgba(221, 110, 30, 0.2); }
+
+    .gnode__label { font-size: 9px; font-weight: 500; color: #ECECF0; text-align: center; max-width: 80px; line-height: 1.2; }
+    .gnode__sub { font-size: 8px; color: #5C5C66; text-align: center; }
+
+    .gnode__badge {
+      position: absolute;
+      top: -4px; right: -6px;
+      min-width: 16px; height: 16px;
+      padding: 0 4px;
+      border-radius: 8px;
+      font-size: 8px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      color: #080C18;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+    .gnode__badge--critical { background: #FF7394; }
+    .gnode__badge--high { background: #DD6E1E; }
+    .gnode__badge--medium { background: #FFDB36; }
+    .gnode__badge--ok { background: #39B985; }
+
+    .issue-graph__legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: #5C5C66;
+    }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .legend-line { width: 16px; height: 2px; border-radius: 1px; }
+    .legend-line--dashed { background: repeating-linear-gradient(90deg, #5C5C66, #5C5C66 4px, transparent 4px, transparent 7px); }
+    .legend-line--highlight { height: 3px; }
+
+    .issue-graph__stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #151928;
+    }
+    .graph-stat { display: flex; align-items: center; gap: 5px; }
+    .graph-stat__num { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+    .graph-stat__num--crit { color: #FF7394; }
+    .graph-stat__num--high { color: #DD6E1E; }
+    .graph-stat__num--info { color: #B3E0FF; }
+    .graph-stat__num--ok { color: #39B985; }
+    .graph-stat__label { font-size: 10px; color: #5C5C66; }
+    .stat-divider { width: 1px; height: 20px; background: #151928; }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       INSTANCE 1: Exposure Management — Environment Issue Map
+       ══════════════════════════════════════════ -->
+  <div class="page-instance">
+    <div class="page-instance__header">
+      <span class="page-instance__badge">Instance</span>
+      <span class="page-instance__title">Exposure Management</span>
+      <span class="page-instance__desc">Environment Issue Map variant</span>
+    </div>
+
+    <div class="page-breadcrumb">
+      Exposure Management <span class="bc-sep">/</span> <span>Production Environment</span> <span class="bc-sep">/</span> <span>Issue Map</span>
+    </div>
+
+    <div class="issue-graph">
+      <div class="issue-graph__header">
+        <div class="issue-graph__title-group">
+          <div class="issue-graph__icon" style="background: linear-gradient(135deg, #B3E0FF 0%, #061721 100%);">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" stroke="#B3E0FF" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="#B3E0FF"/></svg>
+          </div>
+          <div>
+            <div class="issue-graph__title">Issue Map — Environment View</div>
+            <div class="issue-graph__subtitle">Production / us-east-1 — 13 nodes</div>
+          </div>
+        </div>
+        <div class="issue-graph__controls">
+          <span class="graph-ctrl-btn graph-ctrl-btn--active">All</span>
+          <span class="graph-ctrl-btn">Critical</span>
+          <span class="graph-ctrl-btn">Expand</span>
+        </div>
+      </div>
+
+      <div class="issue-graph__canvas">
+        <div class="graph-grid"></div>
+
+        <!-- Clusters -->
+        <div class="cluster cluster--vuln" style="left: 80px; top: 10px; width: 340px; height: 100px;">
+          <span class="cluster__label">Vulnerabilities</span>
+        </div>
+        <div class="cluster cluster--exposure" style="left: 850px; top: 10px; width: 340px; height: 100px;">
+          <span class="cluster__label">Exposure</span>
+        </div>
+        <div class="cluster cluster--identity" style="left: 56px; top: 210px; width: 220px; height: 110px;">
+          <span class="cluster__label">Identities</span>
+        </div>
+        <div class="cluster cluster--data" style="left: 490px; top: 220px; width: 330px; height: 100px;">
+          <span class="cluster__label">Data Stores</span>
+        </div>
+
+        <svg class="graph-svg" viewBox="0 0 1376 340">
+          <defs>
+            <marker id="i1-arrow-asset" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <path d="M0,0 L7,2.5 L0,5" class="arrow-marker" fill="#61C9D3"/>
+            </marker>
+            <marker id="i1-arrow-vuln" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <path d="M0,0 L7,2.5 L0,5" class="arrow-marker" fill="#FF7394"/>
+            </marker>
+            <marker id="i1-arrow-exposure" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <path d="M0,0 L7,2.5 L0,5" class="arrow-marker" fill="#DD6E1E"/>
+            </marker>
+          </defs>
+          <!-- Center env → assets -->
+          <line class="edge edge--asset edge--highlight" x1="688" y1="170" x2="330" y2="65" marker-end="url(#i1-arrow-asset)"/>
+          <line class="edge edge--asset edge--highlight" x1="688" y1="170" x2="1060" y2="65" marker-end="url(#i1-arrow-asset)"/>
+          <line class="edge edge--asset" x1="688" y1="170" x2="210" y2="170"/>
+          <line class="edge edge--asset" x1="688" y1="170" x2="1160" y2="170"/>
+          <!-- Assets → vulns -->
+          <line class="edge edge--vuln edge--highlight" x1="330" y1="65" x2="150" y2="60" marker-end="url(#i1-arrow-vuln)"/>
+          <line class="edge edge--vuln" x1="1060" y1="65" x2="890" y2="60" marker-end="url(#i1-arrow-vuln)"/>
+          <!-- Assets → identities -->
+          <line class="edge edge--identity" x1="210" y1="170" x2="130" y2="275"/>
+          <line class="edge edge--identity" x1="1160" y1="170" x2="1090" y2="275"/>
+          <!-- Assets → databases -->
+          <line class="edge edge--data" x1="688" y1="170" x2="570" y2="280"/>
+          <line class="edge edge--data" x1="688" y1="170" x2="770" y2="280"/>
+          <!-- Assets → exposure -->
+          <line class="edge edge--exposure edge--highlight" x1="1060" y1="65" x2="1220" y2="60" marker-end="url(#i1-arrow-exposure)"/>
+          <!-- Cross links dashed -->
+          <line class="edge edge--vuln edge--dashed" x1="150" y1="60" x2="130" y2="275"/>
+        </svg>
+
+        <!-- Center: Environment -->
+        <div class="gnode" style="left: 661px; top: 140px;">
+          <div class="gnode__circle gnode__circle--env gnode__circle--center">ENV</div>
+          <span class="gnode__label">Production</span>
+        </div>
+        <!-- Assets -->
+        <div class="gnode" style="left: 306px; top: 32px;">
+          <div class="gnode__circle gnode__circle--asset">AST<span class="gnode__badge gnode__badge--critical">3</span></div>
+          <span class="gnode__label">web-server-01</span>
+        </div>
+        <div class="gnode" style="left: 1036px; top: 32px;">
+          <div class="gnode__circle gnode__circle--asset">AST<span class="gnode__badge gnode__badge--high">2</span></div>
+          <span class="gnode__label">api-gateway</span>
+        </div>
+        <div class="gnode" style="left: 186px; top: 140px;">
+          <div class="gnode__circle gnode__circle--asset gnode__circle--sm">AST</div>
+          <span class="gnode__label">load-balancer</span>
+        </div>
+        <div class="gnode" style="left: 1136px; top: 140px;">
+          <div class="gnode__circle gnode__circle--asset gnode__circle--sm">AST</div>
+          <span class="gnode__label">cdn-edge</span>
+        </div>
+        <!-- Vulnerabilities -->
+        <div class="gnode" style="left: 126px; top: 30px;">
+          <div class="gnode__circle gnode__circle--vuln">VLN<div class="gnode__ring gnode__ring--critical"></div></div>
+          <span class="gnode__label">CVE-2026-1234</span>
+        </div>
+        <div class="gnode" style="left: 866px; top: 30px;">
+          <div class="gnode__circle gnode__circle--vuln gnode__circle--sm">VLN</div>
+          <span class="gnode__label">CVE-2026-0456</span>
+        </div>
+        <!-- Identities -->
+        <div class="gnode" style="left: 106px; top: 245px;">
+          <div class="gnode__circle gnode__circle--identity">IDN</div>
+          <span class="gnode__label">svc-deployer</span>
+        </div>
+        <div class="gnode" style="left: 1066px; top: 245px;">
+          <div class="gnode__circle gnode__circle--identity gnode__circle--sm">IDN</div>
+          <span class="gnode__label">admin-ops</span>
+        </div>
+        <!-- Databases -->
+        <div class="gnode" style="left: 546px; top: 248px;">
+          <div class="gnode__circle gnode__circle--database">DB<span class="gnode__badge gnode__badge--high">4</span></div>
+          <span class="gnode__label">analytics-rds</span>
+        </div>
+        <div class="gnode" style="left: 746px; top: 248px;">
+          <div class="gnode__circle gnode__circle--database gnode__circle--sm">DB</div>
+          <span class="gnode__label">cache-redis</span>
+        </div>
+        <!-- Network Exposure -->
+        <div class="gnode" style="left: 1196px; top: 30px;">
+          <div class="gnode__circle gnode__circle--exposure">NET<div class="gnode__ring gnode__ring--high"></div></div>
+          <span class="gnode__label">0.0.0.0/0 :443</span>
+        </div>
+      </div>
+
+      <div class="issue-graph__legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#61C9D3; box-shadow: 0 0 5px #61C9D3;"></div> Asset</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#39B985; box-shadow: 0 0 5px #39B985;"></div> Identity</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FF7394; box-shadow: 0 0 5px #FF7394;"></div> Vulnerability</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#DD6E1E; box-shadow: 0 0 5px #DD6E1E;"></div> Exposure</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#A154E4; box-shadow: 0 0 5px #A154E4;"></div> Database</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#B3E0FF; box-shadow: 0 0 5px #B3E0FF;"></div> Environment</div>
+        <div class="legend-item"><div class="legend-line legend-line--highlight" style="background: #FF7394; box-shadow: 0 0 4px #FF7394;"></div> Critical Path</div>
+      </div>
+      <div class="issue-graph__stats">
+        <div class="graph-stat"><span class="graph-stat__num graph-stat__num--crit">5</span><span class="graph-stat__label">Critical</span></div>
+        <div class="stat-divider"></div>
+        <div class="graph-stat"><span class="graph-stat__num graph-stat__num--high">8</span><span class="graph-stat__label">High</span></div>
+        <div class="stat-divider"></div>
+        <div class="graph-stat"><span class="graph-stat__num graph-stat__num--info">13</span><span class="graph-stat__label">Nodes</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       INSTANCE 2: Asset Investigation — Asset-Centered Issue Map
+       ══════════════════════════════════════════ -->
+  <div class="page-instance">
+    <div class="page-instance__header">
+      <span class="page-instance__badge">Instance</span>
+      <span class="page-instance__title">Asset Investigation</span>
+      <span class="page-instance__desc">Asset-Centered Issue Map variant</span>
+    </div>
+
+    <div class="page-breadcrumb">
+      Asset Investigation <span class="bc-sep">/</span> <span>web-server-01</span> <span class="bc-sep">/</span> <span>Issue Map</span>
+    </div>
+
+    <div class="issue-graph">
+      <div class="issue-graph__header">
+        <div class="issue-graph__title-group">
+          <div class="issue-graph__icon" style="background: linear-gradient(135deg, #61C9D3 0%, #0C1F22 100%);">
+            <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="10" height="10" rx="2" stroke="#61C9D3" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="#61C9D3"/></svg>
+          </div>
+          <div>
+            <div class="issue-graph__title">Issue Map — Asset: web-server-01</div>
+            <div class="issue-graph__subtitle">EC2 / i-0a1b2c3d — 7 issues</div>
+          </div>
+        </div>
+        <div class="issue-graph__controls">
+          <span class="graph-ctrl-btn graph-ctrl-btn--active">All</span>
+          <span class="graph-ctrl-btn">Vulns</span>
+          <span class="graph-ctrl-btn">Expand</span>
+        </div>
+      </div>
+
+      <div class="issue-graph__canvas">
+        <div class="graph-grid"></div>
+
+        <!-- Clusters -->
+        <div class="cluster cluster--vuln" style="left: 290px; top: 8px; width: 680px; height: 100px;">
+          <span class="cluster__label">Vulnerabilities</span>
+        </div>
+        <div class="cluster cluster--identity" style="left: 72px; top: 70px; width: 150px; height: 200px;">
+          <span class="cluster__label">Identities</span>
+        </div>
+        <div class="cluster cluster--exposure" style="left: 1140px; top: 70px; width: 150px; height: 200px;">
+          <span class="cluster__label">Exposure</span>
+        </div>
+        <div class="cluster cluster--data" style="left: 450px; top: 230px; width: 380px; height: 95px;">
+          <span class="cluster__label">Data Stores</span>
+        </div>
+
+        <svg class="graph-svg" viewBox="0 0 1376 340">
+          <defs>
+            <marker id="i2-arrow-vuln" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <path d="M0,0 L7,2.5 L0,5" class="arrow-marker" fill="#FF7394"/>
+            </marker>
+            <marker id="i2-arrow-exposure" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <path d="M0,0 L7,2.5 L0,5" class="arrow-marker" fill="#DD6E1E"/>
+            </marker>
+          </defs>
+          <!-- Center asset → vulns -->
+          <line class="edge edge--vuln edge--highlight" x1="688" y1="170" x2="370" y2="55" marker-end="url(#i2-arrow-vuln)"/>
+          <line class="edge edge--vuln edge--highlight" x1="688" y1="170" x2="570" y2="55" marker-end="url(#i2-arrow-vuln)"/>
+          <line class="edge edge--vuln" x1="688" y1="170" x2="800" y2="55"/>
+          <line class="edge edge--vuln" x1="688" y1="170" x2="1000" y2="55"/>
+          <!-- Center → identities -->
+          <line class="edge edge--identity" x1="688" y1="170" x2="150" y2="120"/>
+          <line class="edge edge--identity" x1="688" y1="170" x2="150" y2="225"/>
+          <!-- Center → databases -->
+          <line class="edge edge--data" x1="688" y1="170" x2="530" y2="280"/>
+          <line class="edge edge--data" x1="688" y1="170" x2="770" y2="280"/>
+          <!-- Center → exposure -->
+          <line class="edge edge--exposure edge--highlight" x1="688" y1="170" x2="1220" y2="120" marker-end="url(#i2-arrow-exposure)"/>
+          <line class="edge edge--exposure" x1="688" y1="170" x2="1220" y2="225"/>
+          <!-- Cross-links -->
+          <line class="edge edge--identity edge--dashed" x1="150" y1="120" x2="530" y2="280"/>
+        </svg>
+
+        <!-- Center: Asset -->
+        <div class="gnode" style="left: 661px; top: 140px;">
+          <div class="gnode__circle gnode__circle--asset gnode__circle--center">AST<span class="gnode__badge gnode__badge--critical">7</span></div>
+          <span class="gnode__label">web-server-01</span>
+        </div>
+        <!-- Vulns -->
+        <div class="gnode" style="left: 346px; top: 22px;">
+          <div class="gnode__circle gnode__circle--vuln">VLN<div class="gnode__ring gnode__ring--critical"></div></div>
+          <span class="gnode__label">CVE-2026-1234</span>
+        </div>
+        <div class="gnode" style="left: 546px; top: 22px;">
+          <div class="gnode__circle gnode__circle--vuln">VLN<div class="gnode__ring gnode__ring--critical"></div></div>
+          <span class="gnode__label">CVE-2026-0891</span>
+        </div>
+        <div class="gnode" style="left: 776px; top: 22px;">
+          <div class="gnode__circle gnode__circle--vuln gnode__circle--sm">VLN</div>
+          <span class="gnode__label">CVE-2025-7723</span>
+        </div>
+        <div class="gnode" style="left: 976px; top: 22px;">
+          <div class="gnode__circle gnode__circle--vuln gnode__circle--sm">VLN</div>
+          <span class="gnode__label">CVE-2025-5501</span>
+        </div>
+        <!-- Identities -->
+        <div class="gnode" style="left: 126px; top: 90px;">
+          <div class="gnode__circle gnode__circle--identity">IDN</div>
+          <span class="gnode__label">jason.mitchell</span>
+        </div>
+        <div class="gnode" style="left: 126px; top: 195px;">
+          <div class="gnode__circle gnode__circle--identity gnode__circle--sm">IDN</div>
+          <span class="gnode__label">svc-deployer</span>
+        </div>
+        <!-- Databases -->
+        <div class="gnode" style="left: 506px; top: 250px;">
+          <div class="gnode__circle gnode__circle--database">DB</div>
+          <span class="gnode__label">analytics-rds</span>
+        </div>
+        <div class="gnode" style="left: 746px; top: 250px;">
+          <div class="gnode__circle gnode__circle--database gnode__circle--sm">DB</div>
+          <span class="gnode__label">app-dynamo</span>
+        </div>
+        <!-- Exposure -->
+        <div class="gnode" style="left: 1196px; top: 90px;">
+          <div class="gnode__circle gnode__circle--exposure">NET<div class="gnode__ring gnode__ring--high"></div></div>
+          <span class="gnode__label">0.0.0.0/0 :80</span>
+        </div>
+        <div class="gnode" style="left: 1196px; top: 195px;">
+          <div class="gnode__circle gnode__circle--exposure gnode__circle--sm">NET</div>
+          <span class="gnode__label">10.0.0.0/8 :22</span>
+        </div>
+      </div>
+
+      <div class="issue-graph__legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#61C9D3; box-shadow: 0 0 5px #61C9D3;"></div> Asset (center)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#39B985; box-shadow: 0 0 5px #39B985;"></div> Identity</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FF7394; box-shadow: 0 0 5px #FF7394;"></div> Vulnerability</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#DD6E1E; box-shadow: 0 0 5px #DD6E1E;"></div> Exposure</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#A154E4; box-shadow: 0 0 5px #A154E4;"></div> Database</div>
+        <div class="legend-item"><div class="legend-line legend-line--highlight" style="background: #FF7394; box-shadow: 0 0 4px #FF7394;"></div> Critical Path</div>
+      </div>
+      <div class="issue-graph__stats">
+        <div class="graph-stat"><span class="graph-stat__num graph-stat__num--crit">2</span><span class="graph-stat__label">Critical CVEs</span></div>
+        <div class="stat-divider"></div>
+        <div class="graph-stat"><span class="graph-stat__num graph-stat__num--high">2</span><span class="graph-stat__label">High CVEs</span></div>
+        <div class="stat-divider"></div>
+        <div class="graph-stat"><span class="graph-stat__num graph-stat__num--info">10</span><span class="graph-stat__label">Nodes</span></div>
+        <div class="stat-divider"></div>
+        <div class="graph-stat"><span class="graph-stat__num" style="color:#DD6E1E;">1</span><span class="graph-stat__label">Public</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       INSTANCE 3: Identity Risk Investigation — Identity-Centered Issue Map
+       ══════════════════════════════════════════ -->
+  <div class="page-instance">
+    <div class="page-instance__header">
+      <span class="page-instance__badge">Instance</span>
+      <span class="page-instance__title">Identity Risk Investigation</span>
+      <span class="page-instance__desc">Identity-Centered Issue Map variant</span>
+    </div>
+
+    <div class="page-breadcrumb">
+      Identity Risk Investigation <span class="bc-sep">/</span> <span>jason.mitchell@acme-corp.com</span> <span class="bc-sep">/</span> <span>Issue Map</span>
+    </div>
+
+    <div class="issue-graph">
+      <div class="issue-graph__header">
+        <div class="issue-graph__title-group">
+          <div class="issue-graph__icon" style="background: linear-gradient(135deg, #39B985 0%, #0C2218 100%);">
+            <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="#39B985" stroke-width="1.5" fill="none"/><path d="M3 14C3 11.2 5.2 9 8 9C10.8 9 13 11.2 13 14" stroke="#39B985" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div>
+            <div class="issue-graph__title">Issue Map — Identity: jason.mitchell</div>
+            <div class="issue-graph__subtitle">Risk Score 74 (High) — 3 assets, 5 CVEs</div>
+          </div>
+        </div>
+        <div class="issue-graph__controls">
+          <span class="graph-ctrl-btn graph-ctrl-btn--active">All</span>
+          <span class="graph-ctrl-btn">Risky</span>
+          <span class="graph-ctrl-btn">Expand</span>
+        </div>
+      </div>
+
+      <div class="issue-graph__canvas">
+        <div class="graph-grid"></div>
+
+        <!-- Clusters -->
+        <div class="cluster cluster--vuln" style="left: 100px; top: 8px; width: 1100px; height: 95px;">
+          <span class="cluster__label">Vulnerabilities</span>
+        </div>
+        <div class="cluster cluster--asset" style="left: 270px; top: 116px; width: 150px; height: 76px;">
+          <span class="cluster__label">Assets</span>
+        </div>
+        <div class="cluster cluster--asset" style="left: 970px; top: 116px; width: 150px; height: 76px;">
+          <span class="cluster__label">Assets</span>
+        </div>
+        <div class="cluster cluster--exposure" style="left: 100px; top: 210px; width: 280px; height: 110px;">
+          <span class="cluster__label">Exposure</span>
+        </div>
+        <div class="cluster cluster--data" style="left: 960px; top: 215px; width: 170px; height: 100px;">
+          <span class="cluster__label">Data Stores</span>
+        </div>
+
+        <svg class="graph-svg" viewBox="0 0 1376 340">
+          <defs>
+            <marker id="i3-arrow-asset" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <path d="M0,0 L7,2.5 L0,5" class="arrow-marker" fill="#61C9D3"/>
+            </marker>
+            <marker id="i3-arrow-vuln" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <path d="M0,0 L7,2.5 L0,5" class="arrow-marker" fill="#FF7394"/>
+            </marker>
+            <marker id="i3-arrow-exposure" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <path d="M0,0 L7,2.5 L0,5" class="arrow-marker" fill="#DD6E1E"/>
+            </marker>
+          </defs>
+          <!-- Center identity → assets -->
+          <line class="edge edge--asset edge--highlight" x1="688" y1="170" x2="345" y2="155" marker-end="url(#i3-arrow-asset)"/>
+          <line class="edge edge--asset edge--highlight" x1="688" y1="170" x2="1045" y2="155" marker-end="url(#i3-arrow-asset)"/>
+          <line class="edge edge--asset" x1="688" y1="170" x2="345" y2="270"/>
+          <!-- Identity → databases -->
+          <line class="edge edge--data" x1="688" y1="170" x2="1045" y2="270"/>
+          <!-- Identity → exposure -->
+          <line class="edge edge--exposure edge--highlight" x1="688" y1="170" x2="195" y2="260" marker-end="url(#i3-arrow-exposure)"/>
+          <!-- Assets → vulns -->
+          <line class="edge edge--vuln edge--highlight" x1="345" y1="155" x2="180" y2="55" marker-end="url(#i3-arrow-vuln)"/>
+          <line class="edge edge--vuln" x1="345" y1="155" x2="500" y2="55"/>
+          <line class="edge edge--vuln" x1="1045" y1="155" x2="880" y2="55"/>
+          <line class="edge edge--vuln" x1="1045" y1="155" x2="1200" y2="55"/>
+          <!-- Assets → exposure -->
+          <line class="edge edge--exposure" x1="345" y1="270" x2="195" y2="290"/>
+          <!-- Database → vuln -->
+          <line class="edge edge--vuln edge--dashed" x1="1045" y1="270" x2="1200" y2="270"/>
+        </svg>
+
+        <!-- Center: Identity -->
+        <div class="gnode" style="left: 661px; top: 140px;">
+          <div class="gnode__circle gnode__circle--identity gnode__circle--center">JM<span class="gnode__badge gnode__badge--high">74</span></div>
+          <span class="gnode__label">jason.mitchell</span>
+        </div>
+        <!-- Assets -->
+        <div class="gnode" style="left: 321px; top: 125px;">
+          <div class="gnode__circle gnode__circle--asset">AST<span class="gnode__badge gnode__badge--critical">3</span></div>
+          <span class="gnode__label">web-server-01</span>
+        </div>
+        <div class="gnode" style="left: 1021px; top: 125px;">
+          <div class="gnode__circle gnode__circle--asset">AST<span class="gnode__badge gnode__badge--high">2</span></div>
+          <span class="gnode__label">api-gateway</span>
+        </div>
+        <div class="gnode" style="left: 321px; top: 242px;">
+          <div class="gnode__circle gnode__circle--asset gnode__circle--sm">AST</div>
+          <span class="gnode__label">s3-prod-lake</span>
+        </div>
+        <!-- Vulnerabilities -->
+        <div class="gnode" style="left: 156px; top: 24px;">
+          <div class="gnode__circle gnode__circle--vuln">VLN<div class="gnode__ring gnode__ring--critical"></div></div>
+          <span class="gnode__label">CVE-2026-1234</span>
+        </div>
+        <div class="gnode" style="left: 476px; top: 24px;">
+          <div class="gnode__circle gnode__circle--vuln gnode__circle--sm">VLN</div>
+          <span class="gnode__label">CVE-2025-9871</span>
+        </div>
+        <div class="gnode" style="left: 856px; top: 24px;">
+          <div class="gnode__circle gnode__circle--vuln gnode__circle--sm">VLN</div>
+          <span class="gnode__label">CVE-2026-0456</span>
+        </div>
+        <div class="gnode" style="left: 1176px; top: 24px;">
+          <div class="gnode__circle gnode__circle--vuln gnode__circle--sm">VLN</div>
+          <span class="gnode__label">CVE-2025-4412</span>
+        </div>
+        <div class="gnode" style="left: 1176px; top: 242px;">
+          <div class="gnode__circle gnode__circle--vuln gnode__circle--sm">VLN</div>
+          <span class="gnode__label">Weak Encrypt.</span>
+        </div>
+        <!-- Network Exposure -->
+        <div class="gnode" style="left: 168px; top: 232px;">
+          <div class="gnode__circle gnode__circle--exposure">NET<div class="gnode__ring gnode__ring--high"></div></div>
+          <span class="gnode__label">Impossible Travel</span>
+        </div>
+        <div class="gnode" style="left: 316px; top: 290px;">
+          <div class="gnode__circle gnode__circle--exposure gnode__circle--sm">NET</div>
+          <span class="gnode__label">0.0.0.0/0 :443</span>
+        </div>
+        <!-- Database -->
+        <div class="gnode" style="left: 1021px; top: 240px;">
+          <div class="gnode__circle gnode__circle--database">DB<span class="gnode__badge gnode__badge--medium">1</span></div>
+          <span class="gnode__label">analytics-rds</span>
+        </div>
+      </div>
+
+      <div class="issue-graph__legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#39B985; box-shadow: 0 0 5px #39B985;"></div> Identity (center)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#61C9D3; box-shadow: 0 0 5px #61C9D3;"></div> Asset</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FF7394; box-shadow: 0 0 5px #FF7394;"></div> Vulnerability</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#DD6E1E; box-shadow: 0 0 5px #DD6E1E;"></div> Exposure</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#A154E4; box-shadow: 0 0 5px #A154E4;"></div> Database</div>
+        <div class="legend-item"><div class="legend-line legend-line--highlight" style="background: #FF7394; box-shadow: 0 0 4px #FF7394;"></div> Critical Path</div>
+      </div>
+      <div class="issue-graph__stats">
+        <div class="graph-stat"><span class="graph-stat__num graph-stat__num--high">74</span><span class="graph-stat__label">Risk Score</span></div>
+        <div class="stat-divider"></div>
+        <div class="graph-stat"><span class="graph-stat__num graph-stat__num--crit">3</span><span class="graph-stat__label">Reachable CVEs</span></div>
+        <div class="stat-divider"></div>
+        <div class="graph-stat"><span class="graph-stat__num" style="color:#61C9D3;">3</span><span class="graph-stat__label">Assets</span></div>
+        <div class="stat-divider"></div>
+        <div class="graph-stat"><span class="graph-stat__num" style="color:#DD6E1E;">2</span><span class="graph-stat__label">Exposures</span></div>
+        <div class="stat-divider"></div>
+        <div class="graph-stat"><span class="graph-stat__num" style="color:#A154E4;">1</span><span class="graph-stat__label">Database</span></div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

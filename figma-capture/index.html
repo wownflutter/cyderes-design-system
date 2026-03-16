@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440, initial-scale=1.0">
+  <title>Identity Risk Investigation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #080C18;
+      color: #ECECF0;
+      width: 1440px;
+      padding: 24px;
+    }
+
+    /* ── Page Title ── */
+    h1.page-title {
+      font-size: 24px;
+      font-weight: 500;
+      color: #ECECF0;
+      margin-bottom: 24px;
+      line-height: 1.25;
+    }
+
+    /* ── Section Frame (base card) ── */
+    .section-frame {
+      background: #080C18;
+      border: 0.5px solid #242944;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .section-frame .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #9898A0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+
+    .section-frame .placeholder {
+      color: #5C5C66;
+      font-size: 14px;
+    }
+
+    /* ── Layout ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .two-col .section-frame { margin-bottom: 0; }
+
+    /* ═══════════════════════════════════════
+       1. IDENTITY HEADER
+       ═══════════════════════════════════════ */
+    #identity-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .id-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #242944;
+      border: 2px solid rgba(57, 185, 133, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 600;
+      color: #39B985;
+      flex-shrink: 0;
+    }
+
+    .id-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+    .id-info__top { display: flex; align-items: center; gap: 12px; }
+
+    .id-info__name {
+      font-size: 20px;
+      font-weight: 600;
+      color: #ECECF0;
+      line-height: 1.25;
+    }
+
+    .id-info__type {
+      font-size: 12px;
+      font-weight: 500;
+      color: #9898A0;
+      background: #242944;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .id-info__meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #9898A0;
+    }
+
+    .meta-item .meta-label { color: #5C5C66; font-size: 12px; }
+    .meta-item .meta-value { color: #ECECF0; font-weight: 400; }
+
+    .meta-divider {
+      width: 1px;
+      height: 16px;
+      background: #242944;
+    }
+
+    .id-info__tags { display: flex; gap: 6px; margin-top: 4px; }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-tag--active {
+      background: #0F2E22;
+      color: #39B985;
+    }
+    .status-tag--mfa {
+      background: #061721;
+      color: #B3E0FF;
+    }
+    .status-tag--stale {
+      background: #18140D;
+      color: #FFDB36;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .status-dot--green { background: #39B985; }
+    .status-dot--blue { background: #B3E0FF; }
+    .status-dot--yellow { background: #FFDB36; }
+
+    /* Risk Score Block */
+    .id-risk {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .id-risk__score {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 40px;
+      border-radius: 6px;
+      font-size: 22px;
+      font-weight: 600;
+      color: #131313;
+      background: #DD6E1E;
+    }
+
+    .id-risk__label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #9898A0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .id-risk__severity {
+      font-size: 12px;
+      font-weight: 600;
+      color: #DD6E1E;
+    }
+
+    /* ═══════════════════════════════════════
+       2. PRIVILEGE OVERVIEW
+       ═══════════════════════════════════════ */
+    #privilege-overview { min-height: 380px; }
+
+    .priv-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .priv-metric {
+      background: #242944;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .priv-metric__value {
+      font-size: 28px;
+      font-weight: 600;
+      color: #ECECF0;
+      line-height: 1.25;
+    }
+    .priv-metric__value--warn { color: #DD6E1E; }
+    .priv-metric__value--crit { color: #FF7394; }
+
+    .priv-metric__label {
+      font-size: 12px;
+      font-weight: 400;
+      color: #9898A0;
+    }
+
+    .priv-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #9898A0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+
+    .priv-entitlements { display: flex; flex-direction: column; gap: 8px; }
+
+    .priv-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: #151428;
+      border-radius: 6px;
+      border-left: 3px solid transparent;
+    }
+
+    .priv-row--critical { border-left-color: #FF7394; }
+    .priv-row--high { border-left-color: #DD6E1E; }
+    .priv-row--medium { border-left-color: #FFDB36; }
+    .priv-row--ok { border-left-color: #39B985; }
+
+    .priv-row__left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .priv-row__name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #ECECF0;
+    }
+
+    .priv-row__scope {
+      font-size: 12px;
+      color: #9898A0;
+    }
+
+    .severity-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 0.6px solid;
+    }
+
+    .severity-pill--critical {
+      color: #FF7394;
+      background: #180F0D;
+      border-color: #FF7394;
+    }
+    .severity-pill--high {
+      color: #DD6E1E;
+      background: #1A0F09;
+      border-color: #DD6E1E;
+    }
+    .severity-pill--medium {
+      color: #FFDB36;
+      background: #18140D;
+      border-color: #FFDB36;
+    }
+    .severity-pill--ok {
+      color: #39B985;
+      background: #0F2E22;
+      border-color: #39B985;
+    }
+    .severity-pill--info {
+      color: #B3E0FF;
+      background: #061721;
+      border-color: #B3E0FF;
+    }
+
+    /* ═══════════════════════════════════════
+       3. IDENTITY RELATIONSHIP GRAPH
+       ═══════════════════════════════════════ */
+    #identity-relationship-graph { min-height: 380px; }
+
+    .graph-container {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+
+    .graph-node {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .graph-node__circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      border: 2px solid;
+    }
+
+    .graph-node__circle--identity {
+      width: 56px;
+      height: 56px;
+      background: #0F2E22;
+      border-color: #39B985;
+      color: #39B985;
+      font-size: 13px;
+    }
+    .graph-node__circle--group {
+      background: #061721;
+      border-color: #61C9D3;
+      color: #61C9D3;
+    }
+    .graph-node__circle--role {
+      background: #0F0A13;
+      border-color: #A154E4;
+      color: #A154E4;
+    }
+    .graph-node__circle--service {
+      background: #1A0F09;
+      border-color: #DD6E1E;
+      color: #DD6E1E;
+    }
+    .graph-node__circle--resource {
+      background: #180F0D;
+      border-color: #FF7394;
+      color: #FF7394;
+    }
+
+    .graph-node__label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #ECECF0;
+      text-align: center;
+      max-width: 80px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .graph-node__sublabel {
+      font-size: 10px;
+      color: #5C5C66;
+      text-align: center;
+    }
+
+    /* SVG edges */
+    .graph-edges {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .graph-edge {
+      stroke: #242944;
+      stroke-width: 1.5;
+      fill: none;
+    }
+    .graph-edge--highlight {
+      stroke: #39B985;
+      stroke-opacity: 0.5;
+    }
+
+    .graph-legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .graph-legend__item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #9898A0;
+    }
+
+    .graph-legend__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* ═══════════════════════════════════════
+       4. RISK FINDINGS
+       ═══════════════════════════════════════ */
+    #risk-findings { min-height: 300px; }
+
+    .findings-summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .finding-count {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #151428;
+    }
+    .finding-count__num {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .finding-count--critical .finding-count__num { color: #FF7394; }
+    .finding-count--critical { border-left: 3px solid #FF7394; }
+    .finding-count--high .finding-count__num { color: #DD6E1E; }
+    .finding-count--high { border-left: 3px solid #DD6E1E; }
+    .finding-count--medium .finding-count__num { color: #FFDB36; }
+    .finding-count--medium { border-left: 3px solid #FFDB36; }
+    .finding-count--low .finding-count__num { color: #9898A0; }
+    .finding-count--low { border-left: 3px solid #9898A0; }
+
+    .finding-count__label { color: #9898A0; font-weight: 400; font-size: 12px; }
+
+    .findings-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #080C18;
+      border: 0.5px solid #242944;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .findings-table thead th {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #9898A0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-align: left;
+      border-bottom: 0.5px solid #4C5491;
+      background: #080C18;
+    }
+
+    .findings-table tbody td {
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #ECECF0;
+      border-bottom: 0.25px solid #242944;
+      vertical-align: middle;
+    }
+
+    .findings-table tbody tr:hover { background: #151428; }
+
+    .finding-id {
+      font-size: 12px;
+      font-weight: 500;
+      color: #9898A0;
+      font-family: monospace;
+    }
+
+    .finding-title { font-weight: 500; color: #ECECF0; }
+
+    .finding-desc {
+      font-size: 12px;
+      color: #5C5C66;
+      margin-top: 2px;
+    }
+
+    .finding-source {
+      font-size: 12px;
+      color: #9898A0;
+      background: #242944;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .finding-date {
+      font-size: 13px;
+      color: #9898A0;
+    }
+
+    /* ═══════════════════════════════════════
+       5. ACCESS ACTIVITY TIMELINE
+       ═══════════════════════════════════════ */
+    #access-activity-timeline { min-height: 280px; }
+
+    .timeline {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: #242944;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 0 0 20px 16px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-dot {
+      position: absolute;
+      left: -21px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid;
+      background: #080C18;
+    }
+    .timeline-dot--critical { border-color: #FF7394; }
+    .timeline-dot--high { border-color: #DD6E1E; }
+    .timeline-dot--info { border-color: #B3E0FF; }
+    .timeline-dot--ok { border-color: #39B985; }
+    .timeline-dot--neutral { border-color: #9898A0; }
+
+    .timeline-content {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: #151428;
+      padding: 12px 16px;
+      border-radius: 8px;
+    }
+
+    .timeline-left { display: flex; flex-direction: column; gap: 4px; }
+
+    .timeline-action {
+      font-size: 14px;
+      font-weight: 500;
+      color: #ECECF0;
+    }
+
+    .timeline-detail {
+      font-size: 12px;
+      color: #9898A0;
+    }
+
+    .timeline-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .timeline-time {
+      font-size: 12px;
+      color: #5C5C66;
+      white-space: nowrap;
+    }
+
+    .timeline-ip {
+      font-size: 11px;
+      color: #5C5C66;
+      font-family: monospace;
+    }
+
+    /* ═══════════════════════════════════════
+       6. ACCESSIBLE RESOURCES
+       ═══════════════════════════════════════ */
+    #accessible-resources { min-height: 280px; }
+
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .resource-card {
+      background: #151428;
+      border: 0.5px solid #242944;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .resource-card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .resource-card__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .resource-card__icon--aws { background: #1A0F09; color: #DD6E1E; }
+    .resource-card__icon--azure { background: #061721; color: #B3E0FF; }
+    .resource-card__icon--gcp { background: #0F2E22; color: #39B985; }
+    .resource-card__icon--github { background: #0F0A13; color: #A154E4; }
+    .resource-card__icon--k8s { background: #0F2528; color: #61C9D3; }
+    .resource-card__icon--db { background: #180F0D; color: #FF7394; }
+
+    .resource-card__name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #ECECF0;
+    }
+
+    .resource-card__type {
+      font-size: 12px;
+      color: #5C5C66;
+    }
+
+    .resource-card__meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .resource-card__perms {
+      display: flex;
+      gap: 4px;
+    }
+
+    .perm-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .perm-badge--read { background: #0F2E22; color: #39B985; }
+    .perm-badge--write { background: #18140D; color: #FFDB36; }
+    .perm-badge--admin { background: #180F0D; color: #FF7394; }
+    .perm-badge--exec { background: #0F0A13; color: #A154E4; }
+    .perm-badge--delete { background: #180F0D; color: #FF7394; }
+
+    .resource-card__last {
+      font-size: 11px;
+      color: #5C5C66;
+    }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+  <h1 class="page-title">Identity Risk Investigation</h1>
+
+  <!-- ════════════════════════════════════════
+       1. IDENTITY HEADER
+       ════════════════════════════════════════ -->
+  <div id="identity-header" class="section-frame">
+    <div class="id-avatar">JM</div>
+
+    <div class="id-info">
+      <div class="id-info__top">
+        <span class="id-info__name">jason.mitchell@acme-corp.com</span>
+        <span class="id-info__type">Human</span>
+      </div>
+
+      <div class="id-info__meta">
+        <div class="meta-item">
+          <span class="meta-label">Provider</span>
+          <span class="meta-value">Azure AD</span>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-item">
+          <span class="meta-label">Department</span>
+          <span class="meta-value">Engineering</span>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-item">
+          <span class="meta-label">Last Active</span>
+          <span class="meta-value">2 hours ago</span>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-item">
+          <span class="meta-label">Created</span>
+          <span class="meta-value">Jan 14, 2024</span>
+        </div>
+      </div>
+
+      <div class="id-info__tags">
+        <span class="status-tag status-tag--active">
+          <span class="status-dot status-dot--green"></span>
+          Active
+        </span>
+        <span class="status-tag status-tag--mfa">
+          <span class="status-dot status-dot--blue"></span>
+          MFA Enabled
+        </span>
+        <span class="status-tag status-tag--stale">
+          <span class="status-dot status-dot--yellow"></span>
+          Stale Credentials
+        </span>
+      </div>
+    </div>
+
+    <div class="id-risk">
+      <div class="id-risk__score">74</div>
+      <span class="id-risk__label">Risk Score</span>
+      <span class="id-risk__severity">High</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <div class="two-col">
+
+    <!-- 2. PRIVILEGE OVERVIEW -->
+    <div id="privilege-overview" class="section-frame">
+      <div class="section-title">Privilege Overview</div>
+
+      <div class="priv-summary">
+        <div class="priv-metric">
+          <span class="priv-metric__value">12</span>
+          <span class="priv-metric__label">Total Entitlements</span>
+        </div>
+        <div class="priv-metric">
+          <span class="priv-metric__value priv-metric__value--warn">4</span>
+          <span class="priv-metric__label">Elevated Privileges</span>
+        </div>
+        <div class="priv-metric">
+          <span class="priv-metric__value priv-metric__value--crit">2</span>
+          <span class="priv-metric__label">Excessive Access</span>
+        </div>
+      </div>
+
+      <div class="priv-section-title">Key Entitlements</div>
+      <div class="priv-entitlements">
+        <div class="priv-row priv-row--critical">
+          <div class="priv-row__left">
+            <span class="priv-row__name">Global Admin</span>
+            <span class="priv-row__scope">Azure AD</span>
+          </div>
+          <span class="severity-pill severity-pill--critical">Critical</span>
+        </div>
+        <div class="priv-row priv-row--high">
+          <div class="priv-row__left">
+            <span class="priv-row__name">S3 Full Access</span>
+            <span class="priv-row__scope">AWS / Production</span>
+          </div>
+          <span class="severity-pill severity-pill--high">High</span>
+        </div>
+        <div class="priv-row priv-row--medium">
+          <div class="priv-row__left">
+            <span class="priv-row__name">DB Read/Write</span>
+            <span class="priv-row__scope">RDS / us-east-1</span>
+          </div>
+          <span class="severity-pill severity-pill--medium">Medium</span>
+        </div>
+        <div class="priv-row priv-row--ok">
+          <div class="priv-row__left">
+            <span class="priv-row__name">CI/CD Pipeline</span>
+            <span class="priv-row__scope">GitHub Actions</span>
+          </div>
+          <span class="severity-pill severity-pill--ok">OK</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. IDENTITY RELATIONSHIP GRAPH -->
+    <div id="identity-relationship-graph" class="section-frame">
+      <div class="section-title">Identity Relationship Graph</div>
+
+      <div class="graph-container">
+        <!-- SVG Edges -->
+        <svg class="graph-edges" viewBox="0 0 636 300">
+          <!-- Center identity → groups -->
+          <line class="graph-edge graph-edge--highlight" x1="318" y1="140" x2="120" y2="48"/>
+          <line class="graph-edge graph-edge--highlight" x1="318" y1="140" x2="500" y2="48"/>
+          <!-- Center → roles -->
+          <line class="graph-edge" x1="318" y1="140" x2="80" y2="180"/>
+          <line class="graph-edge" x1="318" y1="140" x2="540" y2="180"/>
+          <!-- Groups → services -->
+          <line class="graph-edge" x1="120" y1="48" x2="60" y2="260"/>
+          <line class="graph-edge" x1="500" y1="48" x2="420" y2="260"/>
+          <!-- Roles → resources -->
+          <line class="graph-edge" x1="80" y1="180" x2="200" y2="260"/>
+          <line class="graph-edge" x1="540" y1="180" x2="560" y2="260"/>
+        </svg>
+
+        <!-- Central Identity Node -->
+        <div class="graph-node" style="left: 290px; top: 112px;">
+          <div class="graph-node__circle graph-node__circle--identity">JM</div>
+          <span class="graph-node__label">jason.mitchell</span>
+        </div>
+
+        <!-- Group Nodes -->
+        <div class="graph-node" style="left: 94px; top: 16px;">
+          <div class="graph-node__circle graph-node__circle--group">GRP</div>
+          <span class="graph-node__label">Eng-Admins</span>
+        </div>
+        <div class="graph-node" style="left: 474px; top: 16px;">
+          <div class="graph-node__circle graph-node__circle--group">GRP</div>
+          <span class="graph-node__label">Cloud-Ops</span>
+        </div>
+
+        <!-- Role Nodes -->
+        <div class="graph-node" style="left: 52px; top: 150px;">
+          <div class="graph-node__circle graph-node__circle--role">ROL</div>
+          <span class="graph-node__label">GlobalAdmin</span>
+        </div>
+        <div class="graph-node" style="left: 514px; top: 150px;">
+          <div class="graph-node__circle graph-node__circle--role">ROL</div>
+          <span class="graph-node__label">DevOps-Lead</span>
+        </div>
+
+        <!-- Service Nodes -->
+        <div class="graph-node" style="left: 34px; top: 230px;">
+          <div class="graph-node__circle graph-node__circle--service">SVC</div>
+          <span class="graph-node__label">Azure AD</span>
+        </div>
+        <div class="graph-node" style="left: 394px; top: 230px;">
+          <div class="graph-node__circle graph-node__circle--service">SVC</div>
+          <span class="graph-node__label">AWS IAM</span>
+        </div>
+
+        <!-- Resource Nodes -->
+        <div class="graph-node" style="left: 174px; top: 230px;">
+          <div class="graph-node__circle graph-node__circle--resource">RES</div>
+          <span class="graph-node__label">Prod DB</span>
+        </div>
+        <div class="graph-node" style="left: 534px; top: 230px;">
+          <div class="graph-node__circle graph-node__circle--resource">RES</div>
+          <span class="graph-node__label">S3 Buckets</span>
+        </div>
+      </div>
+
+      <div class="graph-legend">
+        <div class="graph-legend__item">
+          <div class="graph-legend__dot" style="background: #39B985;"></div>
+          Identity
+        </div>
+        <div class="graph-legend__item">
+          <div class="graph-legend__dot" style="background: #61C9D3;"></div>
+          Group
+        </div>
+        <div class="graph-legend__item">
+          <div class="graph-legend__dot" style="background: #A154E4;"></div>
+          Role
+        </div>
+        <div class="graph-legend__item">
+          <div class="graph-legend__dot" style="background: #DD6E1E;"></div>
+          Service
+        </div>
+        <div class="graph-legend__item">
+          <div class="graph-legend__dot" style="background: #FF7394;"></div>
+          Resource
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .two-col -->
+
+  <!-- ════════════════════════════════════════
+       4. RISK FINDINGS
+       ════════════════════════════════════════ -->
+  <div id="risk-findings" class="section-frame">
+    <div class="section-title">Risk Findings</div>
+
+    <div class="findings-summary">
+      <div class="finding-count finding-count--critical">
+        <span class="finding-count__num">2</span>
+        <span class="finding-count__label">Critical</span>
+      </div>
+      <div class="finding-count finding-count--high">
+        <span class="finding-count__num">3</span>
+        <span class="finding-count__label">High</span>
+      </div>
+      <div class="finding-count finding-count--medium">
+        <span class="finding-count__num">4</span>
+        <span class="finding-count__label">Medium</span>
+      </div>
+      <div class="finding-count finding-count--low">
+        <span class="finding-count__num">1</span>
+        <span class="finding-count__label">Low</span>
+      </div>
+    </div>
+
+    <table class="findings-table">
+      <thead>
+        <tr>
+          <th style="width: 90px;">ID</th>
+          <th>Finding</th>
+          <th style="width: 110px;">Severity</th>
+          <th style="width: 110px;">Source</th>
+          <th style="width: 120px;">Detected</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="finding-id">RF-1042</span></td>
+          <td>
+            <div class="finding-title">Dormant Global Admin privileges</div>
+            <div class="finding-desc">Global Admin role unused for 47 days but still assigned</div>
+          </td>
+          <td><span class="severity-pill severity-pill--critical">Critical</span></td>
+          <td><span class="finding-source">Azure AD</span></td>
+          <td><span class="finding-date">Mar 10, 2026</span></td>
+        </tr>
+        <tr>
+          <td><span class="finding-id">RF-1038</span></td>
+          <td>
+            <div class="finding-title">Access keys not rotated in 180+ days</div>
+            <div class="finding-desc">AWS access key AKIA****Q7NF last rotated Sep 2025</div>
+          </td>
+          <td><span class="severity-pill severity-pill--critical">Critical</span></td>
+          <td><span class="finding-source">AWS IAM</span></td>
+          <td><span class="finding-date">Mar 8, 2026</span></td>
+        </tr>
+        <tr>
+          <td><span class="finding-id">RF-1035</span></td>
+          <td>
+            <div class="finding-title">Cross-account S3 access without MFA</div>
+            <div class="finding-desc">Production S3 buckets accessible without session MFA</div>
+          </td>
+          <td><span class="severity-pill severity-pill--high">High</span></td>
+          <td><span class="finding-source">AWS S3</span></td>
+          <td><span class="finding-date">Mar 7, 2026</span></td>
+        </tr>
+        <tr>
+          <td><span class="finding-id">RF-1029</span></td>
+          <td>
+            <div class="finding-title">Impossible travel detected</div>
+            <div class="finding-desc">Login from US and EU within 23 minutes on Mar 5</div>
+          </td>
+          <td><span class="severity-pill severity-pill--high">High</span></td>
+          <td><span class="finding-source">Azure AD</span></td>
+          <td><span class="finding-date">Mar 5, 2026</span></td>
+        </tr>
+        <tr>
+          <td><span class="finding-id">RF-1024</span></td>
+          <td>
+            <div class="finding-title">Excessive DB permissions</div>
+            <div class="finding-desc">Write access to prod RDS not used in last 60 days</div>
+          </td>
+          <td><span class="severity-pill severity-pill--medium">Medium</span></td>
+          <td><span class="finding-source">AWS RDS</span></td>
+          <td><span class="finding-date">Mar 3, 2026</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       5. ACCESS ACTIVITY TIMELINE
+       ════════════════════════════════════════ -->
+  <div id="access-activity-timeline" class="section-frame">
+    <div class="section-title">Access Activity Timeline</div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot timeline-dot--critical"></div>
+        <div class="timeline-content">
+          <div class="timeline-left">
+            <span class="timeline-action">Failed login attempt (3x) - Azure AD</span>
+            <span class="timeline-detail">Brute-force pattern detected from unrecognized device</span>
+          </div>
+          <div class="timeline-right">
+            <span class="timeline-time">Today, 11:42 AM</span>
+            <span class="timeline-ip">185.220.101.34</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot timeline-dot--high"></div>
+        <div class="timeline-content">
+          <div class="timeline-left">
+            <span class="timeline-action">S3 bucket policy modified - prod-data-lake</span>
+            <span class="timeline-detail">Public access block removed from bucket configuration</span>
+          </div>
+          <div class="timeline-right">
+            <span class="timeline-time">Today, 09:15 AM</span>
+            <span class="timeline-ip">10.0.45.112</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot timeline-dot--info"></div>
+        <div class="timeline-content">
+          <div class="timeline-left">
+            <span class="timeline-action">Console login - AWS Management Console</span>
+            <span class="timeline-detail">Session via federated SSO from Azure AD</span>
+          </div>
+          <div class="timeline-right">
+            <span class="timeline-time">Today, 08:52 AM</span>
+            <span class="timeline-ip">72.34.18.201</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot timeline-dot--ok"></div>
+        <div class="timeline-content">
+          <div class="timeline-left">
+            <span class="timeline-action">MFA challenge completed successfully</span>
+            <span class="timeline-detail">TOTP verification via Authenticator app</span>
+          </div>
+          <div class="timeline-right">
+            <span class="timeline-time">Today, 08:50 AM</span>
+            <span class="timeline-ip">72.34.18.201</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot timeline-dot--high"></div>
+        <div class="timeline-content">
+          <div class="timeline-left">
+            <span class="timeline-action">Impossible travel - login from Frankfurt, DE</span>
+            <span class="timeline-detail">Previous session active in New York, US (23 min gap)</span>
+          </div>
+          <div class="timeline-right">
+            <span class="timeline-time">Mar 5, 04:17 PM</span>
+            <span class="timeline-ip">91.218.67.14</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot timeline-dot--neutral"></div>
+        <div class="timeline-content">
+          <div class="timeline-left">
+            <span class="timeline-action">GitHub repository cloned - infra-terraform</span>
+            <span class="timeline-detail">Full clone of infrastructure-as-code repository</span>
+          </div>
+          <div class="timeline-right">
+            <span class="timeline-time">Mar 4, 02:30 PM</span>
+            <span class="timeline-ip">10.0.45.112</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       6. ACCESSIBLE RESOURCES
+       ════════════════════════════════════════ -->
+  <div id="accessible-resources" class="section-frame">
+    <div class="section-title">Accessible Resources</div>
+
+    <div class="resources-grid">
+      <div class="resource-card">
+        <div class="resource-card__header">
+          <div class="resource-card__icon resource-card__icon--aws">AWS</div>
+          <span class="severity-pill severity-pill--critical">Critical</span>
+        </div>
+        <div>
+          <div class="resource-card__name">prod-data-lake</div>
+          <div class="resource-card__type">S3 Bucket / us-east-1</div>
+        </div>
+        <div class="resource-card__meta">
+          <div class="resource-card__perms">
+            <span class="perm-badge perm-badge--read">Read</span>
+            <span class="perm-badge perm-badge--write">Write</span>
+            <span class="perm-badge perm-badge--delete">Del</span>
+          </div>
+          <span class="resource-card__last">2h ago</span>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card__header">
+          <div class="resource-card__icon resource-card__icon--azure">AD</div>
+          <span class="severity-pill severity-pill--critical">Critical</span>
+        </div>
+        <div>
+          <div class="resource-card__name">Azure AD Tenant</div>
+          <div class="resource-card__type">Directory / Global Admin</div>
+        </div>
+        <div class="resource-card__meta">
+          <div class="resource-card__perms">
+            <span class="perm-badge perm-badge--admin">Admin</span>
+            <span class="perm-badge perm-badge--write">Write</span>
+          </div>
+          <span class="resource-card__last">47d idle</span>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card__header">
+          <div class="resource-card__icon resource-card__icon--db">RDS</div>
+          <span class="severity-pill severity-pill--high">High</span>
+        </div>
+        <div>
+          <div class="resource-card__name">prod-analytics-db</div>
+          <div class="resource-card__type">PostgreSQL / us-east-1</div>
+        </div>
+        <div class="resource-card__meta">
+          <div class="resource-card__perms">
+            <span class="perm-badge perm-badge--read">Read</span>
+            <span class="perm-badge perm-badge--write">Write</span>
+          </div>
+          <span class="resource-card__last">60d idle</span>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card__header">
+          <div class="resource-card__icon resource-card__icon--github">GH</div>
+          <span class="severity-pill severity-pill--medium">Medium</span>
+        </div>
+        <div>
+          <div class="resource-card__name">infra-terraform</div>
+          <div class="resource-card__type">GitHub Repo / Private</div>
+        </div>
+        <div class="resource-card__meta">
+          <div class="resource-card__perms">
+            <span class="perm-badge perm-badge--read">Read</span>
+            <span class="perm-badge perm-badge--write">Write</span>
+            <span class="perm-badge perm-badge--admin">Admin</span>
+          </div>
+          <span class="resource-card__last">9d ago</span>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card__header">
+          <div class="resource-card__icon resource-card__icon--k8s">K8S</div>
+          <span class="severity-pill severity-pill--medium">Medium</span>
+        </div>
+        <div>
+          <div class="resource-card__name">prod-cluster-east</div>
+          <div class="resource-card__type">EKS Cluster / us-east-1</div>
+        </div>
+        <div class="resource-card__meta">
+          <div class="resource-card__perms">
+            <span class="perm-badge perm-badge--read">Read</span>
+            <span class="perm-badge perm-badge--exec">Exec</span>
+          </div>
+          <span class="resource-card__last">3d ago</span>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-card__header">
+          <div class="resource-card__icon resource-card__icon--gcp">GCP</div>
+          <span class="severity-pill severity-pill--ok">OK</span>
+        </div>
+        <div>
+          <div class="resource-card__name">analytics-bq-prod</div>
+          <div class="resource-card__type">BigQuery / us-central1</div>
+        </div>
+        <div class="resource-card__meta">
+          <div class="resource-card__perms">
+            <span class="perm-badge perm-badge--read">Read</span>
+          </div>
+          <span class="resource-card__last">1d ago</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

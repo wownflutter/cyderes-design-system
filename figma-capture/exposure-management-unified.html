@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Exposure Management — Cyderes Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #080C18;
+    color: #ECECF0;
+    width: 1440px;
+    overflow: hidden;
+  }
+
+  /* ── Layout Shell ── */
+  .shell { display: flex; width: 1440px; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 240px;
+    min-width: 240px;
+    background: #0D1220;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #2A3055;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+  }
+  .sidebar-logo {
+    padding: 20px 24px;
+    border-bottom: 1px solid #2A3055;
+  }
+  .sidebar-logo span {
+    font-size: 18px;
+    font-weight: 700;
+    color: #39B985;
+    letter-spacing: 4px;
+  }
+  .nav-section { padding: 20px 0 4px; }
+  .nav-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B6B75;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 0 24px 8px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #9898A0;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { color: #ECECF0; background: rgba(28,35,64,0.4); }
+  .nav-item.active {
+    color: #ECECF0;
+    background: #1C2340;
+    border-left-color: #39B985;
+  }
+  .nav-item .icon {
+    width: 20px;
+    text-align: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .sidebar-bottom {
+    margin-top: auto;
+    border-top: 1px solid #2A3055;
+    padding: 12px 0;
+  }
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #39B985;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #080C18;
+  }
+
+  /* ── Main Area ── */
+  .main-area {
+    margin-left: 240px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 1200px;
+  }
+
+  /* ── Top Bar ── */
+  .topbar {
+    height: 56px;
+    min-height: 56px;
+    background: #0D1220;
+    border-bottom: 1px solid #2A3055;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+  }
+  .breadcrumb {
+    font-size: 13px;
+    color: #9898A0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .breadcrumb .sep { color: #6B6B75; }
+  .breadcrumb .current { color: #ECECF0; font-weight: 500; }
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .topbar-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9898A0;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  .topbar-icon:hover { background: #1C2340; color: #ECECF0; }
+  .notif-wrapper { position: relative; }
+  .notif-dot {
+    width: 7px; height: 7px;
+    background: #FF7394;
+    border-radius: 50%;
+    position: absolute;
+    top: 5px; right: 6px;
+    border: 1.5px solid #0D1220;
+  }
+  .env-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #ECECF0;
+  }
+  .env-dot { width: 6px; height: 6px; border-radius: 50%; background: #39B985; }
+  .time-range {
+    font-size: 12px;
+    font-weight: 500;
+    color: #9898A0;
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    border-radius: 6px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .export-btn {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9898A0;
+    background: transparent;
+    border: 1px solid #2A3055;
+    border-radius: 6px;
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+  .export-btn:hover { border-color: #39B985; color: #ECECF0; }
+
+  /* ── Content ── */
+  .content { padding: 24px; background: #080C18; }
+
+  /* ── KPI Row ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card {
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+  }
+  .kpi-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    position: absolute;
+    top: 16px; right: 16px;
+  }
+  .kpi-label { font-size: 13px; font-weight: 500; color: #9898A0; margin-bottom: 8px; }
+  .kpi-value { font-size: 32px; font-weight: 700; line-height: 1.1; margin-bottom: 6px; }
+  .kpi-sub { font-size: 12px; font-weight: 500; }
+
+  /* ── Card Common ── */
+  .card {
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-icon { font-size: 16px; color: #39B985; }
+  .card-title { font-size: 16px; font-weight: 600; color: #ECECF0; }
+  .card-subtitle { font-size: 13px; color: #9898A0; margin-top: 2px; }
+  .card-header-right { display: flex; align-items: center; gap: 16px; }
+  .card-link { font-size: 13px; font-weight: 500; color: #39B985; cursor: pointer; white-space: nowrap; }
+
+  /* ── Attack Path ── */
+  .attack-path-section { margin-bottom: 24px; }
+  .attack-path-svg-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px 16px;
+  }
+
+  /* ── Charts Row ── */
+  .charts-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+
+  /* Bar Chart */
+  .bar-chart { display: flex; flex-direction: column; gap: 12px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { width: 56px; font-size: 12px; font-weight: 500; color: #9898A0; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 20px; background: #1C2340; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-value { width: 42px; font-size: 12px; font-weight: 600; color: #ECECF0; text-align: right; flex-shrink: 0; }
+
+  /* Donut */
+  .donut-wrap { display: flex; align-items: center; gap: 24px; justify-content: center; }
+  .donut-container { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+  .donut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .donut-center-val { font-size: 24px; font-weight: 700; color: #ECECF0; }
+  .donut-center-label { font-size: 11px; color: #9898A0; }
+  .donut-legend { display: flex; flex-direction: column; gap: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #ECECF0; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .legend-val { color: #9898A0; margin-left: auto; padding-left: 12px; font-weight: 500; }
+
+  /* Stacked Bars */
+  .stacked-chart { display: flex; flex-direction: column; gap: 10px; }
+  .stacked-row { display: flex; align-items: center; gap: 10px; }
+  .stacked-label { width: 100px; font-size: 11px; font-weight: 500; color: #9898A0; text-align: right; flex-shrink: 0; }
+  .stacked-track { flex: 1; height: 18px; background: #1C2340; border-radius: 4px; overflow: hidden; }
+  .stacked-fill { height: 100%; border-radius: 4px; }
+  .stacked-value { width: 32px; font-size: 12px; font-weight: 600; color: #ECECF0; text-align: right; flex-shrink: 0; }
+
+  /* ── Table ── */
+  .table-section { margin-bottom: 0; }
+  .table-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .table-header-left { display: flex; align-items: center; gap: 12px; }
+  .table-title { font-size: 16px; font-weight: 600; color: #ECECF0; }
+  .table-badge {
+    background: rgba(57,185,133,0.15);
+    color: #39B985;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+  .table-filters { display: flex; align-items: center; gap: 8px; }
+  .filter-pill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid #2A3055;
+    color: #9898A0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .filter-pill.active {
+    background: rgba(57,185,133,0.15);
+    border-color: #39B985;
+    color: #39B985;
+  }
+  .sort-icon { color: #9898A0; font-size: 14px; cursor: pointer; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: #1C2340;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B6B75;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #2A3055;
+  }
+  thead th:first-child { border-radius: 6px 0 0 0; }
+  thead th:last-child { border-radius: 0 6px 0 0; }
+  tbody tr {
+    background: #151A2D;
+    border-bottom: 1px solid #2A3055;
+  }
+  tbody tr:hover { background: #1C2340; }
+  tbody td {
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #ECECF0;
+    white-space: nowrap;
+  }
+  .severity-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .sev-critical { background: rgba(255,115,148,0.18); color: #FF7394; }
+  .sev-high { background: rgba(221,110,30,0.18); color: #DD6E1E; }
+  .sev-medium { background: rgba(255,219,54,0.18); color: #FFDB36; }
+  .status-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .st-open { background: rgba(255,115,148,0.18); color: #FF7394; }
+  .st-remediate { background: rgba(221,110,30,0.18); color: #DD6E1E; }
+  .st-review { background: rgba(255,219,54,0.18); color: #FFDB36; }
+  .st-accepted { background: rgba(57,185,133,0.18); color: #39B985; }
+  .st-planned { background: rgba(179,224,255,0.18); color: #B3E0FF; }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #151A2D;
+    border-top: 1px solid #2A3055;
+    border-radius: 0 0 8px 8px;
+  }
+  .pagination-info { font-size: 12px; color: #6B6B75; }
+  .pagination-pages { display: flex; align-items: center; gap: 4px; }
+  .page-btn {
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 500;
+    color: #9898A0;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .page-btn.active { background: #39B985; color: #080C18; font-weight: 700; }
+  .page-btn:hover:not(.active) { background: #1C2340; }
+  .page-ellipsis { font-size: 12px; color: #6B6B75; padding: 0 2px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ════════ SIDEBAR ════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span>CYDERES</span></div>
+
+    <nav style="flex:1; overflow-y:auto; padding: 8px 0;">
+      <!-- Command Center -->
+      <div class="nav-section">
+        <div class="nav-section-label">Command Center</div>
+        <div class="nav-item"><span class="icon">⊞</span> Dashboard</div>
+      </div>
+
+      <!-- Detect & Respond -->
+      <div class="nav-section">
+        <div class="nav-section-label">Detect &amp; Respond</div>
+        <div class="nav-item"><span class="icon">⚡</span> Incidents</div>
+        <div class="nav-item"><span class="icon">◎</span> Detections</div>
+        <div class="nav-item"><span class="icon">⊘</span> Investigations</div>
+      </div>
+
+      <!-- Exposure -->
+      <div class="nav-section">
+        <div class="nav-section-label">Exposure</div>
+        <div class="nav-item active"><span class="icon">◈</span> Overview</div>
+        <div class="nav-item"><span class="icon">⊙</span> Findings</div>
+        <div class="nav-item"><span class="icon">⤳</span> Attack Paths</div>
+      </div>
+
+      <!-- Inventory -->
+      <div class="nav-section">
+        <div class="nav-section-label">Inventory</div>
+        <div class="nav-item"><span class="icon">▣</span> Assets</div>
+        <div class="nav-item"><span class="icon">⊕</span> Identities</div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="nav-section">
+        <div class="nav-section-label">Analysis</div>
+        <div class="nav-item"><span class="icon">⬡</span> Issue Map</div>
+        <div class="nav-item"><span class="icon">▤</span> Reports</div>
+      </div>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="nav-item"><span class="icon">⚙</span> Settings</div>
+      <div class="nav-item" style="gap:12px;">
+        <div class="user-avatar">CM</div>
+        <span>Curtis M.</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ════════ MAIN AREA ════════ -->
+  <div class="main-area">
+
+    <!-- ── Top Bar ── -->
+    <header class="topbar">
+      <div class="breadcrumb">
+        <span>Exposure</span>
+        <span class="sep">/</span>
+        <span class="current">Overview</span>
+      </div>
+      <div class="topbar-actions">
+        <div class="topbar-icon">⌕</div>
+        <div class="topbar-icon notif-wrapper">
+          🔔
+          <div class="notif-dot"></div>
+        </div>
+        <div class="env-pill"><div class="env-dot"></div> Production</div>
+        <div class="time-range">🕐 Last 30 Days</div>
+        <button class="export-btn">↗ Export</button>
+      </div>
+    </header>
+
+    <!-- ── Content ── -->
+    <main class="content">
+
+      <!-- KPI Row -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-dot" style="background:#FF7394;"></div>
+          <div class="kpi-label">Critical Exposures</div>
+          <div class="kpi-value" style="color:#FF7394;">342</div>
+          <div class="kpi-sub" style="color:#FF7394;">↑ 12 from last week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-dot" style="background:#DD6E1E;"></div>
+          <div class="kpi-label">High Severity</div>
+          <div class="kpi-value" style="color:#DD6E1E;">1,024</div>
+          <div class="kpi-sub" style="color:#39B985;">↓ 3.6% from last period</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-dot" style="background:#FFDB36;"></div>
+          <div class="kpi-label">Medium Severity</div>
+          <div class="kpi-value" style="color:#FFDB36;">4,891</div>
+          <div class="kpi-sub" style="color:#9898A0;">No change</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-dot" style="background:#ECECF0;"></div>
+          <div class="kpi-label">Total Exposed Assets</div>
+          <div class="kpi-value" style="color:#ECECF0;">12,847</div>
+          <div class="kpi-sub" style="color:#DD6E1E;">↑ 3.2% from last period</div>
+        </div>
+      </div>
+
+      <!-- Attack Path Visualization -->
+      <div class="card attack-path-section">
+        <div class="card-header">
+          <div>
+            <div class="card-header-left">
+              <span class="card-icon">◈</span>
+              <span class="card-title">Attack Path Visualization</span>
+            </div>
+            <div class="card-subtitle" style="margin-left:24px;">Highest-risk exploitable path: Internet → Production Database (5 hops) · CVSS 9.8</div>
+          </div>
+          <div class="card-header-right">
+            <span class="card-link">+ All Paths (22)</span>
+            <span class="card-link">▸ Expand</span>
+          </div>
+        </div>
+        <div class="attack-path-svg-wrap">
+          <svg width="1100" height="200" viewBox="0 0 1100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Glow filters -->
+              <filter id="glow-info" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.7  0 0 0 0 0.88  0 0 0 0 1  0 0 0 0.5 0"/>
+                <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="glow-asset" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.38  0 0 0 0 0.79  0 0 0 0 0.83  0 0 0 0.5 0"/>
+                <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="glow-exposure" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.87  0 0 0 0 0.43  0 0 0 0 0.12  0 0 0 0.5 0"/>
+                <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="glow-identity" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.22  0 0 0 0 0.73  0 0 0 0 0.52  0 0 0 0.5 0"/>
+                <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="glow-database" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.63  0 0 0 0 0.33  0 0 0 0 0.89  0 0 0 0.5 0"/>
+                <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="glow-edge" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.22  0 0 0 0 0.73  0 0 0 0 0.52  0 0 0 0.4 0"/>
+                <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <!-- Arrow marker -->
+              <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#39B985"/>
+              </marker>
+            </defs>
+
+            <!-- Cluster groupings (dashed) -->
+            <rect x="48" y="30" width="200" height="140" rx="12" fill="none" stroke="#2A3055" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="148" y="24" text-anchor="middle" fill="#6B6B75" font-size="9" font-family="Inter" font-weight="500">EXTERNAL</text>
+
+            <rect x="298" y="30" width="370" height="140" rx="12" fill="none" stroke="#2A3055" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="483" y="24" text-anchor="middle" fill="#6B6B75" font-size="9" font-family="Inter" font-weight="500">DMZ / APPLICATION TIER</text>
+
+            <rect x="718" y="30" width="340" height="140" rx="12" fill="none" stroke="#2A3055" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="888" y="24" text-anchor="middle" fill="#6B6B75" font-size="9" font-family="Inter" font-weight="500">INTERNAL / DATA TIER</text>
+
+            <!-- Edges -->
+            <line x1="148" y1="100" x2="300" y2="100" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrowhead)" filter="url(#glow-edge)"/>
+            <line x1="370" y1="100" x2="482" y2="100" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrowhead)" filter="url(#glow-edge)"/>
+            <line x1="542" y1="100" x2="654" y2="100" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrowhead)" filter="url(#glow-edge)"/>
+            <line x1="724" y1="100" x2="836" y2="100" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrowhead)" filter="url(#glow-edge)"/>
+            <line x1="906" y1="100" x2="1008" y2="100" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrowhead)" filter="url(#glow-edge)"/>
+
+            <!-- Edge labels -->
+            <text x="224" y="90" text-anchor="middle" fill="#6B6B75" font-size="9" font-family="Inter" font-weight="500">PORT 443</text>
+            <text x="426" y="90" text-anchor="middle" fill="#6B6B75" font-size="9" font-family="Inter" font-weight="500">API</text>
+            <text x="598" y="90" text-anchor="middle" fill="#6B6B75" font-size="9" font-family="Inter" font-weight="500">LATERAL</text>
+            <text x="780" y="90" text-anchor="middle" fill="#6B6B75" font-size="9" font-family="Inter" font-weight="500">PRIV ESC</text>
+            <text x="957" y="90" text-anchor="middle" fill="#6B6B75" font-size="9" font-family="Inter" font-weight="500">DB CONN</text>
+
+            <!-- Node 1: Internet -->
+            <circle cx="100" cy="100" r="24" fill="#B3E0FF" fill-opacity="0.15" stroke="#B3E0FF" stroke-width="2" filter="url(#glow-info)"/>
+            <circle cx="100" cy="100" r="10" fill="#B3E0FF"/>
+            <text x="100" y="145" text-anchor="middle" fill="#9898A0" font-size="11" font-family="Inter" font-weight="500">Internet</text>
+
+            <!-- Node 2: Public Web Server -->
+            <circle cx="322" cy="100" r="24" fill="#61C9D3" fill-opacity="0.15" stroke="#61C9D3" stroke-width="2" filter="url(#glow-asset)"/>
+            <circle cx="322" cy="100" r="10" fill="#61C9D3"/>
+            <text x="322" y="145" text-anchor="middle" fill="#9898A0" font-size="11" font-family="Inter" font-weight="500">Public Web Server</text>
+
+            <!-- Node 3: Content Mgmt -->
+            <circle cx="510" cy="100" r="24" fill="#61C9D3" fill-opacity="0.15" stroke="#61C9D3" stroke-width="2" filter="url(#glow-asset)"/>
+            <circle cx="510" cy="100" r="10" fill="#61C9D3"/>
+            <text x="510" y="145" text-anchor="middle" fill="#9898A0" font-size="11" font-family="Inter" font-weight="500">Content Mgmt</text>
+
+            <!-- Node 4: Exposed API -->
+            <circle cx="688" cy="100" r="24" fill="#DD6E1E" fill-opacity="0.15" stroke="#DD6E1E" stroke-width="2" filter="url(#glow-exposure)"/>
+            <circle cx="688" cy="100" r="10" fill="#DD6E1E"/>
+            <text x="688" y="145" text-anchor="middle" fill="#9898A0" font-size="11" font-family="Inter" font-weight="500">Exposed API</text>
+
+            <!-- Node 5: Privileged Identity -->
+            <circle cx="870" cy="100" r="24" fill="#39B985" fill-opacity="0.15" stroke="#39B985" stroke-width="2" filter="url(#glow-identity)"/>
+            <circle cx="870" cy="100" r="10" fill="#39B985"/>
+            <text x="870" y="145" text-anchor="middle" fill="#9898A0" font-size="11" font-family="Inter" font-weight="500">Privileged Identity</text>
+
+            <!-- Node 6: Production Database -->
+            <circle cx="1040" cy="100" r="24" fill="#A154E4" fill-opacity="0.15" stroke="#A154E4" stroke-width="2" filter="url(#glow-database)"/>
+            <circle cx="1040" cy="100" r="10" fill="#A154E4"/>
+            <text x="1040" y="145" text-anchor="middle" fill="#9898A0" font-size="11" font-family="Inter" font-weight="500">Prod Database</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-row">
+
+        <!-- Chart 1: Vulnerabilities by Severity -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" style="font-size:14px;">Vulnerabilities by Severity</span>
+          </div>
+          <div class="bar-chart">
+            <div class="bar-row">
+              <span class="bar-label">Critical</span>
+              <div class="bar-track"><div class="bar-fill" style="width:5.5%; background:#FF7394;"></div></div>
+              <span class="bar-value">342</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">High</span>
+              <div class="bar-track"><div class="bar-fill" style="width:16.5%; background:#DD6E1E;"></div></div>
+              <span class="bar-value">1,024</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Medium</span>
+              <div class="bar-track"><div class="bar-fill" style="width:79%; background:#FFDB36;"></div></div>
+              <span class="bar-value">4,891</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Low</span>
+              <div class="bar-track"><div class="bar-fill" style="width:100%; background:#39B985;"></div></div>
+              <span class="bar-value">6,190</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart 2: Asset Exposure Distribution (Donut) -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" style="font-size:14px;">Asset Exposure Distribution</span>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut-container">
+              <svg width="140" height="140" viewBox="0 0 140 140">
+                <!-- Donut segments: Cloud 35.1%, Endpoints 27.3%, Identities 22%, Apps 15% -->
+                <circle cx="70" cy="70" r="54" fill="none" stroke="#61C9D3" stroke-width="16"
+                  stroke-dasharray="119 220" stroke-dashoffset="-55" stroke-linecap="round"/>
+                <circle cx="70" cy="70" r="54" fill="none" stroke="#39B985" stroke-width="16"
+                  stroke-dasharray="93 246" stroke-dashoffset="-174" stroke-linecap="round"/>
+                <circle cx="70" cy="70" r="54" fill="none" stroke="#B3E0FF" stroke-width="16"
+                  stroke-dasharray="75 264" stroke-dashoffset="-267" stroke-linecap="round"/>
+                <circle cx="70" cy="70" r="54" fill="none" stroke="#A154E4" stroke-width="16"
+                  stroke-dasharray="51 288" stroke-dashoffset="-342" stroke-linecap="round"/>
+              </svg>
+              <div class="donut-center">
+                <div class="donut-center-val">12.8k</div>
+                <div class="donut-center-label">total assets</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#61C9D3;"></div> Cloud <span class="legend-val">4,496</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#39B985;"></div> Endpoints <span class="legend-val">3,507</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#B3E0FF;"></div> Identities <span class="legend-val">2,825</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#A154E4;"></div> Applications <span class="legend-val">1,926</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart 3: Identity Risk Distribution -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" style="font-size:14px;">Identity Risk Distribution</span>
+          </div>
+          <div class="stacked-chart">
+            <div class="stacked-row">
+              <span class="stacked-label">Over-privileged</span>
+              <div class="stacked-track"><div class="stacked-fill" style="width:8.4%; background:#FF7394;"></div></div>
+              <span class="stacked-value">80</span>
+            </div>
+            <div class="stacked-row">
+              <span class="stacked-label">Stale credentials</span>
+              <div class="stacked-track"><div class="stacked-fill" style="width:16.3%; background:#DD6E1E;"></div></div>
+              <span class="stacked-value">156</span>
+            </div>
+            <div class="stacked-row">
+              <span class="stacked-label">No MFA</span>
+              <div class="stacked-track"><div class="stacked-fill" style="width:7%; background:#FFDB36;"></div></div>
+              <span class="stacked-value">67</span>
+            </div>
+            <div class="stacked-row">
+              <span class="stacked-label">External access</span>
+              <div class="stacked-track"><div class="stacked-fill" style="width:4.3%; background:#B3E0FF;"></div></div>
+              <span class="stacked-value">41</span>
+            </div>
+            <div class="stacked-row">
+              <span class="stacked-label">Compliant</span>
+              <div class="stacked-track"><div class="stacked-fill" style="width:100%; background:#39B985;"></div></div>
+              <span class="stacked-value">958</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Findings Table -->
+      <div class="card table-section">
+        <div class="table-header-row">
+          <div class="table-header-left">
+            <span class="table-title">Exposure Findings</span>
+            <span class="table-badge">342</span>
+          </div>
+          <div class="table-filters">
+            <button class="filter-pill active">Critical First</button>
+            <button class="filter-pill">All Types</button>
+            <span class="sort-icon">⇅</span>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="width:28%">Exposure</th>
+              <th style="width:10%">Severity</th>
+              <th style="width:18%">Asset</th>
+              <th style="width:14%">Category</th>
+              <th style="width:8%">CVSS</th>
+              <th style="width:8%">Age</th>
+              <th style="width:14%">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CVE-2024-21762 — FortiOS RCE</td>
+              <td><span class="severity-pill sev-critical">Critical</span></td>
+              <td>fw-prod-edge-01</td>
+              <td>Network Device</td>
+              <td>9.8</td>
+              <td>14d</td>
+              <td><span class="status-pill st-open">Open</span></td>
+            </tr>
+            <tr>
+              <td>CVE-2024-3400 — PAN-OS Command Inj.</td>
+              <td><span class="severity-pill sev-critical">Critical</span></td>
+              <td>pan-gw-us-west</td>
+              <td>Firewall</td>
+              <td>10.0</td>
+              <td>7d</td>
+              <td><span class="status-pill st-remediate">Remediate</span></td>
+            </tr>
+            <tr>
+              <td>CVE-2024-1709 — ConnectWise Auth Bypass</td>
+              <td><span class="severity-pill sev-critical">Critical</span></td>
+              <td>rmm-server-prod</td>
+              <td>Application</td>
+              <td>10.0</td>
+              <td>21d</td>
+              <td><span class="status-pill st-open">Open</span></td>
+            </tr>
+            <tr>
+              <td>CVE-2023-44228 — Log4Shell Variant</td>
+              <td><span class="severity-pill sev-critical">Critical</span></td>
+              <td>api-gateway-east</td>
+              <td>Web Server</td>
+              <td>9.8</td>
+              <td>45d</td>
+              <td><span class="status-pill st-review">Review</span></td>
+            </tr>
+            <tr>
+              <td>CVE-2024-27198 — JetBrains Auth Bypass</td>
+              <td><span class="severity-pill sev-high">High</span></td>
+              <td>ci-build-runner-03</td>
+              <td>CI/CD</td>
+              <td>8.1</td>
+              <td>30d</td>
+              <td><span class="status-pill st-planned">Planned</span></td>
+            </tr>
+            <tr>
+              <td>CVE-2024-23897 — Jenkins CLI Read</td>
+              <td><span class="severity-pill sev-high">High</span></td>
+              <td>jenkins-master</td>
+              <td>CI/CD</td>
+              <td>7.5</td>
+              <td>60d</td>
+              <td><span class="status-pill st-accepted">Accepted</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <div class="pagination-info">Showing 1–6 of 342 findings</div>
+          <div class="pagination-pages">
+            <div class="page-btn active">1</div>
+            <div class="page-btn">2</div>
+            <div class="page-btn">3</div>
+            <span class="page-ellipsis">...</span>
+            <div class="page-btn">57</div>
+            <div class="page-btn">▸</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

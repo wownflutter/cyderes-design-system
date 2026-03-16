@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "design-system",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "./design-system-preview", "-p", "3456", "-c-1"],
+      "port": 3456
+    },
+    {
+      "name": "exposure-mgmt",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "./exposure-management", "-p", "3457", "-c-1"],
+      "port": 3457
+    },
+    {
+      "name": "figma-capture",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "./figma-capture", "-p", "3847", "-c-1"],
+      "port": 3847
+    }
+  ]
+}

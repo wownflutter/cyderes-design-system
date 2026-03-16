@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Cyderes — Investigation Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #080C18; color: #ECECF0; width: 1440px; min-height: 100vh; display: flex; }
+
+  /* Sidebar */
+  .sidebar { width: 240px; background: #0D1220; height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 10; }
+  .sidebar-logo { padding: 20px 24px; font-size: 18px; font-weight: 700; color: #39B985; letter-spacing: 4px; }
+  .sidebar-nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 8px; }
+  .nav-section-label { padding: 12px 24px 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6B6B75; letter-spacing: 1px; }
+  .nav-item { display: flex; align-items: center; padding: 9px 24px; font-size: 14px; font-weight: 500; color: #9898A0; cursor: pointer; text-decoration: none; border-left: 3px solid transparent; }
+  .nav-item:hover { color: #ECECF0; background: rgba(28,35,64,0.5); }
+  .nav-item.active { color: #ECECF0; border-left-color: #39B985; background: #1C2340; }
+  .sidebar-bottom { padding: 16px 24px; border-top: 1px solid #2A3055; }
+  .sidebar-bottom .nav-item { padding: 9px 0; border-left: none; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #39B985; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; margin-top: 12px; }
+
+  /* Top Bar */
+  .topbar { position: fixed; top: 0; left: 240px; right: 0; height: 56px; background: #0D1220; border-bottom: 1px solid #2A3055; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 10; }
+  .breadcrumb { font-size: 13px; color: #9898A0; }
+  .breadcrumb span { color: #ECECF0; }
+  .topbar-actions { display: flex; align-items: center; gap: 16px; }
+  .search-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #6B6B75; cursor: pointer; }
+  .search-pill kbd { background: #2A3055; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: 'Inter', sans-serif; }
+  .bell-icon { position: relative; color: #9898A0; font-size: 18px; cursor: pointer; }
+  .bell-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #FF7394; border-radius: 50%; }
+  .env-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #ECECF0; }
+  .env-dot { width: 8px; height: 8px; background: #39B985; border-radius: 50%; }
+  .export-btn { padding: 6px 14px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #ECECF0; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  /* Main Content */
+  .main { margin-left: 240px; margin-top: 56px; padding: 24px; width: 1200px; }
+  .card { background: #151A2D; border: 1px solid #2A3055; border-radius: 12px; padding: 24px; }
+  .card-header { font-size: 15px; font-weight: 600; color: #ECECF0; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+  .row { display: flex; gap: 16px; margin-bottom: 16px; }
+
+  /* Entity Header */
+  .entity-header { background: #151A2D; border: 1px solid #2A3055; border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+  .entity-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+  .entity-left { display: flex; align-items: center; gap: 16px; }
+  .entity-icon { width: 52px; height: 52px; border-radius: 12px; background: rgba(255,115,148,0.15); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: #FF7394; }
+  .entity-name { font-size: 22px; font-weight: 700; color: #ECECF0; }
+  .entity-sub { font-size: 13px; color: #9898A0; margin-top: 4px; }
+  .entity-meta { display: flex; gap: 8px; margin-top: 8px; }
+  .meta-pill { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+  .meta-critical { background: rgba(255,115,148,0.15); color: #FF7394; }
+  .meta-active { background: rgba(57,185,133,0.15); color: #39B985; }
+  .meta-assigned { background: rgba(179,224,255,0.15); color: #B3E0FF; }
+  .entity-actions { display: flex; gap: 8px; }
+  .btn-primary { padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; background: #39B985; color: #080C18; border: none; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .btn-secondary { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; background: #1C2340; color: #ECECF0; border: 1px solid #2A3055; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .entity-stats { display: flex; gap: 16px; }
+  .stat-box { flex: 1; background: #1C2340; border-radius: 8px; padding: 14px 16px; text-align: center; }
+  .stat-value { font-size: 24px; font-weight: 700; }
+  .stat-label { font-size: 11px; color: #9898A0; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Severity pills */
+  .sev-pill { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; display: inline-block; }
+  .sev-critical { background: rgba(255,115,148,0.15); color: #FF7394; }
+  .sev-high { background: rgba(221,110,30,0.15); color: #DD6E1E; }
+  .sev-medium { background: rgba(255,219,54,0.15); color: #FFDB36; }
+  .sev-low { background: rgba(57,185,133,0.15); color: #39B985; }
+  .status-pill { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 500; display: inline-block; }
+  .status-investigating { background: rgba(255,219,54,0.15); color: #FFDB36; }
+  .status-contained { background: rgba(57,185,133,0.15); color: #39B985; }
+  .status-remediated { background: rgba(179,224,255,0.15); color: #B3E0FF; }
+  .status-open { background: rgba(255,115,148,0.15); color: #FF7394; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #1C2340; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6B6B75; padding: 10px 12px; text-align: left; white-space: nowrap; }
+  tbody td { padding: 10px 12px; font-size: 13px; color: #ECECF0; border-bottom: 1px solid #1C2340; white-space: nowrap; }
+  tbody tr:hover { background: rgba(28,35,64,0.4); }
+
+  /* Timeline */
+  .timeline { position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: #2A3055; }
+  .tl-item { display: flex; gap: 14px; padding: 10px 0; position: relative; }
+  .tl-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; z-index: 1; }
+  .tl-content { flex: 1; }
+  .tl-title { font-size: 13px; font-weight: 500; color: #ECECF0; }
+  .tl-time { font-size: 11px; color: #6B6B75; margin-top: 2px; }
+  .tl-desc { font-size: 12px; color: #9898A0; margin-top: 4px; }
+
+  /* Graph mini */
+  .graph-mini { background: #0D1220; border: 1px solid #2A3055; border-radius: 12px; padding: 16px; position: relative; overflow: hidden; }
+  .graph-mini svg { width: 100%; height: 280px; }
+
+  /* Related entities grid */
+  .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .related-card { background: #1C2340; border: 1px solid #2A3055; border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+  .related-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .related-info { flex: 1; min-width: 0; }
+  .related-name { font-size: 13px; font-weight: 500; color: #ECECF0; }
+  .related-type { font-size: 11px; color: #6B6B75; }
+
+  /* Remediation */
+  .reco-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid #1C2340; }
+  .reco-item:last-child { border-bottom: none; }
+  .reco-num { width: 28px; height: 28px; border-radius: 50%; background: #39B985; color: #080C18; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .reco-title { font-size: 13px; font-weight: 500; color: #ECECF0; }
+  .reco-desc { font-size: 12px; color: #9898A0; margin-top: 4px; }
+  .reco-priority { font-size: 11px; font-weight: 600; margin-top: 6px; }
+
+  /* Two column layout */
+  .two-col { display: flex; gap: 16px; }
+  .col-left { flex: 3; display: flex; flex-direction: column; gap: 16px; }
+  .col-right { flex: 2; display: flex; flex-direction: column; gap: 16px; }
+
+  /* Link */
+  .link { color: #39B985; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">CYDERES</div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Command Center</div>
+      <div class="nav-item">Overview</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Detect & Respond</div>
+      <div class="nav-item">Detections</div>
+      <div class="nav-item active">Investigations</div>
+      <div class="nav-item">Incidents</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Exposure</div>
+      <div class="nav-item">Overview</div>
+      <div class="nav-item">Findings</div>
+      <div class="nav-item">Attack Paths</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Inventory</div>
+      <div class="nav-item">Assets</div>
+      <div class="nav-item">Identities</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Analysis</div>
+      <div class="nav-item">Issue Map</div>
+      <div class="nav-item">Reports</div>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="nav-item">Settings</div>
+    <div class="avatar">CM</div>
+  </div>
+</aside>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="breadcrumb">Detect & Respond / Investigations / <span>INV-2024-0847</span></div>
+  <div class="topbar-actions">
+    <div class="search-pill">Search <kbd>&#8984;K</kbd></div>
+    <div class="bell-icon">&#128276;<div class="bell-dot"></div></div>
+    <div class="env-pill"><div class="env-dot"></div> Production</div>
+    <button class="export-btn">Export</button>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="main">
+
+  <!-- Entity Header -->
+  <div class="entity-header">
+    <div class="entity-top">
+      <div class="entity-left">
+        <div class="entity-icon">!</div>
+        <div>
+          <div class="entity-name">INV-2024-0847</div>
+          <div class="entity-sub">Lateral Movement via Compromised Service Account</div>
+          <div class="entity-meta">
+            <span class="meta-pill meta-critical">Critical</span>
+            <span class="meta-pill meta-active">Active</span>
+            <span class="meta-pill meta-assigned">Assigned: J. Mitchell</span>
+          </div>
+        </div>
+      </div>
+      <div class="entity-actions">
+        <button class="btn-primary">Escalate to Incident</button>
+        <button class="btn-secondary">Contain</button>
+        <button class="btn-secondary">Add Note</button>
+      </div>
+    </div>
+    <div class="entity-stats">
+      <div class="stat-box">
+        <div class="stat-value" style="color: #FF7394;">9.4</div>
+        <div class="stat-label">Risk Score</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" style="color: #DD6E1E;">12</div>
+        <div class="stat-label">Detections</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" style="color: #61C9D3;">6</div>
+        <div class="stat-label">Assets</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" style="color: #39B985;">3</div>
+        <div class="stat-label">Identities</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" style="color: #FFDB36;">4</div>
+        <div class="stat-label">Exposures</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" style="color: #B3E0FF;">2h 14m</div>
+        <div class="stat-label">MTTR</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two Column Layout -->
+  <div class="two-col">
+    <!-- Left Column -->
+    <div class="col-left">
+
+      <!-- Detection Summary -->
+      <div class="card">
+        <div class="card-header">Detection Summary <a class="link">View All 12 Detections</a></div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Detection</th>
+                <th>Source</th>
+                <th>Severity</th>
+                <th>Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Abnormal Kerberos TGT Request</td>
+                <td>CrowdStrike EDR</td>
+                <td><span class="sev-pill sev-critical">Critical</span></td>
+                <td>Mar 14, 14:23</td>
+                <td><span class="status-pill status-investigating">Investigating</span></td>
+              </tr>
+              <tr>
+                <td>Service Account Privilege Escalation</td>
+                <td>Azure AD</td>
+                <td><span class="sev-pill sev-critical">Critical</span></td>
+                <td>Mar 14, 14:18</td>
+                <td><span class="status-pill status-investigating">Investigating</span></td>
+              </tr>
+              <tr>
+                <td>Lateral Movement — SMB Relay</td>
+                <td>Sentinel SIEM</td>
+                <td><span class="sev-pill sev-high">High</span></td>
+                <td>Mar 14, 14:12</td>
+                <td><span class="status-pill status-contained">Contained</span></td>
+              </tr>
+              <tr>
+                <td>Anomalous RDP Session from VPN</td>
+                <td>CrowdStrike EDR</td>
+                <td><span class="sev-pill sev-high">High</span></td>
+                <td>Mar 14, 13:58</td>
+                <td><span class="status-pill status-contained">Contained</span></td>
+              </tr>
+              <tr>
+                <td>Failed MFA Bypass Attempt</td>
+                <td>Okta SSO</td>
+                <td><span class="sev-pill sev-medium">Medium</span></td>
+                <td>Mar 14, 13:45</td>
+                <td><span class="status-pill status-remediated">Remediated</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Related Assets -->
+      <div class="card">
+        <div class="card-header">Related Assets <span class="link">Open in Issue Map</span></div>
+        <div class="related-grid">
+          <div class="related-card">
+            <div class="related-icon" style="background: rgba(97,201,211,0.15); color: #61C9D3;">S</div>
+            <div class="related-info">
+              <div class="related-name">srv-dc-01</div>
+              <div class="related-type">Domain Controller &middot; <span class="sev-pill sev-critical" style="font-size:10px;padding:2px 8px;">Critical</span></div>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-icon" style="background: rgba(97,201,211,0.15); color: #61C9D3;">S</div>
+            <div class="related-info">
+              <div class="related-name">srv-app-03</div>
+              <div class="related-type">Application Server &middot; <span class="sev-pill sev-high" style="font-size:10px;padding:2px 8px;">High</span></div>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-icon" style="background: rgba(97,201,211,0.15); color: #61C9D3;">F</div>
+            <div class="related-info">
+              <div class="related-name">fw-edge-01</div>
+              <div class="related-type">Firewall &middot; <span class="sev-pill sev-medium" style="font-size:10px;padding:2px 8px;">Medium</span></div>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-icon" style="background: rgba(97,201,211,0.15); color: #61C9D3;">W</div>
+            <div class="related-info">
+              <div class="related-name">ws-finance-12</div>
+              <div class="related-type">Workstation &middot; <span class="sev-pill sev-high" style="font-size:10px;padding:2px 8px;">High</span></div>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-icon" style="background: rgba(161,84,228,0.15); color: #A154E4;">D</div>
+            <div class="related-info">
+              <div class="related-name">db-prod-02</div>
+              <div class="related-type">Database &middot; <span class="sev-pill sev-high" style="font-size:10px;padding:2px 8px;">High</span></div>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-icon" style="background: rgba(97,201,211,0.15); color: #61C9D3;">V</div>
+            <div class="related-info">
+              <div class="related-name">vpn-gw-01</div>
+              <div class="related-type">VPN Gateway &middot; <span class="sev-pill sev-medium" style="font-size:10px;padding:2px 8px;">Medium</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exposure Context -->
+      <div class="card">
+        <div class="card-header">Exposure Context <span style="font-size:12px;color:#9898A0;">4 Related Exposures</span></div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Exposure</th>
+                <th>Affected Asset</th>
+                <th>CVSS</th>
+                <th>Severity</th>
+                <th>Exploited</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>CVE-2024-21407 — Hyper-V RCE</td>
+                <td>srv-dc-01</td>
+                <td>9.8</td>
+                <td><span class="sev-pill sev-critical">Critical</span></td>
+                <td><span style="color:#FF7394;font-weight:600;">Yes — Active</span></td>
+              </tr>
+              <tr>
+                <td>CVE-2024-30088 — Win32k Priv Esc</td>
+                <td>srv-app-03</td>
+                <td>8.8</td>
+                <td><span class="sev-pill sev-high">High</span></td>
+                <td><span style="color:#FF7394;font-weight:600;">Yes — Active</span></td>
+              </tr>
+              <tr>
+                <td>CVE-2024-26169 — Error Reporting Esc</td>
+                <td>ws-finance-12</td>
+                <td>7.8</td>
+                <td><span class="sev-pill sev-high">High</span></td>
+                <td><span style="color:#FFDB36;">Possible</span></td>
+              </tr>
+              <tr>
+                <td>Stale Service Account Credentials</td>
+                <td>svc-backup</td>
+                <td>—</td>
+                <td><span class="sev-pill sev-high">High</span></td>
+                <td><span style="color:#FF7394;font-weight:600;">Confirmed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-right">
+
+      <!-- Investigation Graph -->
+      <div class="card" style="padding:16px;">
+        <div class="card-header" style="margin-bottom:12px;">Attack Path <a class="link">Expand in Issue Map</a></div>
+        <div class="graph-mini">
+          <svg viewBox="0 0 440 280" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowG" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse"><polygon points="0 0, 10 3.5, 0 7" fill="#39B985"/></marker>
+              <marker id="arrowR" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse"><polygon points="0 0, 10 3.5, 0 7" fill="#FF7394"/></marker>
+              <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <!-- Attack path edges -->
+            <line x1="60" y1="140" x2="140" y2="60" stroke="#FF7394" stroke-width="2" marker-end="url(#arrowR)" opacity="0.8"/>
+            <line x1="140" y1="60" x2="260" y2="60" stroke="#FF7394" stroke-width="2" marker-end="url(#arrowR)" opacity="0.8"/>
+            <line x1="260" y1="60" x2="380" y2="100" stroke="#FF7394" stroke-width="2" marker-end="url(#arrowR)" opacity="0.8"/>
+            <line x1="60" y1="140" x2="140" y2="200" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrowG)" opacity="0.5"/>
+            <line x1="140" y1="200" x2="260" y2="200" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrowG)" opacity="0.5"/>
+            <line x1="260" y1="200" x2="380" y2="180" stroke="#39B985" stroke-width="1.5" marker-end="url(#arrowG)" opacity="0.5"/>
+            <line x1="260" y1="60" x2="260" y2="200" stroke="#2A3055" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="380" y1="100" x2="380" y2="180" stroke="#2A3055" stroke-width="1" stroke-dasharray="4,3"/>
+            <!-- Nodes -->
+            <circle cx="60" cy="140" r="22" fill="#39B985" opacity="0.2" filter="url(#glow)"/><circle cx="60" cy="140" r="16" fill="#080C18" stroke="#39B985" stroke-width="2"/><text x="60" y="144" text-anchor="middle" font-size="9" fill="#39B985" font-weight="600">svc</text>
+            <circle cx="140" cy="60" r="18" fill="#080C18" stroke="#FF7394" stroke-width="2"/><text x="140" y="64" text-anchor="middle" font-size="9" fill="#FF7394" font-weight="600">DC</text>
+            <circle cx="260" cy="60" r="18" fill="#080C18" stroke="#DD6E1E" stroke-width="2"/><text x="260" y="64" text-anchor="middle" font-size="9" fill="#DD6E1E" font-weight="600">APP</text>
+            <circle cx="380" cy="100" r="18" fill="#080C18" stroke="#A154E4" stroke-width="2"/><text x="380" y="104" text-anchor="middle" font-size="9" fill="#A154E4" font-weight="600">DB</text>
+            <circle cx="140" cy="200" r="16" fill="#080C18" stroke="#61C9D3" stroke-width="2"/><text x="140" y="204" text-anchor="middle" font-size="9" fill="#61C9D3" font-weight="600">FW</text>
+            <circle cx="260" cy="200" r="16" fill="#080C18" stroke="#61C9D3" stroke-width="2"/><text x="260" y="204" text-anchor="middle" font-size="9" fill="#61C9D3" font-weight="600">VPN</text>
+            <circle cx="380" cy="180" r="16" fill="#080C18" stroke="#B3E0FF" stroke-width="2"/><text x="380" y="184" text-anchor="middle" font-size="9" fill="#B3E0FF" font-weight="600">WS</text>
+            <!-- Edge labels -->
+            <text x="92" y="90" font-size="8" fill="#FF7394" opacity="0.7">PRIV ESC</text>
+            <text x="185" y="50" font-size="8" fill="#FF7394" opacity="0.7">LATERAL</text>
+            <text x="310" y="72" font-size="8" fill="#FF7394" opacity="0.7">DB CONN</text>
+            <!-- Legend -->
+            <line x1="20" y1="262" x2="40" y2="262" stroke="#FF7394" stroke-width="2"/><text x="44" y="265" font-size="9" fill="#9898A0">Critical Path</text>
+            <line x1="120" y1="262" x2="140" y2="262" stroke="#39B985" stroke-width="1.5"/><text x="144" y="265" font-size="9" fill="#9898A0">Network Path</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Related Identities -->
+      <div class="card">
+        <div class="card-header">Related Identities</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="related-card">
+            <div class="related-icon" style="background:rgba(57,185,133,0.15);color:#39B985;">S</div>
+            <div class="related-info">
+              <div class="related-name">svc-backup</div>
+              <div class="related-type">Service Account &middot; <span style="color:#FF7394;font-weight:600;">Compromised</span></div>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-icon" style="background:rgba(57,185,133,0.15);color:#39B985;">J</div>
+            <div class="related-info">
+              <div class="related-name">jason.mitchell@acme-corp.com</div>
+              <div class="related-type">User &middot; Domain Admin &middot; <span class="sev-pill sev-high" style="font-size:10px;padding:2px 8px;">High Risk</span></div>
+            </div>
+          </div>
+          <div class="related-card">
+            <div class="related-icon" style="background:rgba(57,185,133,0.15);color:#39B985;">A</div>
+            <div class="related-info">
+              <div class="related-name">admin-ops</div>
+              <div class="related-type">Service Account &middot; <span class="sev-pill sev-medium" style="font-size:10px;padding:2px 8px;">Medium</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Investigation Timeline -->
+      <div class="card">
+        <div class="card-header">Investigation Timeline</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#FF7394;"></div>
+            <div class="tl-content">
+              <div class="tl-title">Initial Detection — Anomalous TGT Request</div>
+              <div class="tl-time">Mar 14, 13:42 UTC</div>
+              <div class="tl-desc">CrowdStrike flagged abnormal Kerberos ticket request from svc-backup</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#DD6E1E;"></div>
+            <div class="tl-content">
+              <div class="tl-title">Lateral Movement Detected</div>
+              <div class="tl-time">Mar 14, 13:58 UTC</div>
+              <div class="tl-desc">SMB relay attack from ws-finance-12 to srv-dc-01</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#FFDB36;"></div>
+            <div class="tl-content">
+              <div class="tl-title">Investigation Opened — INV-2024-0847</div>
+              <div class="tl-time">Mar 14, 14:05 UTC</div>
+              <div class="tl-desc">Auto-correlated 8 detections into investigation</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#39B985;"></div>
+            <div class="tl-content">
+              <div class="tl-title">Containment — svc-backup Disabled</div>
+              <div class="tl-time">Mar 14, 14:12 UTC</div>
+              <div class="tl-desc">Service account credentials rotated, sessions terminated</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#B3E0FF;"></div>
+            <div class="tl-content">
+              <div class="tl-title">Analyst Assigned — J. Mitchell</div>
+              <div class="tl-time">Mar 14, 14:15 UTC</div>
+              <div class="tl-desc">Escalated to Tier 2 for full scope assessment</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:#FF7394;"></div>
+            <div class="tl-content">
+              <div class="tl-title">Privilege Escalation Confirmed</div>
+              <div class="tl-time">Mar 14, 14:23 UTC</div>
+              <div class="tl-desc">svc-backup exploited CVE-2024-30088 to gain admin on srv-app-03</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommended Remediation -->
+      <div class="card">
+        <div class="card-header">Recommended Remediation</div>
+        <div class="reco-item">
+          <div class="reco-num">1</div>
+          <div>
+            <div class="reco-title">Rotate All svc-backup Credentials</div>
+            <div class="reco-desc">Reset password, revoke all active tokens, and regenerate API keys for the compromised service account.</div>
+            <div class="reco-priority" style="color:#FF7394;">Priority: Immediate</div>
+          </div>
+        </div>
+        <div class="reco-item">
+          <div class="reco-num">2</div>
+          <div>
+            <div class="reco-title">Patch CVE-2024-21407 on srv-dc-01</div>
+            <div class="reco-desc">Apply the March 2024 cumulative update to the domain controller to close the Hyper-V RCE vector.</div>
+            <div class="reco-priority" style="color:#FF7394;">Priority: Immediate</div>
+          </div>
+        </div>
+        <div class="reco-item">
+          <div class="reco-num">3</div>
+          <div>
+            <div class="reco-title">Network Segmentation — Isolate srv-app-03</div>
+            <div class="reco-desc">Add firewall rules to restrict east-west traffic from the application tier to the database tier.</div>
+            <div class="reco-priority" style="color:#DD6E1E;">Priority: High</div>
+          </div>
+        </div>
+        <div class="reco-item">
+          <div class="reco-num">4</div>
+          <div>
+            <div class="reco-title">Enable MFA on All Service Accounts</div>
+            <div class="reco-desc">Enforce conditional access policies requiring MFA for privileged service account authentication.</div>
+            <div class="reco-priority" style="color:#FFDB36;">Priority: Medium</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

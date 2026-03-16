@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Cyderes — Platform Overview — Risk Navigator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#080C18;color:#ECECF0;width:1440px;min-height:100vh;}
+
+/* TOP NAV */
+.topnav{display:flex;align-items:center;height:56px;background:#0D1220;border-bottom:1px solid #2A3055;padding:0 24px;}
+.logo{font-size:18px;font-weight:700;color:#39B985;letter-spacing:4px;margin-right:32px;}
+.nav-links{display:flex;gap:4px;}
+.nav-link{padding:8px 16px;font-size:13px;font-weight:500;color:#9898A0;border-radius:6px;cursor:pointer;text-decoration:none;}
+.nav-link:hover{color:#ECECF0;background:rgba(28,35,64,0.5);}
+.nav-link.active{color:#ECECF0;background:#1C2340;}
+.nav-spacer{flex:1;}
+.search-bar{display:flex;align-items:center;gap:8px;padding:7px 14px;background:#1C2340;border:1px solid #2A3055;border-radius:8px;font-size:12px;color:#6B6B75;cursor:pointer;min-width:200px;}
+.search-bar kbd{background:#2A3055;padding:2px 6px;border-radius:4px;font-size:11px;font-family:'Inter',sans-serif;margin-left:auto;}
+.topnav-right{display:flex;align-items:center;gap:14px;margin-left:16px;}
+.env-pill{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid #2A3055;border-radius:20px;font-size:12px;color:#ECECF0;}
+.env-dot{width:8px;height:8px;border-radius:50%;background:#39B985;}
+.time-pill{padding:6px 14px;border:1px solid #2A3055;border-radius:20px;font-size:12px;color:#ECECF0;}
+.bell-icon{position:relative;color:#9898A0;font-size:18px;cursor:pointer;}
+.bell-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#FF7394;border-radius:50%;}
+.avatar{width:32px;height:32px;border-radius:50%;background:#39B985;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#080C18;}
+
+/* MAIN */
+.main{padding:28px 32px;}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:24px;}
+.page-title{font-size:22px;font-weight:700;color:#ECECF0;}
+.page-sub{font-size:13px;color:#9898A0;margin-top:4px;}
+
+/* CARDS */
+.card{background:#151A2D;border:1px solid #2A3055;border-radius:12px;padding:24px;}
+.card-header{font-size:15px;font-weight:600;color:#ECECF0;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.link{color:#39B985;font-size:13px;font-weight:500;text-decoration:none;cursor:pointer;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#151A2D 0%,#1A2038 50%,#1C2340 100%);border:1px solid #2A3055;border-radius:14px;padding:28px 32px;margin-bottom:24px;display:flex;gap:32px;align-items:stretch;}
+.hero-left{flex:1;display:flex;flex-direction:column;}
+.hero-right{width:440px;display:flex;flex-direction:column;}
+.hero-eyebrow{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:#FF7394;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.hero-eyebrow-dot{width:8px;height:8px;border-radius:50%;background:#FF7394;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.hero-title{font-size:20px;font-weight:700;color:#ECECF0;margin-bottom:6px;line-height:1.3;}
+.hero-desc{font-size:13px;color:#9898A0;margin-bottom:20px;line-height:1.5;}
+
+/* ATTACK CHAIN */
+.chain{display:flex;align-items:center;gap:0;margin-bottom:24px;}
+.chain-node{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.chain-dot{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;text-align:center;line-height:1.15;border:2px solid;background:rgba(0,0,0,0.3);}
+.chain-name{font-size:10px;color:#9898A0;text-align:center;max-width:80px;line-height:1.3;}
+.chain-arrow{margin:0 -2px;margin-top:-16px;color:#FF7394;}
+.chain-arrow svg{width:28px;height:10px;}
+
+/* HERO METRICS */
+.hero-metrics{display:flex;gap:24px;margin-bottom:20px;}
+.hero-metric{text-align:left;}
+.hero-metric-val{font-size:20px;font-weight:700;}
+.hero-metric-label{font-size:10px;color:#6B6B75;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* HERO ACTIONS */
+.hero-actions{display:flex;gap:8px;margin-top:auto;}
+.btn-crit{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;background:#FF7394;color:#080C18;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-ghost{padding:9px 16px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;color:#ECECF0;border:1px solid #2A3055;cursor:pointer;font-family:'Inter',sans-serif;}
+
+/* HERO RIGHT — mini graph */
+.mini-graph{background:#0D1220;border:1px solid #2A3055;border-radius:10px;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.mini-graph svg{width:100%;height:100%;}
+.graph-label{position:absolute;bottom:12px;left:12px;font-size:10px;color:#6B6B75;}
+
+/* ROW */
+.row{display:flex;gap:16px;margin-bottom:24px;}
+.col{flex:1;}
+
+/* SEVERITY PILLS */
+.sev{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;display:inline-block;}
+.sev-c{background:rgba(255,115,148,0.15);color:#FF7394;}
+.sev-h{background:rgba(221,110,30,0.15);color:#DD6E1E;}
+.sev-m{background:rgba(255,219,54,0.15);color:#FFDB36;}
+.sev-l{background:rgba(57,185,133,0.15);color:#39B985;}
+.sev-i{background:rgba(179,224,255,0.15);color:#B3E0FF;}
+.status{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:500;display:inline-block;}
+.st-open{background:rgba(255,115,148,0.12);color:#FF7394;}
+.st-triage{background:rgba(255,219,54,0.12);color:#FFDB36;}
+.st-review{background:rgba(179,224,255,0.12);color:#B3E0FF;}
+.st-planned{background:rgba(107,107,117,0.15);color:#9898A0;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+thead th{background:#1C2340;font-size:11px;font-weight:600;text-transform:uppercase;color:#6B6B75;padding:10px 12px;text-align:left;white-space:nowrap;letter-spacing:0.5px;}
+thead th:first-child{border-radius:8px 0 0 0;}
+thead th:last-child{border-radius:0 8px 0 0;}
+tbody td{padding:11px 12px;font-size:13px;color:#ECECF0;border-bottom:1px solid rgba(42,48,85,0.5);white-space:nowrap;}
+tbody tr:hover{background:rgba(28,35,64,0.3);}
+.issue-link{color:#39B985;font-weight:500;cursor:pointer;}
+.table-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 0 0;font-size:12px;color:#6B6B75;}
+.page-btns{display:flex;gap:4px;}
+.pg{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#1C2340;color:#9898A0;font-size:12px;border:1px solid #2A3055;cursor:pointer;}
+.pg.on{background:#39B985;color:#080C18;border-color:#39B985;}
+
+/* EXPOSURE DISTRIBUTION */
+.dist-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.dist-card{background:#1C2340;border:1px solid #2A3055;border-radius:10px;padding:18px 20px;}
+.dist-label{font-size:12px;color:#9898A0;margin-bottom:8px;}
+.dist-bar-wrap{display:flex;flex-direction:column;gap:8px;}
+.dist-row{display:flex;align-items:center;gap:10px;}
+.dist-row-label{font-size:11px;color:#9898A0;width:80px;flex-shrink:0;}
+.dist-bar{height:8px;border-radius:4px;flex:1;background:#2A3055;overflow:hidden;position:relative;}
+.dist-fill{height:100%;border-radius:4px;position:absolute;left:0;top:0;}
+.dist-row-val{font-size:12px;font-weight:600;width:40px;text-align:right;flex-shrink:0;}
+.dist-total{font-size:24px;font-weight:700;margin-bottom:4px;}
+.dist-sub{font-size:11px;color:#6B6B75;}
+
+/* RISK PANELS */
+.risk-row{display:flex;gap:14px;}
+.risk-card{flex:1;background:#1C2340;border:1px solid #2A3055;border-radius:10px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;}
+.risk-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.risk-val{font-size:24px;font-weight:700;line-height:1.1;}
+.risk-label{font-size:12px;color:#9898A0;margin-top:3px;}
+.risk-trend{font-size:11px;margin-top:4px;}
+
+/* TWO COL BOTTOM */
+.bottom-row{display:flex;gap:16px;}
+.bottom-col{flex:1;}
+.id-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+</style>
+</head>
+<body>
+
+<!-- SECTION 1 — GLOBAL HEADER -->
+<nav class="topnav">
+  <div class="logo">CYDERES</div>
+  <div class="nav-links">
+    <a class="nav-link active">Overview</a>
+    <a class="nav-link">Issues</a>
+    <a class="nav-link">Attack Paths</a>
+    <a class="nav-link">Assets</a>
+    <a class="nav-link">Identities</a>
+    <a class="nav-link">Investigations</a>
+  </div>
+  <div class="nav-spacer"></div>
+  <div class="search-bar">Search across platform... <kbd>&#8984;K</kbd></div>
+  <div class="topnav-right">
+    <div class="time-pill">Last 30 Days</div>
+    <div class="env-pill"><div class="env-dot"></div> Production</div>
+    <div class="bell-icon">&#128276;<div class="bell-dot"></div></div>
+    <div class="avatar">CM</div>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-title">Risk Navigator</div>
+    <div class="page-sub">Where you're most exposed &middot; What to fix first &middot; Last updated 2 minutes ago</div>
+  </div>
+
+  <!-- SECTION 2 — ATTACK PATH RISK (HERO) -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span> Highest Risk Attack Path</div>
+      <div class="hero-title">Internet to Production Database<br>via Credential Exposure</div>
+      <div class="hero-desc">An internet-facing web server exposes hardcoded credentials that grant a privileged service account access to production data stores containing PII.</div>
+
+      <div class="chain">
+        <div class="chain-node">
+          <div class="chain-dot" style="border-color:#B3E0FF;color:#B3E0FF;">Internet</div>
+          <div class="chain-name">Entry Point</div>
+        </div>
+        <div class="chain-arrow"><svg viewBox="0 0 28 10"><line x1="0" y1="5" x2="22" y2="5" stroke="#FF7394" stroke-width="1.5"/><polygon points="22,2 28,5 22,8" fill="#FF7394"/></svg></div>
+        <div class="chain-node">
+          <div class="chain-dot" style="border-color:#61C9D3;color:#61C9D3;">Web<br>Srv</div>
+          <div class="chain-name">web-srv-01</div>
+        </div>
+        <div class="chain-arrow"><svg viewBox="0 0 28 10"><line x1="0" y1="5" x2="22" y2="5" stroke="#FF7394" stroke-width="1.5"/><polygon points="22,2 28,5 22,8" fill="#FF7394"/></svg></div>
+        <div class="chain-node">
+          <div class="chain-dot" style="border-color:#FF7394;color:#FF7394;">Cred<br>Leak</div>
+          <div class="chain-name">Exposed Creds</div>
+        </div>
+        <div class="chain-arrow"><svg viewBox="0 0 28 10"><line x1="0" y1="5" x2="22" y2="5" stroke="#FF7394" stroke-width="1.5"/><polygon points="22,2 28,5 22,8" fill="#FF7394"/></svg></div>
+        <div class="chain-node">
+          <div class="chain-dot" style="border-color:#39B985;color:#39B985;">Priv<br>Acct</div>
+          <div class="chain-name">svc-backup</div>
+        </div>
+        <div class="chain-arrow"><svg viewBox="0 0 28 10"><line x1="0" y1="5" x2="22" y2="5" stroke="#FF7394" stroke-width="1.5"/><polygon points="22,2 28,5 22,8" fill="#FF7394"/></svg></div>
+        <div class="chain-node">
+          <div class="chain-dot" style="border-color:#A154E4;color:#A154E4;">Prod<br>DB</div>
+          <div class="chain-name">db-prod-02</div>
+        </div>
+      </div>
+
+      <div class="hero-metrics">
+        <div class="hero-metric">
+          <div class="hero-metric-val" style="color:#FF7394;">9.8</div>
+          <div class="hero-metric-label">Risk Score</div>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-metric-val" style="color:#DD6E1E;">5</div>
+          <div class="hero-metric-label">Hops</div>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-metric-val" style="color:#FFDB36;">3</div>
+          <div class="hero-metric-label">CVEs</div>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-metric-val" style="color:#61C9D3;">14</div>
+          <div class="hero-metric-label">Assets</div>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-metric-val" style="color:#39B985;">2</div>
+          <div class="hero-metric-label">Identities</div>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn-crit">View Attack Path</button>
+        <button class="btn-ghost">Create Investigation</button>
+        <button class="btn-ghost">Assign</button>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="mini-graph">
+        <svg viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="7" markerHeight="5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#FF7394"/></marker>
+            <marker id="ag" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="7" markerHeight="5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#2A3055"/></marker>
+            <filter id="gl"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Secondary edges -->
+          <line x1="60" y1="50" x2="150" y2="90" stroke="#2A3055" stroke-width="1" marker-end="url(#ag)"/>
+          <line x1="60" y1="50" x2="100" y2="180" stroke="#2A3055" stroke-width="1" stroke-dasharray="4,3"/>
+          <line x1="150" y1="90" x2="260" y2="60" stroke="#2A3055" stroke-width="1" marker-end="url(#ag)"/>
+          <line x1="260" y1="60" x2="340" y2="120" stroke="#2A3055" stroke-width="1" stroke-dasharray="4,3"/>
+          <line x1="150" y1="90" x2="150" y2="200" stroke="#2A3055" stroke-width="1"/>
+          <line x1="260" y1="200" x2="360" y2="200" stroke="#2A3055" stroke-width="1"/>
+          <!-- Critical path -->
+          <line x1="60" y1="50" x2="150" y2="90" stroke="#FF7394" stroke-width="2" marker-end="url(#ar)" opacity="0.9"/>
+          <line x1="150" y1="90" x2="220" y2="130" stroke="#FF7394" stroke-width="2" marker-end="url(#ar)" opacity="0.9"/>
+          <line x1="220" y1="130" x2="300" y2="160" stroke="#FF7394" stroke-width="2" marker-end="url(#ar)" opacity="0.9"/>
+          <line x1="300" y1="160" x2="370" y2="200" stroke="#FF7394" stroke-width="2" marker-end="url(#ar)" opacity="0.9"/>
+          <!-- Nodes -->
+          <circle cx="60" cy="50" r="16" fill="#080C18" stroke="#B3E0FF" stroke-width="2" filter="url(#gl)"/>
+          <text x="60" y="54" text-anchor="middle" font-size="8" fill="#B3E0FF" font-weight="600">NET</text>
+          <circle cx="150" cy="90" r="16" fill="#080C18" stroke="#61C9D3" stroke-width="2" filter="url(#gl)"/>
+          <text x="150" y="94" text-anchor="middle" font-size="8" fill="#61C9D3" font-weight="600">WEB</text>
+          <circle cx="220" cy="130" r="14" fill="#080C18" stroke="#FF7394" stroke-width="2" filter="url(#gl)"/>
+          <text x="220" y="134" text-anchor="middle" font-size="7" fill="#FF7394" font-weight="600">CRED</text>
+          <circle cx="300" cy="160" r="16" fill="#080C18" stroke="#39B985" stroke-width="2" filter="url(#gl)"/>
+          <text x="300" y="164" text-anchor="middle" font-size="8" fill="#39B985" font-weight="600">SVC</text>
+          <circle cx="370" cy="200" r="16" fill="#080C18" stroke="#A154E4" stroke-width="2" filter="url(#gl)"/>
+          <text x="370" y="204" text-anchor="middle" font-size="8" fill="#A154E4" font-weight="600">DB</text>
+          <!-- Secondary nodes -->
+          <circle cx="100" cy="180" r="12" fill="#080C18" stroke="#61C9D3" stroke-width="1.5"/>
+          <text x="100" y="183" text-anchor="middle" font-size="7" fill="#61C9D3">FW</text>
+          <circle cx="260" cy="60" r="12" fill="#080C18" stroke="#DD6E1E" stroke-width="1.5"/>
+          <text x="260" y="63" text-anchor="middle" font-size="7" fill="#DD6E1E">CVE</text>
+          <circle cx="150" cy="200" r="12" fill="#080C18" stroke="#61C9D3" stroke-width="1.5"/>
+          <text x="150" y="203" text-anchor="middle" font-size="7" fill="#61C9D3">VPN</text>
+          <circle cx="260" cy="200" r="12" fill="#080C18" stroke="#39B985" stroke-width="1.5"/>
+          <text x="260" y="203" text-anchor="middle" font-size="7" fill="#39B985">ADM</text>
+          <circle cx="360" cy="200" r="10" fill="#080C18" stroke="#A154E4" stroke-width="1.5"/>
+          <text x="360" y="203" text-anchor="middle" font-size="6" fill="#A154E4">S3</text>
+          <circle cx="340" cy="120" r="10" fill="#080C18" stroke="#B3E0FF" stroke-width="1.5"/>
+          <text x="340" y="123" text-anchor="middle" font-size="6" fill="#B3E0FF">DNS</text>
+          <!-- Legend -->
+          <line x1="20" y1="244" x2="36" y2="244" stroke="#FF7394" stroke-width="2"/><text x="40" y="247" font-size="9" fill="#6B6B75">Critical Path</text>
+          <line x1="120" y1="244" x2="136" y2="244" stroke="#2A3055" stroke-width="1"/><text x="140" y="247" font-size="9" fill="#6B6B75">Relationship</text>
+          <text x="240" y="247" font-size="9" fill="#6B6B75">156 entities &middot; 342 edges</text>
+        </svg>
+        <div class="graph-label">Expand Graph &rarr;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 — TOP SECURITY ISSUES -->
+  <div class="card" style="margin-bottom:24px;">
+    <div class="card-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        Top Security Issues
+        <span class="sev sev-c">47 Critical</span>
+        <span class="sev sev-h">389 High</span>
+      </div>
+      <a class="link">View All Issues &rarr;</a>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Issue</th>
+          <th>Severity</th>
+          <th>Asset</th>
+          <th>Identity</th>
+          <th>Exposure Type</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="issue-link">Internet-exposed database with default credentials</td>
+          <td><span class="sev sev-c">Critical</span></td>
+          <td>db-prod-02</td>
+          <td>svc-backup</td>
+          <td>Credential + Network</td>
+          <td><span class="status st-open">Open</span></td>
+        </tr>
+        <tr>
+          <td class="issue-link">Public S3 bucket containing customer PII</td>
+          <td><span class="sev sev-c">Critical</span></td>
+          <td>s3-prod-data</td>
+          <td>—</td>
+          <td>Misconfiguration</td>
+          <td><span class="status st-open">Open</span></td>
+        </tr>
+        <tr>
+          <td class="issue-link">Domain admin without MFA — jason.mitchell</td>
+          <td><span class="sev sev-c">Critical</span></td>
+          <td>—</td>
+          <td>jason.mitchell@acme</td>
+          <td>Identity Risk</td>
+          <td><span class="status st-triage">Triaging</span></td>
+        </tr>
+        <tr>
+          <td class="issue-link">CVE-2024-21407 — Hyper-V RCE on domain controller</td>
+          <td><span class="sev sev-c">Critical</span></td>
+          <td>srv-dc-01</td>
+          <td>—</td>
+          <td>Vulnerability</td>
+          <td><span class="status st-open">Open</span></td>
+        </tr>
+        <tr>
+          <td class="issue-link">Lateral movement path: VPN gateway to production</td>
+          <td><span class="sev sev-h">High</span></td>
+          <td>vpn-gw-01</td>
+          <td>svc-deploy-ci</td>
+          <td>Attack Path</td>
+          <td><span class="status st-triage">Triaging</span></td>
+        </tr>
+        <tr>
+          <td class="issue-link">Admin API key committed to public repository</td>
+          <td><span class="sev sev-h">High</span></td>
+          <td>api-gateway-east</td>
+          <td>admin-ops</td>
+          <td>Credential Exposure</td>
+          <td><span class="status st-review">Review</span></td>
+        </tr>
+        <tr>
+          <td class="issue-link">Excessive cross-account IAM role trust policy</td>
+          <td><span class="sev sev-h">High</span></td>
+          <td>aws-account-prod</td>
+          <td>role-cross-acct</td>
+          <td>Identity Risk</td>
+          <td><span class="status st-planned">Planned</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-footer">
+      <span>Showing 1–7 of 436</span>
+      <div class="page-btns">
+        <div class="pg on">1</div>
+        <div class="pg">2</div>
+        <div class="pg">3</div>
+        <div class="pg">...</div>
+        <div class="pg">63</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 — EXPOSURE DISTRIBUTION -->
+  <div style="margin-bottom:24px;">
+    <div style="font-size:15px;font-weight:600;color:#ECECF0;margin-bottom:14px;">Exposure Distribution</div>
+    <div class="dist-grid">
+      <!-- Severity Distribution -->
+      <div class="dist-card">
+        <div class="dist-label">By Severity</div>
+        <div class="dist-bar-wrap">
+          <div class="dist-row">
+            <div class="dist-row-label">Critical</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:34%;background:#FF7394;"></div></div>
+            <div class="dist-row-val" style="color:#FF7394;">142</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-row-label">High</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:62%;background:#DD6E1E;"></div></div>
+            <div class="dist-row-val" style="color:#DD6E1E;">389</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-row-label">Medium</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:80%;background:#FFDB36;"></div></div>
+            <div class="dist-row-val" style="color:#FFDB36;">521</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-row-label">Low</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:30%;background:#39B985;"></div></div>
+            <div class="dist-row-val" style="color:#39B985;">195</div>
+          </div>
+        </div>
+      </div>
+      <!-- Internet Exposure -->
+      <div class="dist-card">
+        <div class="dist-label">Internet-Exposed Assets</div>
+        <div class="dist-total" style="color:#FF7394;">89</div>
+        <div class="dist-sub">of 12,847 total assets</div>
+        <div class="dist-bar-wrap" style="margin-top:14px;">
+          <div class="dist-row">
+            <div class="dist-row-label">Servers</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:45%;background:#61C9D3;"></div></div>
+            <div class="dist-row-val" style="color:#61C9D3;">34</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-row-label">Cloud</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:35%;background:#A154E4;"></div></div>
+            <div class="dist-row-val" style="color:#A154E4;">28</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-row-label">APIs</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:22%;background:#B3E0FF;"></div></div>
+            <div class="dist-row-val" style="color:#B3E0FF;">18</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-row-label">Other</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:12%;background:#9898A0;"></div></div>
+            <div class="dist-row-val" style="color:#9898A0;">9</div>
+          </div>
+        </div>
+      </div>
+      <!-- Cloud Misconfigurations -->
+      <div class="dist-card">
+        <div class="dist-label">Cloud Misconfigurations</div>
+        <div class="dist-total" style="color:#DD6E1E;">249</div>
+        <div class="dist-sub">across 3 cloud accounts</div>
+        <div class="dist-bar-wrap" style="margin-top:14px;">
+          <div class="dist-row">
+            <div class="dist-row-label">IAM</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:55%;background:#39B985;"></div></div>
+            <div class="dist-row-val" style="color:#39B985;">98</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-row-label">Storage</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:35%;background:#A154E4;"></div></div>
+            <div class="dist-row-val" style="color:#A154E4;">67</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-row-label">Network</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:28%;background:#61C9D3;"></div></div>
+            <div class="dist-row-val" style="color:#61C9D3;">52</div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-row-label">Compute</div>
+            <div class="dist-bar"><div class="dist-fill" style="width:15%;background:#B3E0FF;"></div></div>
+            <div class="dist-row-val" style="color:#B3E0FF;">32</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 + 6 — ASSETS AT RISK + IDENTITY RISK -->
+  <div class="bottom-row">
+    <!-- ASSETS AT RISK -->
+    <div class="bottom-col">
+      <div class="card">
+        <div class="card-header">Assets at Risk <a class="link">View All &rarr;</a></div>
+        <div class="risk-row" style="margin-bottom:12px;">
+          <div class="risk-card">
+            <div class="risk-icon" style="background:rgba(255,115,148,0.1);color:#FF7394;">&#127760;</div>
+            <div>
+              <div class="risk-val" style="color:#FF7394;">89</div>
+              <div class="risk-label">Internet-Exposed</div>
+              <div class="risk-trend" style="color:#FF7394;">+12 this week</div>
+            </div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-icon" style="background:rgba(221,110,30,0.1);color:#DD6E1E;">&#9888;</div>
+            <div>
+              <div class="risk-val" style="color:#DD6E1E;">342</div>
+              <div class="risk-label">Critical Vulns</div>
+              <div class="risk-trend" style="color:#39B985;">-18 remediated</div>
+            </div>
+          </div>
+        </div>
+        <div class="risk-row">
+          <div class="risk-card">
+            <div class="risk-icon" style="background:rgba(179,224,255,0.1);color:#B3E0FF;">&#10010;</div>
+            <div>
+              <div class="risk-val" style="color:#B3E0FF;">156</div>
+              <div class="risk-label">New (7 days)</div>
+              <div class="risk-trend" style="color:#9898A0;">23 unclassified</div>
+            </div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-icon" style="background:rgba(255,219,54,0.1);color:#FFDB36;">&#128683;</div>
+            <div>
+              <div class="risk-val" style="color:#FFDB36;">67</div>
+              <div class="risk-label">No Monitoring</div>
+              <div class="risk-trend" style="color:#FF7394;">41 production</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IDENTITY RISK -->
+    <div class="bottom-col">
+      <div class="card">
+        <div class="card-header">Identity Risk <a class="link">View All &rarr;</a></div>
+        <div class="id-grid">
+          <div class="risk-card">
+            <div class="risk-icon" style="background:rgba(255,115,148,0.1);color:#FF7394;">&#128274;</div>
+            <div>
+              <div class="risk-val" style="color:#FF7394;">23</div>
+              <div class="risk-label">Privileged No MFA</div>
+              <div class="risk-trend" style="color:#FF7394;">8 domain admins</div>
+            </div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-icon" style="background:rgba(221,110,30,0.1);color:#DD6E1E;">&#128164;</div>
+            <div>
+              <div class="risk-val" style="color:#DD6E1E;">41</div>
+              <div class="risk-label">Dormant Admins</div>
+              <div class="risk-trend" style="color:#9898A0;">90+ days inactive</div>
+            </div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-icon" style="background:rgba(255,219,54,0.1);color:#FFDB36;">&#9889;</div>
+            <div>
+              <div class="risk-val" style="color:#FFDB36;">156</div>
+              <div class="risk-label">Excessive Perms</div>
+              <div class="risk-trend" style="color:#9898A0;">3.2x over-provisioned</div>
+            </div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-icon" style="background:rgba(57,185,133,0.1);color:#39B985;">&#128101;</div>
+            <div>
+              <div class="risk-val" style="color:#39B985;">12</div>
+              <div class="risk-label">Shared Accounts</div>
+              <div class="risk-trend" style="color:#DD6E1E;">4 have admin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>
