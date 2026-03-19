@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Identity Risk Investigation — Cyderes Darkstar</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #080C18; color: #ECECF0; width: 1440px; min-height: 900px; display: flex; }
+
+  /* ── Tokens ── */
+  :root {
+    --base: #080C18; --raised: #0D1220; --card: #151A2D; --elevated: #1C2340; --border: #2A3055;
+    --text-1: #ECECF0; --text-2: #9898A0; --text-3: #6B6B75;
+    --emerald: #39B985;
+    --critical: #FF7394; --high: #DD6E1E; --medium: #FFDB36; --low: #39B985; --info: #B3E0FF;
+    --asset: #61C9D3; --identity: #39B985; --vuln: #FF7394; --exposure: #DD6E1E; --db: #A154E4; --env: #B3E0FF;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar { width: 240px; min-height: 100vh; background: var(--raised); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar-logo { padding: 20px 24px; font-size: 15px; font-weight: 700; letter-spacing: 4px; color: var(--emerald); }
+  .nav-section { margin-top: 8px; }
+  .nav-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; padding: 12px 24px 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 24px; font-size: 14px; font-weight: 500; color: var(--text-2); cursor: pointer; border-left: 3px solid transparent; transition: background .15s; }
+  .nav-item:hover { background: rgba(255,255,255,.04); }
+  .nav-item.active { color: var(--emerald); background: var(--elevated); border-left-color: var(--emerald); }
+  .nav-item .icon { width: 18px; text-align: center; font-size: 14px; opacity: .7; }
+  .nav-item.active .icon { opacity: 1; }
+  .sidebar-bottom { margin-top: auto; border-top: 1px solid var(--border); padding: 12px 0; }
+  .avatar-pill { display: flex; align-items: center; gap: 10px; padding: 10px 24px; }
+  .avatar-circle { width: 32px; height: 32px; border-radius: 50%; background: var(--elevated); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text-2); border: 1px solid var(--border); }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  /* ── Top Bar ── */
+  .topbar { height: 56px; background: var(--raised); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+  .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-2); }
+  .breadcrumb span:last-child { color: var(--text-1); font-weight: 500; }
+  .breadcrumb .sep { color: var(--text-3); }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-btn { background: none; border: 1px solid var(--border); color: var(--text-2); padding: 6px 12px; border-radius: 6px; font-size: 13px; font-family: inherit; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  .env-pill { background: rgba(57,185,133,.12); color: var(--emerald); border: 1px solid rgba(57,185,133,.25); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+  .bell-wrap { position: relative; }
+  .bell-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: var(--critical); border-radius: 50%; border: 2px solid var(--raised); }
+
+  /* ── Content ── */
+  .content { padding: 24px; overflow-y: auto; flex: 1; }
+
+  /* ── Cards ── */
+  .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); }
+  .card-sm { border-radius: 8px; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .card-header h3 { font-size: 14px; font-weight: 600; color: var(--text-1); }
+  .card-header .link { font-size: 12px; color: var(--emerald); cursor: pointer; font-weight: 500; }
+  .card-body { padding: 20px; }
+
+  /* ── Entity Header ── */
+  .entity-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .entity-left { display: flex; gap: 16px; flex: 1; }
+  .entity-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--emerald); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #080C18; flex-shrink: 0; }
+  .entity-info { display: flex; flex-direction: column; gap: 8px; }
+  .entity-name-row { display: flex; align-items: center; gap: 10px; }
+  .entity-name { font-size: 20px; font-weight: 700; color: var(--text-1); }
+  .entity-type-pill { background: rgba(57,185,133,.15); color: var(--emerald); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 12px; }
+  .entity-meta { font-size: 12px; color: var(--text-2); }
+  .entity-meta .dot { margin: 0 6px; }
+  .status-row { display: flex; gap: 8px; margin-top: 2px; }
+  .status-pill { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 12px; display: flex; align-items: center; gap: 4px; }
+  .status-ok { background: rgba(57,185,133,.12); color: var(--emerald); }
+  .status-warn { background: rgba(221,110,30,.12); color: var(--high); }
+  .action-row { display: flex; gap: 8px; margin-top: 6px; }
+  .btn { font-family: inherit; font-size: 12px; font-weight: 500; padding: 7px 14px; border-radius: 6px; cursor: pointer; border: 1px solid; display: flex; align-items: center; gap: 5px; }
+  .btn-danger-outline { background: transparent; border-color: var(--critical); color: var(--critical); }
+  .btn-outline { background: transparent; border-color: var(--border); color: var(--text-2); }
+  .btn-primary { background: var(--emerald); border-color: var(--emerald); color: #080C18; font-weight: 600; }
+  .btn-red-outline { background: transparent; border-color: var(--critical); color: var(--critical); }
+
+  /* Risk Score */
+  .risk-score-block { text-align: center; flex-shrink: 0; padding: 8px 24px; }
+  .risk-number { font-size: 48px; font-weight: 700; color: var(--high); line-height: 1; }
+  .risk-label { font-size: 11px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  .risk-severity { font-size: 13px; font-weight: 600; color: var(--high); margin-top: 2px; }
+
+  /* ── Two Col ── */
+  .two-col { display: flex; gap: 20px; margin-top: 20px; }
+  .col-left { width: 60%; display: flex; flex-direction: column; gap: 20px; }
+  .col-right { width: 40%; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── Privilege Overview ── */
+  .priv-stats { display: flex; gap: 12px; margin-bottom: 16px; }
+  .priv-stat { flex: 1; background: var(--elevated); border-radius: 8px; padding: 14px 16px; text-align: center; border: 1px solid var(--border); }
+  .priv-stat .num { font-size: 22px; font-weight: 700; }
+  .priv-stat .lbl { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+  .ent-list { display: flex; flex-direction: column; gap: 0; }
+  .ent-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(42,48,85,.5); }
+  .ent-row:last-child { border-bottom: none; }
+  .ent-name { font-size: 13px; font-weight: 500; color: var(--text-1); }
+  .ent-source { font-size: 12px; color: var(--text-2); }
+  .sev-pill { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 10px; text-transform: uppercase; }
+  .sev-critical { background: rgba(255,115,148,.15); color: var(--critical); }
+  .sev-high { background: rgba(221,110,30,.15); color: var(--high); }
+  .sev-medium { background: rgba(255,219,54,.15); color: var(--medium); }
+  .sev-low { background: rgba(57,185,133,.15); color: var(--low); }
+  .sev-info { background: rgba(179,224,255,.15); color: var(--info); }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--elevated); font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; padding: 10px 14px; text-align: left; white-space: nowrap; }
+  tbody td { padding: 12px 14px; font-size: 13px; color: var(--text-1); border-bottom: 1px solid rgba(42,48,85,.4); vertical-align: middle; }
+  tbody tr:hover { background: rgba(255,255,255,.02); }
+  .finding-desc { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+  .filter-tabs { display: flex; gap: 8px; }
+  .filter-tab { font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); color: var(--text-2); background: transparent; font-family: inherit; }
+  .filter-tab.active { border-color: var(--critical); color: var(--critical); background: rgba(255,115,148,.08); }
+
+  /* ── Timeline ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: var(--border); }
+  .tl-item { display: flex; gap: 14px; padding: 12px 0; position: relative; }
+  .tl-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; position: relative; z-index: 1; border: 2px solid var(--card); }
+  .tl-dot.red { background: var(--critical); }
+  .tl-dot.yellow { background: var(--medium); }
+  .tl-dot.green { background: var(--emerald); }
+  .tl-content { flex: 1; min-width: 0; }
+  .tl-title { font-size: 13px; font-weight: 500; color: var(--text-1); }
+  .tl-desc { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+  .tl-meta { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+
+  /* ── Accessible Resources Grid ── */
+  .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .res-card { background: var(--elevated); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .res-top { display: flex; justify-content: space-between; align-items: center; }
+  .res-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+  .res-name { font-size: 13px; font-weight: 600; color: var(--text-1); }
+  .res-type { font-size: 11px; color: var(--text-2); }
+  .res-perms { display: flex; gap: 4px; flex-wrap: wrap; }
+  .perm-pill { font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,.06); color: var(--text-2); text-transform: uppercase; letter-spacing: .3px; }
+  .perm-pill.write { color: var(--high); background: rgba(221,110,30,.1); }
+  .perm-pill.delete { color: var(--critical); background: rgba(255,115,148,.1); }
+  .perm-pill.admin { color: var(--critical); background: rgba(255,115,148,.12); }
+  .perm-pill.read { color: var(--emerald); background: rgba(57,185,133,.1); }
+  .perm-pill.exec { color: var(--medium); background: rgba(255,219,54,.1); }
+  .res-age { font-size: 10px; color: var(--text-3); }
+
+  /* SVG graph */
+  .graph-container { width: 100%; height: 320px; position: relative; }
+  .graph-legend { display: flex; gap: 14px; padding: 12px 20px; border-top: 1px solid var(--border); }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-2); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">CYDERES</div>
+
+  <div class="nav-section">
+    <div class="nav-label">Command Center</div>
+    <div class="nav-item"><span class="icon">▣</span> Dashboard</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Detect &amp; Respond</div>
+    <div class="nav-item"><span class="icon">⚡</span> Incidents</div>
+    <div class="nav-item"><span class="icon">◎</span> Detections</div>
+    <div class="nav-item"><span class="icon">🔍</span> Investigations</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Exposure</div>
+    <div class="nav-item"><span class="icon">◉</span> Overview</div>
+    <div class="nav-item"><span class="icon">⬡</span> Findings</div>
+    <div class="nav-item"><span class="icon">⤳</span> Attack Paths</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Inventory</div>
+    <div class="nav-item"><span class="icon">⊞</span> Assets</div>
+    <div class="nav-item active"><span class="icon">👤</span> Identities</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Analysis</div>
+    <div class="nav-item"><span class="icon">◈</span> Issue Map</div>
+    <div class="nav-item"><span class="icon">📊</span> Reports</div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="nav-item"><span class="icon">⚙</span> Settings</div>
+    <div class="avatar-pill">
+      <div class="avatar-circle">CM</div>
+      <span style="font-size:13px;color:var(--text-2)">C. Miller</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ════════════ MAIN ════════════ -->
+<div class="main">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="breadcrumb">
+      <span>Inventory</span><span class="sep">/</span>
+      <span>Identities</span><span class="sep">/</span>
+      <span>jason.mitchell@acme-corp.com</span>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn">⌕ Search</button>
+      <div class="bell-wrap">
+        <button class="topbar-btn">🔔</button>
+        <span class="bell-dot"></span>
+      </div>
+      <span class="env-pill">● Production</span>
+      <button class="topbar-btn">↗ Export</button>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ══ Entity Header Card ══ -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-body entity-header">
+        <div class="entity-left">
+          <div class="entity-avatar">JM</div>
+          <div class="entity-info">
+            <div class="entity-name-row">
+              <span class="entity-name">jason.mitchell@acme-corp.com</span>
+              <span class="entity-type-pill">Human</span>
+            </div>
+            <div class="entity-meta">
+              Provider: Azure AD<span class="dot">·</span>Department: Engineering<span class="dot">·</span>Last Active: 2 hours ago<span class="dot">·</span>Created: Jan 14, 2024
+            </div>
+            <div class="status-row">
+              <span class="status-pill status-ok">✓ Active</span>
+              <span class="status-pill status-ok">✓ MFA Enabled</span>
+              <span class="status-pill status-warn">⚠ Stale Credentials</span>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-danger-outline">Disable Account</button>
+              <button class="btn btn-outline">Reset Credentials</button>
+              <button class="btn btn-primary">Review Permissions</button>
+              <button class="btn btn-red-outline">⚠ Escalate</button>
+            </div>
+          </div>
+        </div>
+        <div class="risk-score-block">
+          <div class="risk-number">74</div>
+          <div class="risk-label">RISK SCORE</div>
+          <div class="risk-severity">High</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ Two Column Layout ══ -->
+    <div class="two-col">
+
+      <!-- ── LEFT COLUMN ── -->
+      <div class="col-left">
+
+        <!-- Privilege Overview -->
+        <div class="card card-sm">
+          <div class="card-header"><h3>Privilege Overview</h3></div>
+          <div class="card-body">
+            <div class="priv-stats">
+              <div class="priv-stat"><div class="num" style="color:var(--text-1)">12</div><div class="lbl">Total Entitlements</div></div>
+              <div class="priv-stat"><div class="num" style="color:var(--high)">4</div><div class="lbl">Elevated Privileges</div></div>
+              <div class="priv-stat"><div class="num" style="color:var(--critical)">2</div><div class="lbl">Excessive Access</div></div>
+            </div>
+            <div class="ent-list">
+              <div class="ent-row">
+                <div><div class="ent-name">Global Admin</div><div class="ent-source">Azure AD</div></div>
+                <span class="sev-pill sev-critical">Critical</span>
+              </div>
+              <div class="ent-row">
+                <div><div class="ent-name">S3 Full Access</div><div class="ent-source">AWS / Production</div></div>
+                <span class="sev-pill sev-high">High</span>
+              </div>
+              <div class="ent-row">
+                <div><div class="ent-name">DB Read/Write</div><div class="ent-source">RDS / us-east-1</div></div>
+                <span class="sev-pill sev-medium">Medium</span>
+              </div>
+              <div class="ent-row">
+                <div><div class="ent-name">CI/CD Pipeline</div><div class="ent-source">GitHub Actions</div></div>
+                <span class="sev-pill sev-low">OK</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Identity Relationship Graph -->
+        <div class="card card-sm">
+          <div class="card-header"><h3>◈ Identity Relationship Graph</h3><span class="link">Expand</span></div>
+          <div class="graph-container">
+            <svg width="100%" height="320" viewBox="0 0 680 320">
+              <defs>
+                <!-- Glow filters -->
+                <filter id="glow-emerald" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="6" result="blur"/>
+                  <feFlood flood-color="#39B985" flood-opacity="0.4"/>
+                  <feComposite in2="blur" operator="in"/>
+                  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="glow-critical" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="5" result="blur"/>
+                  <feFlood flood-color="#FF7394" flood-opacity="0.45"/>
+                  <feComposite in2="blur" operator="in"/>
+                  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="glow-info" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="4" result="blur"/>
+                  <feFlood flood-color="#B3E0FF" flood-opacity="0.35"/>
+                  <feComposite in2="blur" operator="in"/>
+                  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="glow-asset" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="4" result="blur"/>
+                  <feFlood flood-color="#61C9D3" flood-opacity="0.35"/>
+                  <feComposite in2="blur" operator="in"/>
+                  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="glow-db" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="4" result="blur"/>
+                  <feFlood flood-color="#A154E4" flood-opacity="0.35"/>
+                  <feComposite in2="blur" operator="in"/>
+                  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <!-- Edge glow -->
+                <filter id="edge-glow-critical" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                  <feFlood flood-color="#FF7394" flood-opacity="0.5"/>
+                  <feComposite in2="blur" operator="in"/>
+                  <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+
+              <!-- Cluster backgrounds -->
+              <rect x="90" y="60" width="180" height="110" rx="12" fill="none" stroke="#2A3055" stroke-width="1" stroke-dasharray="6 4" opacity="0.5"/>
+              <text x="100" y="78" font-size="9" fill="#6B6B75" font-weight="600" letter-spacing="0.5">GROUPS</text>
+
+              <rect x="380" y="185" width="260" height="120" rx="12" fill="none" stroke="#2A3055" stroke-width="1" stroke-dasharray="6 4" opacity="0.5"/>
+              <text x="390" y="203" font-size="9" fill="#6B6B75" font-weight="600" letter-spacing="0.5">RESOURCES</text>
+
+              <!-- Edges — normal -->
+              <line x1="340" y1="150" x2="185" y2="95" stroke="#2A3055" stroke-width="1.5" opacity="0.7"/>
+              <line x1="340" y1="150" x2="185" y2="145" stroke="#2A3055" stroke-width="1.5" opacity="0.7"/>
+              <line x1="340" y1="150" x2="500" y2="100" stroke="#2A3055" stroke-width="1.5" opacity="0.7"/>
+              <line x1="340" y1="150" x2="490" y2="235" stroke="#2A3055" stroke-width="1.5" opacity="0.7"/>
+              <line x1="340" y1="150" x2="600" y2="255" stroke="#2A3055" stroke-width="1.5" opacity="0.7"/>
+
+              <!-- Edges — critical glow -->
+              <line x1="340" y1="150" x2="160" y2="215" stroke="#FF7394" stroke-width="1.5" filter="url(#edge-glow-critical)" opacity="0.9"/>
+              <line x1="340" y1="150" x2="420" y2="260" stroke="#FF7394" stroke-width="1.5" filter="url(#edge-glow-critical)" opacity="0.75"/>
+              <line x1="340" y1="150" x2="225" y2="275" stroke="#A154E4" stroke-width="1.5" opacity="0.7"/>
+              <line x1="340" y1="150" x2="340" y2="275" stroke="#B3E0FF" stroke-width="1.5" opacity="0.6"/>
+
+              <!-- Group connections -->
+              <line x1="185" y1="95" x2="160" y2="215" stroke="#2A3055" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>
+              <line x1="185" y1="145" x2="500" y2="100" stroke="#2A3055" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>
+
+              <!-- Center node: jason.mitchell -->
+              <circle cx="340" cy="150" r="28" fill="#0D1220" stroke="#39B985" stroke-width="2.5" filter="url(#glow-emerald)"/>
+              <circle cx="340" cy="150" r="22" fill="rgba(57,185,133,0.15)"/>
+              <text x="340" y="146" text-anchor="middle" font-size="11" font-weight="700" fill="#39B985">J.M.</text>
+              <text x="340" y="157" text-anchor="middle" font-size="7" fill="#9898A0">Identity</text>
+
+              <!-- Eng-Admins — group, top-left -->
+              <circle cx="185" cy="95" r="21" fill="#0D1220" stroke="#39B985" stroke-width="2" filter="url(#glow-emerald)"/>
+              <circle cx="185" cy="95" r="16" fill="rgba(57,185,133,0.12)"/>
+              <text x="185" y="93" text-anchor="middle" font-size="8" font-weight="600" fill="#39B985">Eng</text>
+              <text x="185" y="102" text-anchor="middle" font-size="7" fill="#9898A0">Admins</text>
+
+              <!-- Cloud-Ops — group, top-right -->
+              <circle cx="185" cy="145" r="21" fill="#0D1220" stroke="#39B985" stroke-width="2" filter="url(#glow-emerald)"/>
+              <circle cx="185" cy="145" r="16" fill="rgba(57,185,133,0.12)"/>
+              <text x="185" y="143" text-anchor="middle" font-size="8" font-weight="600" fill="#39B985">Cloud</text>
+              <text x="185" y="152" text-anchor="middle" font-size="7" fill="#9898A0">Ops</text>
+
+              <!-- GlobalAdmin — role, critical highlight -->
+              <circle cx="160" cy="215" r="19" fill="#0D1220" stroke="#FF7394" stroke-width="2" filter="url(#glow-critical)"/>
+              <circle cx="160" cy="215" r="14" fill="rgba(255,115,148,0.12)"/>
+              <text x="160" y="213" text-anchor="middle" font-size="7" font-weight="600" fill="#FF7394">Global</text>
+              <text x="160" y="221" text-anchor="middle" font-size="7" fill="#FF7394">Admin</text>
+
+              <!-- DevOps-Lead — role, right -->
+              <circle cx="500" cy="100" r="19" fill="#0D1220" stroke="#39B985" stroke-width="2" filter="url(#glow-emerald)"/>
+              <circle cx="500" cy="100" r="14" fill="rgba(57,185,133,0.12)"/>
+              <text x="500" y="98" text-anchor="middle" font-size="7" font-weight="600" fill="#39B985">DevOps</text>
+              <text x="500" y="107" text-anchor="middle" font-size="7" fill="#9898A0">Lead</text>
+
+              <!-- Azure AD — service, bottom-left -->
+              <circle cx="225" cy="275" r="19" fill="#0D1220" stroke="#B3E0FF" stroke-width="2" filter="url(#glow-info)"/>
+              <circle cx="225" cy="275" r="14" fill="rgba(179,224,255,0.1)"/>
+              <text x="225" y="273" text-anchor="middle" font-size="7" font-weight="600" fill="#B3E0FF">Azure</text>
+              <text x="225" y="282" text-anchor="middle" font-size="7" fill="#B3E0FF">AD</text>
+
+              <!-- Prod DB — resource, bottom -->
+              <circle cx="420" cy="260" r="19" fill="#0D1220" stroke="#A154E4" stroke-width="2" filter="url(#glow-db)"/>
+              <circle cx="420" cy="260" r="14" fill="rgba(161,84,228,0.12)"/>
+              <text x="420" y="258" text-anchor="middle" font-size="7" font-weight="600" fill="#A154E4">Prod</text>
+              <text x="420" y="267" text-anchor="middle" font-size="7" fill="#A154E4">DB</text>
+
+              <!-- AWS IAM — service, bottom -->
+              <circle cx="340" cy="275" r="19" fill="#0D1220" stroke="#B3E0FF" stroke-width="2" filter="url(#glow-info)"/>
+              <circle cx="340" cy="275" r="14" fill="rgba(179,224,255,0.1)"/>
+              <text x="340" y="273" text-anchor="middle" font-size="7" font-weight="600" fill="#B3E0FF">AWS</text>
+              <text x="340" y="282" text-anchor="middle" font-size="7" fill="#B3E0FF">IAM</text>
+
+              <!-- S3 Buckets — resource, bottom-right -->
+              <circle cx="490" cy="235" r="19" fill="#0D1220" stroke="#61C9D3" stroke-width="2" filter="url(#glow-asset)"/>
+              <circle cx="490" cy="235" r="14" fill="rgba(97,201,211,0.12)"/>
+              <text x="490" y="233" text-anchor="middle" font-size="7" font-weight="600" fill="#61C9D3">S3</text>
+              <text x="490" y="242" text-anchor="middle" font-size="7" fill="#61C9D3">Buckets</text>
+
+              <!-- GitHub — resource -->
+              <circle cx="600" cy="255" r="19" fill="#0D1220" stroke="#61C9D3" stroke-width="2" filter="url(#glow-asset)"/>
+              <circle cx="600" cy="255" r="14" fill="rgba(97,201,211,0.12)"/>
+              <text x="600" y="253" text-anchor="middle" font-size="7" font-weight="600" fill="#61C9D3">Git</text>
+              <text x="600" y="262" text-anchor="middle" font-size="7" fill="#61C9D3">Hub</text>
+            </svg>
+          </div>
+          <div class="graph-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--identity)"></div> Identity</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--identity)"></div> Group</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--critical)"></div> Role</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--info)"></div> Service</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--asset)"></div> Resource</div>
+          </div>
+        </div>
+
+        <!-- Risk Findings Table -->
+        <div class="card card-sm">
+          <div class="card-header">
+            <h3>Risk Findings</h3>
+            <div class="filter-tabs">
+              <button class="filter-tab active">2 Critical</button>
+              <button class="filter-tab">3 High</button>
+              <button class="filter-tab">4 Medium</button>
+              <button class="filter-tab">1 Low</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Finding</th>
+                  <th>Severity</th>
+                  <th>Source</th>
+                  <th>Detected</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color:var(--text-2);font-size:12px">RF-1842</td>
+                  <td>
+                    <div>Dormant Global Admin privileges</div>
+                    <div class="finding-desc">Role enabled for 47 days but not assigned to any task</div>
+                  </td>
+                  <td><span class="sev-pill sev-critical">Critical</span></td>
+                  <td style="color:var(--text-2)">Azure AD</td>
+                  <td style="color:var(--text-2);white-space:nowrap">Mar 10, 2026</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--text-2);font-size:12px">RF-1830</td>
+                  <td>
+                    <div>Access keys not rotated in 180+ days</div>
+                    <div class="finding-desc">IAM access keys exceed rotation policy</div>
+                  </td>
+                  <td><span class="sev-pill sev-critical">Critical</span></td>
+                  <td style="color:var(--text-2)">AWS IAM</td>
+                  <td style="color:var(--text-2);white-space:nowrap">Mar 8, 2026</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--text-2);font-size:12px">RF-1825</td>
+                  <td>
+                    <div>Cross-account S3 access without MFA</div>
+                    <div class="finding-desc">Production S3 buckets accessible without session MFA</div>
+                  </td>
+                  <td><span class="sev-pill sev-high">High</span></td>
+                  <td style="color:var(--text-2)">AWS S3</td>
+                  <td style="color:var(--text-2);white-space:nowrap">Mar 7, 2026</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--text-2);font-size:12px">RF-1829</td>
+                  <td>
+                    <div>Impossible travel detected</div>
+                    <div class="finding-desc">Logins from US and EU within 23 minutes on Mar 5</div>
+                  </td>
+                  <td><span class="sev-pill sev-high">High</span></td>
+                  <td style="color:var(--text-2)">Azure AD</td>
+                  <td style="color:var(--text-2);white-space:nowrap">Mar 7, 2026</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--text-2);font-size:12px">RF-1824</td>
+                  <td>
+                    <div>Excessive DB permissions</div>
+                    <div class="finding-desc">Write access to prod RDS not used in last 60 days</div>
+                  </td>
+                  <td><span class="sev-pill sev-medium">Medium</span></td>
+                  <td style="color:var(--text-2)">AWS RDS</td>
+                  <td style="color:var(--text-2);white-space:nowrap">Mar 5, 2026</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RIGHT COLUMN ── -->
+      <div class="col-right">
+
+        <!-- Access Activity Timeline -->
+        <div class="card card-sm">
+          <div class="card-header"><h3>ACCESS ACTIVITY TIMELINE</h3></div>
+          <div class="card-body">
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-dot red"></div>
+                <div class="tl-content">
+                  <div class="tl-title">Failed login attempt (3x) — Azure AD</div>
+                  <div class="tl-desc">Brute-force from unrecognized device</div>
+                  <div class="tl-meta">Today, 11:42 AM · src: 200.189.xx</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot yellow"></div>
+                <div class="tl-content">
+                  <div class="tl-title">S3 bucket policy modified — prod-data-lake</div>
+                  <div class="tl-desc">Public access block removed</div>
+                  <div class="tl-meta">Today, 08:15 AM · 10.4.xx</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot green"></div>
+                <div class="tl-content">
+                  <div class="tl-title">Console login — AWS Management Console</div>
+                  <div class="tl-desc">Session via federated SSO</div>
+                  <div class="tl-meta">Today, 08:12 AM · 10.34.xx</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot green"></div>
+                <div class="tl-content">
+                  <div class="tl-title">MFA challenge completed successfully</div>
+                  <div class="tl-desc">TOTP via Authenticator app</div>
+                  <div class="tl-meta">Today, 08:50 AM</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot red"></div>
+                <div class="tl-content">
+                  <div class="tl-title">Impossible travel — login from Frankfurt, DE</div>
+                  <div class="tl-desc">Previous session from New York, US (23 min gap)</div>
+                  <div class="tl-meta">Mar 5, 04:17 PM · 51.216.xx</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot yellow"></div>
+                <div class="tl-content">
+                  <div class="tl-title">GitHub repository cloned — infra-terraform</div>
+                  <div class="tl-desc">Full clone of infrastructure-as-code</div>
+                  <div class="tl-meta">Mar 4, 03:33 PM · 10.4.xx</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accessible Resources -->
+        <div class="card card-sm">
+          <div class="card-header"><h3>ACCESSIBLE RESOURCES</h3></div>
+          <div class="card-body">
+            <div class="res-grid">
+              <!-- 1: prod-data-lake -->
+              <div class="res-card">
+                <div class="res-top">
+                  <span class="res-badge" style="background:rgba(221,110,30,.15);color:#DD6E1E">AWS</span>
+                  <span class="sev-pill sev-critical">Critical</span>
+                </div>
+                <div class="res-name">prod-data-lake</div>
+                <div class="res-type">S3 Bucket / us-east-1</div>
+                <div class="res-perms">
+                  <span class="perm-pill read">READ</span>
+                  <span class="perm-pill write">WRITE</span>
+                  <span class="perm-pill delete">DEL</span>
+                </div>
+                <div class="res-age">2d ago</div>
+              </div>
+              <!-- 2: Azure AD Tenant -->
+              <div class="res-card">
+                <div class="res-top">
+                  <span class="res-badge" style="background:rgba(179,224,255,.15);color:#B3E0FF">AD</span>
+                  <span class="sev-pill sev-critical">Critical</span>
+                </div>
+                <div class="res-name">Azure AD Tenant</div>
+                <div class="res-type">Directory / Global Admin</div>
+                <div class="res-perms">
+                  <span class="perm-pill admin">ADMIN</span>
+                  <span class="perm-pill write">WRITE</span>
+                </div>
+                <div class="res-age">47d idle</div>
+              </div>
+              <!-- 3: prod-analytics-db -->
+              <div class="res-card">
+                <div class="res-top">
+                  <span class="res-badge" style="background:rgba(161,84,228,.15);color:#A154E4">RDS</span>
+                  <span class="sev-pill sev-high">High</span>
+                </div>
+                <div class="res-name">prod-analytics-db</div>
+                <div class="res-type">PostgreSQL / us-east-1</div>
+                <div class="res-perms">
+                  <span class="perm-pill read">READ</span>
+                  <span class="perm-pill write">WRITE</span>
+                </div>
+                <div class="res-age">60d idle</div>
+              </div>
+              <!-- 4: infra-terraform -->
+              <div class="res-card">
+                <div class="res-top">
+                  <span class="res-badge" style="background:rgba(255,255,255,.08);color:#ECECF0">GH</span>
+                  <span class="sev-pill sev-medium">Medium</span>
+                </div>
+                <div class="res-name">infra-terraform</div>
+                <div class="res-type">Repository</div>
+                <div class="res-perms">
+                  <span class="perm-pill read">READ</span>
+                  <span class="perm-pill write">WRITE</span>
+                  <span class="perm-pill admin">ADMIN</span>
+                </div>
+                <div class="res-age">8d ago</div>
+              </div>
+              <!-- 5: prod-cluster-east -->
+              <div class="res-card">
+                <div class="res-top">
+                  <span class="res-badge" style="background:rgba(255,219,54,.12);color:#FFDB36">K8S</span>
+                  <span class="sev-pill sev-medium">Medium</span>
+                </div>
+                <div class="res-name">prod-cluster-east</div>
+                <div class="res-type">EKS / us-east-1</div>
+                <div class="res-perms">
+                  <span class="perm-pill read">READ</span>
+                  <span class="perm-pill exec">EXEC</span>
+                </div>
+                <div class="res-age">5d ago</div>
+              </div>
+              <!-- 6: analytics-bq-prod -->
+              <div class="res-card">
+                <div class="res-top">
+                  <span class="res-badge" style="background:rgba(57,185,133,.12);color:#39B985">GCP</span>
+                  <span class="sev-pill sev-low">OK</span>
+                </div>
+                <div class="res-name">analytics-bq-prod</div>
+                <div class="res-type">BigQuery / us-central1</div>
+                <div class="res-perms">
+                  <span class="perm-pill read">READ</span>
+                </div>
+                <div class="res-age">1d ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /col-right -->
+    </div><!-- /two-col -->
+  </div><!-- /content -->
+</div><!-- /main -->
+
+</body>
+</html>

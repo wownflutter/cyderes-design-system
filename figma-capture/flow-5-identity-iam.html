@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Cyderes — Identities (IAM)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#080C18;color:#ECECF0;width:1440px;min-height:900px;display:flex;}
+
+/* LEFT SIDEBAR */
+.sidebar{width:240px;background:#0D1220;display:flex;flex-direction:column;min-height:100vh;position:fixed;top:0;left:0;z-index:10;}
+.sidebar-logo{padding:24px 20px 28px;font-size:18px;font-weight:700;color:#39B985;letter-spacing:4px;}
+.nav-section{margin-bottom:16px;}
+.nav-section-label{font-size:11px;font-weight:600;text-transform:uppercase;color:#6B6B75;padding:8px 20px 4px;letter-spacing:1px;}
+.nav-item{display:flex;align-items:center;padding:8px 20px;font-size:14px;font-weight:500;color:#9898A0;cursor:pointer;border-left:3px solid transparent;transition:all .15s;}
+.nav-item:hover{color:#ECECF0;background:rgba(28,35,64,.5);}
+.nav-item.active{color:#ECECF0;border-left-color:#39B985;background:#1C2340;}
+.sidebar-bottom{margin-top:auto;padding:16px 20px;border-top:1px solid #2A3055;}
+.sidebar-bottom .nav-item{padding:8px 0;}
+.avatar{width:32px;height:32px;border-radius:50%;background:#39B985;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;margin-top:12px;}
+
+/* TOP BAR */
+.topbar{position:fixed;top:0;left:240px;right:0;height:56px;background:#0D1220;border-bottom:1px solid #2A3055;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:10;}
+.breadcrumb{font-size:13px;color:#9898A0;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.search-pill{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #2A3055;border-radius:8px;font-size:12px;color:#6B6B75;cursor:pointer;}
+.search-pill kbd{background:#1C2340;padding:2px 6px;border-radius:4px;font-size:11px;font-family:'Inter',sans-serif;}
+.bell-icon{position:relative;color:#9898A0;font-size:18px;cursor:pointer;}
+.bell-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#FF7394;border-radius:50%;}
+.env-pill{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #2A3055;border-radius:20px;font-size:12px;color:#ECECF0;}
+.env-dot{width:8px;height:8px;border-radius:50%;background:#39B985;}
+.export-btn{padding:6px 14px;border:1px solid #2A3055;border-radius:8px;font-size:12px;color:#ECECF0;background:transparent;cursor:pointer;}
+
+/* MAIN */
+.main{margin-left:240px;margin-top:56px;padding:24px;width:1200px;}
+
+/* CARDS */
+.card{background:#151A2D;border:1px solid #2A3055;border-radius:8px;padding:20px;}
+.card-header{font-size:15px;font-weight:600;color:#ECECF0;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px;}
+.kpi-label{font-size:13px;font-weight:500;color:#9898A0;margin-bottom:6px;}
+.kpi-value{font-size:28px;font-weight:700;margin-bottom:4px;}
+.kpi-sub{font-size:12px;}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:55fr 45fr;gap:16px;margin-bottom:16px;}
+
+/* TABLE STYLES */
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;font-size:11px;font-weight:600;color:#6B6B75;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid #2A3055;}
+td{padding:10px;border-bottom:1px solid rgba(42,48,85,.5);color:#ECECF0;font-weight:400;}
+
+/* PILLS / BADGES */
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.pill-red{background:rgba(255,115,148,.15);color:#FF7394;}
+.pill-orange{background:rgba(221,110,30,.15);color:#DD6E1E;}
+.pill-yellow{background:rgba(255,219,54,.15);color:#FFDB36;}
+.pill-green{background:rgba(57,185,133,.15);color:#39B985;}
+.pill-blue{background:rgba(179,224,255,.15);color:#B3E0FF;}
+
+.status-pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;}
+
+/* FILTER PILLS */
+.filter-pills{display:flex;gap:8px;}
+.filter-pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid #2A3055;color:#9898A0;cursor:pointer;background:transparent;}
+.filter-pill.active{background:#1C2340;color:#ECECF0;border-color:#39B985;}
+
+.badge-count{background:#1C2340;padding:2px 8px;border-radius:12px;font-size:12px;color:#9898A0;margin-left:8px;}
+
+/* PATTERN CARDS */
+.pattern-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.pattern-card{background:#1C2340;border-radius:8px;padding:16px;}
+.pattern-icon{font-size:22px;margin-bottom:8px;}
+.pattern-title{font-size:13px;font-weight:600;color:#ECECF0;margin-bottom:8px;}
+.pattern-stat{font-size:14px;font-weight:700;margin-bottom:2px;}
+.pattern-sub{font-size:12px;color:#9898A0;}
+
+/* GRAPH */
+.graph-header-link{font-size:13px;font-weight:500;color:#39B985;cursor:pointer;}
+.legend{display:flex;gap:16px;margin-top:12px;font-size:11px;color:#9898A0;}
+.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle;}
+
+/* SUBSECTION */
+.sub-label{font-size:12px;font-weight:600;color:#6B6B75;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;}
+.mini-table th{font-size:10px;padding:6px 8px;}
+.mini-table td{font-size:12px;padding:8px;}
+
+.bar-container{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.bar-label{font-size:12px;color:#9898A0;width:100px;text-align:right;}
+.bar-track{flex:1;height:14px;background:#1C2340;border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;}
+.bar-value{font-size:11px;color:#6B6B75;width:40px;}
+
+.risk-text{font-size:12px;color:#FF7394;margin-top:12px;}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:12px;color:#6B6B75;}
+.page-btns{display:flex;gap:4px;}
+.page-btn{width:28px;height:28px;border-radius:6px;border:1px solid #2A3055;background:transparent;color:#9898A0;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;}
+.page-btn.active{background:#39B985;color:#080C18;border-color:#39B985;font-weight:600;}
+
+.time-pill{padding:4px 10px;border:1px solid #2A3055;border-radius:16px;font-size:11px;color:#9898A0;}
+
+.warning-icon{color:#FF7394;margin-left:6px;}
+.check-green{color:#39B985;}
+.check-red{color:#FF7394;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">CYDERES</div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Command Center</div>
+    <div class="nav-item">Dashboard</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Detect &amp; Respond</div>
+    <div class="nav-item">Incidents</div>
+    <div class="nav-item">Detections</div>
+    <div class="nav-item">Investigations</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Exposure</div>
+    <div class="nav-item">Overview</div>
+    <div class="nav-item">Findings</div>
+    <div class="nav-item">Attack Paths</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Inventory</div>
+    <div class="nav-item">Assets</div>
+    <div class="nav-item active">Identities</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Analysis</div>
+    <div class="nav-item">Issue Map</div>
+    <div class="nav-item">Reports</div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="nav-item">Settings</div>
+    <div class="avatar">CM</div>
+  </div>
+</nav>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="breadcrumb">Inventory / Identities</div>
+  <div class="topbar-right">
+    <div class="search-pill">Search <kbd>⌘K</kbd></div>
+    <div class="bell-icon">🔔<span class="bell-dot"></span></div>
+    <div class="env-pill"><span class="env-dot"></span> Production</div>
+    <button class="export-btn">Export</button>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ROW 1: KPI CARDS -->
+  <div class="kpi-row">
+    <div class="card">
+      <div class="kpi-label">Total Identities</div>
+      <div class="kpi-value" style="color:#ECECF0">3,842</div>
+      <div class="kpi-sub" style="color:#9898A0">across 6 providers</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">Over-Privileged</div>
+      <div class="kpi-value" style="color:#FF7394">80</div>
+      <div class="kpi-sub" style="color:#FF7394">↑ 8 from last week</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">Stale Credentials</div>
+      <div class="kpi-value" style="color:#DD6E1E">156</div>
+      <div class="kpi-sub" style="color:#9898A0">90+ days inactive</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">No MFA Enabled</div>
+      <div class="kpi-value" style="color:#FFDB36">67</div>
+      <div class="kpi-sub" style="color:#FF7394">critical compliance gap</div>
+    </div>
+  </div>
+
+  <!-- ROW 2: TWO COLUMN -->
+  <div class="two-col">
+    <!-- Left: Privileged Identity Overview -->
+    <div class="card">
+      <div class="card-header">Privileged Identity Overview</div>
+
+      <!-- a) Global Admin Accounts -->
+      <div class="sub-label">Global Administrators — 12 accounts <span class="warning-icon">⚠</span></div>
+      <table class="mini-table">
+        <thead><tr><th>Identity</th><th>Provider</th><th>Last Active</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>admin-jblue@acme</td><td>Azure AD</td><td>2h ago</td><td><span class="status-pill check-green">✓ Active</span></td></tr>
+          <tr><td>root-aws-prod</td><td>AWS IAM</td><td>5d ago</td><td><span class="status-pill" style="color:#DD6E1E">⚠ Stale</span></td></tr>
+          <tr><td>sa-gcp-admin</td><td>GCP</td><td>12d ago</td><td><span class="status-pill" style="color:#DD6E1E">⚠ Stale</span></td></tr>
+        </tbody>
+      </table>
+
+      <!-- b) Privilege Distribution -->
+      <div class="sub-label" style="margin-top:20px;">Privilege Distribution</div>
+      <div style="margin-top:8px;">
+        <div class="bar-container">
+          <div class="bar-label">Global Admin</div>
+          <div class="bar-track"><div class="bar-fill" style="width:3%;background:#FF7394;"></div></div>
+          <div class="bar-value">12</div>
+        </div>
+        <div class="bar-container">
+          <div class="bar-label">Admin</div>
+          <div class="bar-track"><div class="bar-fill" style="width:12%;background:#DD6E1E;"></div></div>
+          <div class="bar-value">45</div>
+        </div>
+        <div class="bar-container">
+          <div class="bar-label">Power User</div>
+          <div class="bar-track"><div class="bar-fill" style="width:33%;background:#FFDB36;"></div></div>
+          <div class="bar-value">128</div>
+        </div>
+        <div class="bar-container">
+          <div class="bar-label">Standard</div>
+          <div class="bar-track"><div class="bar-fill" style="width:95%;background:#39B985;"></div></div>
+          <div class="bar-value">3,657</div>
+        </div>
+      </div>
+
+      <!-- c) Risk Summary -->
+      <div class="risk-text" style="margin-top:16px;">23 accounts with excessive privileges need immediate review</div>
+    </div>
+
+    <!-- Right: Identity Relationship Graph -->
+    <div class="card" style="padding:16px;">
+      <div class="card-header">
+        <span>◈ Identity Relationship Graph</span>
+        <span class="graph-header-link">Expand →</span>
+      </div>
+      <svg width="100%" height="340" viewBox="0 0 480 340" style="display:block;">
+        <defs>
+          <filter id="glow-green"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow-red"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow-teal"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- Cluster borders -->
+        <rect x="30" y="60" width="170" height="220" rx="12" fill="none" stroke="#2A3055" stroke-dasharray="6 4" stroke-width="1"/>
+        <text x="115" y="52" text-anchor="middle" font-size="10" fill="#6B6B75" font-family="Inter">Identities</text>
+
+        <rect x="210" y="30" width="110" height="130" rx="12" fill="none" stroke="#2A3055" stroke-dasharray="6 4" stroke-width="1"/>
+        <text x="265" y="22" text-anchor="middle" font-size="10" fill="#6B6B75" font-family="Inter">Groups / Roles</text>
+
+        <rect x="340" y="120" width="130" height="180" rx="12" fill="none" stroke="#2A3055" stroke-dasharray="6 4" stroke-width="1"/>
+        <text x="405" y="112" text-anchor="middle" font-size="10" fill="#6B6B75" font-family="Inter">Resources</text>
+
+        <!-- Edges -->
+        <!-- identity → groups -->
+        <line x1="135" y1="115" x2="240" y2="70" stroke="#2A3055" stroke-width="1"/>
+        <line x1="100" y1="175" x2="240" y2="70" stroke="#2A3055" stroke-width="1"/>
+        <line x1="135" y1="115" x2="250" y2="130" stroke="#2A3055" stroke-width="1"/>
+        <line x1="80" y1="240" x2="250" y2="130" stroke="#2A3055" stroke-width="1"/>
+
+        <!-- groups → roles (critical red) -->
+        <line x1="270" y1="70" x2="280" y2="70" stroke="#FF7394" stroke-width="2" filter="url(#glow-red)"/>
+        <line x1="240" y1="70" x2="370" y2="170" stroke="#FF7394" stroke-width="2" filter="url(#glow-red)"/>
+        <line x1="250" y1="130" x2="380" y2="230" stroke="#FF7394" stroke-width="2" filter="url(#glow-red)"/>
+
+        <!-- identity → resources -->
+        <line x1="135" y1="115" x2="400" y2="270" stroke="#2A3055" stroke-width="1"/>
+        <line x1="80" y1="240" x2="420" y2="270" stroke="#2A3055" stroke-width="1"/>
+
+        <!-- Identity nodes -->
+        <circle cx="135" cy="115" r="22" fill="#39B985" opacity=".2" filter="url(#glow-green)"/>
+        <circle cx="135" cy="115" r="18" fill="#151A2D" stroke="#39B985" stroke-width="2"/>
+        <text x="135" y="119" text-anchor="middle" font-size="7" fill="#39B985" font-family="Inter" font-weight="600">jason.m</text>
+
+        <circle cx="100" cy="175" r="22" fill="#39B985" opacity=".2" filter="url(#glow-green)"/>
+        <circle cx="100" cy="175" r="18" fill="#151A2D" stroke="#39B985" stroke-width="2"/>
+        <text x="100" y="179" text-anchor="middle" font-size="7" fill="#39B985" font-family="Inter" font-weight="600">admin-jb</text>
+
+        <circle cx="80" cy="240" r="22" fill="#39B985" opacity=".2" filter="url(#glow-green)"/>
+        <circle cx="80" cy="240" r="18" fill="#151A2D" stroke="#39B985" stroke-width="2"/>
+        <text x="80" y="244" text-anchor="middle" font-size="7" fill="#39B985" font-family="Inter" font-weight="600">svc-deploy</text>
+
+        <!-- Group nodes -->
+        <circle cx="240" cy="70" r="19" fill="#39B985" opacity=".15"/>
+        <circle cx="240" cy="70" r="15" fill="#151A2D" stroke="#39B985" stroke-width="1.5"/>
+        <text x="240" y="74" text-anchor="middle" font-size="7" fill="#39B985" font-family="Inter" font-weight="500">Eng-Adm</text>
+
+        <circle cx="250" cy="130" r="19" fill="#39B985" opacity=".15"/>
+        <circle cx="250" cy="130" r="15" fill="#151A2D" stroke="#39B985" stroke-width="1.5"/>
+        <text x="250" y="134" text-anchor="middle" font-size="7" fill="#39B985" font-family="Inter" font-weight="500">Cloud-Ops</text>
+
+        <!-- Role nodes (red) -->
+        <circle cx="370" cy="170" r="18" fill="#FF7394" opacity=".2" filter="url(#glow-red)"/>
+        <circle cx="370" cy="170" r="14" fill="#151A2D" stroke="#FF7394" stroke-width="2"/>
+        <text x="370" y="174" text-anchor="middle" font-size="6.5" fill="#FF7394" font-family="Inter" font-weight="600">GlobalAdm</text>
+
+        <circle cx="380" cy="230" r="18" fill="#FF7394" opacity=".2" filter="url(#glow-red)"/>
+        <circle cx="380" cy="230" r="14" fill="#151A2D" stroke="#FF7394" stroke-width="2"/>
+        <text x="380" y="234" text-anchor="middle" font-size="6.5" fill="#FF7394" font-family="Inter" font-weight="600">DomAdm</text>
+
+        <!-- Resource nodes (teal) -->
+        <circle cx="400" cy="270" r="18" fill="#61C9D3" opacity=".15" filter="url(#glow-teal)"/>
+        <circle cx="400" cy="270" r="14" fill="#151A2D" stroke="#61C9D3" stroke-width="1.5"/>
+        <text x="400" y="274" text-anchor="middle" font-size="7" fill="#61C9D3" font-family="Inter" font-weight="500">Prod-DB</text>
+
+        <circle cx="440" cy="180" r="18" fill="#61C9D3" opacity=".15"/>
+        <circle cx="440" cy="180" r="14" fill="#151A2D" stroke="#61C9D3" stroke-width="1.5"/>
+        <text x="440" y="184" text-anchor="middle" font-size="6.5" fill="#61C9D3" font-family="Inter" font-weight="500">S3-Buck</text>
+
+        <circle cx="430" cy="130" r="18" fill="#61C9D3" opacity=".15"/>
+        <circle cx="430" cy="130" r="14" fill="#151A2D" stroke="#61C9D3" stroke-width="1.5"/>
+        <text x="430" y="134" text-anchor="middle" font-size="6.5" fill="#61C9D3" font-family="Inter" font-weight="500">Azure-AD</text>
+      </svg>
+
+      <div class="legend">
+        <span><span class="legend-dot" style="background:#39B985"></span> Identity</span>
+        <span><span class="legend-dot" style="background:#39B985"></span> Group</span>
+        <span><span class="legend-dot" style="background:#FF7394"></span> Role</span>
+        <span><span class="legend-dot" style="background:#61C9D3"></span> Resource</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 3: Risky Authentication Patterns -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header">
+      <span>Risky Authentication Patterns</span>
+      <span class="time-pill">Last 7 days</span>
+    </div>
+    <div class="pattern-row">
+      <div class="pattern-card">
+        <div class="pattern-icon">🌍</div>
+        <div class="pattern-title">Impossible Travel</div>
+        <div class="pattern-stat" style="color:#FF7394">12 incidents</div>
+        <div class="pattern-sub">3 unique identities</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-icon">🌙</div>
+        <div class="pattern-title">Off-hours Access</div>
+        <div class="pattern-stat" style="color:#DD6E1E">34 events</div>
+        <div class="pattern-sub">8 identities</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-icon">🔐</div>
+        <div class="pattern-title">Failed MFA</div>
+        <div class="pattern-stat" style="color:#FFDB36">89 attempts</div>
+        <div class="pattern-sub">15 identities</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-icon">💻</div>
+        <div class="pattern-title">New Device Login</div>
+        <div class="pattern-stat" style="color:#B3E0FF">23 events</div>
+        <div class="pattern-sub">18 identities</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 4: Identity Table -->
+  <div class="card">
+    <div class="card-header">
+      <div style="display:flex;align-items:center;">
+        Identity Inventory <span class="badge-count">3,842</span>
+      </div>
+      <div class="filter-pills">
+        <div class="filter-pill">All</div>
+        <div class="filter-pill active">Human</div>
+        <div class="filter-pill">Service</div>
+        <div class="filter-pill">External</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Identity</th>
+          <th>Type</th>
+          <th>Provider</th>
+          <th>Risk Score</th>
+          <th>Privileges</th>
+          <th>MFA</th>
+          <th>Last Active</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:500">jason.mitchell@acme</td>
+          <td>Human</td>
+          <td>Azure AD</td>
+          <td><span class="pill pill-orange">74</span></td>
+          <td>12 entitlements</td>
+          <td><span class="check-green">✓ MFA</span></td>
+          <td>2h ago</td>
+          <td><span class="pill pill-orange">⚠ Elevated</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500">admin-jblue@acme</td>
+          <td>Human</td>
+          <td>Azure AD</td>
+          <td><span class="pill pill-red">91</span></td>
+          <td>Global Admin</td>
+          <td><span class="check-green">✓ MFA</span></td>
+          <td>2h ago</td>
+          <td><span class="pill pill-red">🔴 Critical</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500">svc-deploy-ci</td>
+          <td>Service</td>
+          <td>AWS IAM</td>
+          <td><span class="pill pill-red">82</span></td>
+          <td>Admin Access</td>
+          <td><span class="check-red">✗ No MFA</span></td>
+          <td>1d ago</td>
+          <td><span class="pill pill-orange">⚠ Over-privileged</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500">dev-readonly</td>
+          <td>Service</td>
+          <td>GCP</td>
+          <td><span class="pill pill-green">23</span></td>
+          <td>Read Only</td>
+          <td><span style="color:#6B6B75">N/A</span></td>
+          <td>3h ago</td>
+          <td><span class="pill pill-green">✓ OK</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500">contractor-ext-01</td>
+          <td>External</td>
+          <td>Azure AD</td>
+          <td><span class="pill pill-yellow">45</span></td>
+          <td>Limited</td>
+          <td><span class="check-green">✓ MFA</span></td>
+          <td>5d ago</td>
+          <td><span class="pill pill-yellow">⚠ Stale</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:500">sa-backup-prod</td>
+          <td>Service</td>
+          <td>AWS IAM</td>
+          <td><span class="pill pill-orange">67</span></td>
+          <td>S3 Full Access</td>
+          <td><span class="check-red">✗ No MFA</span></td>
+          <td>30d ago</td>
+          <td><span class="pill pill-orange">⚠ Stale</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <span>Showing 1–6 of 3,842</span>
+      <div class="page-btns">
+        <div class="page-btn active">1</div>
+        <div class="page-btn">2</div>
+        <div class="page-btn">3</div>
+        <div class="page-btn">…</div>
+        <div class="page-btn">641</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

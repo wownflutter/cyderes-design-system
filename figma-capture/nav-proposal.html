@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440" />
+  <title>Cyderes Platform Navigation Proposal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Surfaces */
+      --surface-base: #080C18;
+      --surface-recessed: #0A0E1A;
+      --surface-raised: #242944;
+      --surface-overlay: #151428;
+      /* Text */
+      --text-primary: #ECECF0;
+      --text-secondary: #9898A0;
+      --text-tertiary: #5C5C66;
+      /* Accent */
+      --accent: #39B985;
+      /* Severity */
+      --critical: #FF7394;
+      --high: #DD6E1E;
+      --medium: #FFDB36;
+      --ok: #39B985;
+      --info: #B3E0FF;
+      /* Node */
+      --node-asset: #61C9D3;
+      --node-identity: #39B985;
+      --node-vulnerability: #FF7394;
+      --node-exposure: #DD6E1E;
+      --node-database: #A154E4;
+      --node-environment: #B3E0FF;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface-base);
+      color: var(--text-primary);
+      width: 1440px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    /* ── Section Spacing ── */
+    .section { margin-bottom: 56px; }
+
+    /* ── Section Headers ── */
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--surface-raised);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--surface-raised);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ── HEADER ── */
+    .page-header { margin-bottom: 56px; }
+    .page-header h1 {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .page-header .subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .page-header .date {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+    .page-header .description {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      max-width: 900px;
+    }
+    .header-divider {
+      width: 80px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    /* ── OBJECT MODEL CARDS ── */
+    .object-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .object-card {
+      background: var(--surface-recessed);
+      border: 1px solid var(--surface-raised);
+      border-radius: 10px;
+      padding: 20px 20px 16px 20px;
+      border-left: 4px solid;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .object-card .obj-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .object-card .obj-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .object-card .obj-domains {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+    .object-card .obj-domains span {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ── NAV TREE SECTION ── */
+    .nav-section-layout {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    /* Sidebar mock */
+    .sidebar-mock {
+      width: 260px;
+      min-width: 260px;
+      background: var(--surface-recessed);
+      border: 1px solid var(--surface-raised);
+      border-radius: 12px;
+      padding: 20px 0;
+      flex-shrink: 0;
+    }
+    .sidebar-logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent);
+      padding: 0 20px 16px 20px;
+      border-bottom: 1px solid var(--surface-raised);
+      margin-bottom: 8px;
+    }
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      padding: 14px 20px 6px 20px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: default;
+      position: relative;
+      transition: background 0.15s;
+    }
+    .sidebar-item:hover { background: rgba(255,255,255,0.03); }
+    .sidebar-item.active {
+      color: var(--accent);
+      background: rgba(57, 185, 133, 0.08);
+    }
+    .sidebar-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--accent);
+    }
+    .sidebar-item .icon {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .sidebar-item.special {
+      color: var(--node-database);
+    }
+    .sidebar-item.special .icon { color: var(--node-database); }
+    .sidebar-divider {
+      height: 1px;
+      background: var(--surface-raised);
+      margin: 8px 20px;
+    }
+    .sidebar-sub {
+      padding-left: 48px;
+    }
+
+    /* Annotation panel */
+    .annotation-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .annotation-card {
+      background: var(--surface-overlay);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+    }
+    .annotation-card .ann-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .annotation-card .ann-body {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    /* ── FLOW DIAGRAMS ── */
+    .flow-section { margin-bottom: 40px; }
+    .flow-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .flow-title .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .flow-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .flow-box {
+      background: var(--surface-recessed);
+      border: 1px solid var(--surface-raised);
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      border-left: 3px solid;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .flow-box.graph-box {
+      border: 1.5px dashed var(--accent);
+      border-left: 3px dashed var(--accent);
+      background: rgba(57, 185, 133, 0.06);
+    }
+    .flow-box.graph-box::before {
+      content: '◆';
+      color: var(--accent);
+      font-size: 11px;
+    }
+    .flow-box.pivot {
+      opacity: 0.8;
+      font-style: italic;
+    }
+    .flow-arrow {
+      font-size: 18px;
+      color: var(--text-tertiary);
+      padding: 0 10px;
+      flex-shrink: 0;
+    }
+    .flow-annotation {
+      background: var(--surface-overlay);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      border-left: 3px solid;
+    }
+    .flow-annotation strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* ── GRAPH PLACEMENT CARDS ── */
+    .placement-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .placement-card {
+      background: var(--surface-recessed);
+      border: 1px solid var(--surface-raised);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .placement-card .pc-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .placement-card .pc-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .placement-card .pc-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .placement-card .pc-meta {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      line-height: 1.55;
+    }
+    .placement-card .pc-meta strong {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .placement-card .pc-purpose {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* Mini wireframe */
+    .mini-wireframe {
+      width: 100%;
+      height: 140px;
+      border: 1px solid var(--surface-raised);
+      border-radius: 8px;
+      background: var(--surface-base);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+    .mw-topbar {
+      height: 12px;
+      background: var(--surface-raised);
+      border-radius: 3px;
+      opacity: 0.5;
+    }
+    .mw-kpi {
+      height: 14px;
+      background: var(--surface-raised);
+      border-radius: 3px;
+      opacity: 0.35;
+    }
+    .mw-body {
+      flex: 1;
+      display: flex;
+      gap: 4px;
+    }
+    .mw-main {
+      flex: 1;
+      border-radius: 4px;
+    }
+    .mw-sidebar-zone {
+      width: 30%;
+      background: var(--surface-raised);
+      border-radius: 4px;
+      opacity: 0.3;
+    }
+    .mw-highlight {
+      opacity: 1 !important;
+      border: 1.5px solid;
+    }
+    .mw-graph-label {
+      position: absolute;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(0,0,0,0.6);
+    }
+
+    /* ── CROSS-DOMAIN PIVOT ── */
+    .pivot-diagram {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 0;
+      position: relative;
+    }
+    .pivot-center {
+      width: 160px;
+      height: 160px;
+      border: 3px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(57, 185, 133, 0.08);
+      position: relative;
+      z-index: 2;
+    }
+    .pivot-center .pc-icon { font-size: 28px; color: var(--accent); margin-bottom: 6px; }
+    .pivot-center .pc-label { font-size: 15px; font-weight: 700; color: var(--accent); }
+    .pivot-center .pc-sublabel { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+
+    .pivot-layout {
+      display: grid;
+      grid-template-columns: 320px 200px 320px;
+      grid-template-rows: auto 60px auto;
+      align-items: center;
+      justify-items: center;
+      gap: 0;
+    }
+    .pivot-domain {
+      background: var(--surface-recessed);
+      border: 1px solid var(--surface-raised);
+      border-radius: 10px;
+      padding: 20px;
+      width: 300px;
+    }
+    .pivot-domain .pd-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pivot-domain .pd-title .pd-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .pivot-domain .pd-chain {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .pivot-domain .pd-chain .pd-arrow { color: var(--text-tertiary); }
+    .pivot-connector {
+      font-size: 20px;
+      color: var(--accent);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pivot-connector-line {
+      width: 60px;
+      height: 2px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+    .pivot-annotation {
+      grid-column: 1 / -1;
+      margin-top: 24px;
+      background: var(--surface-overlay);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      max-width: 800px;
+      text-align: left;
+    }
+
+    /* ── CONSISTENCY TABLE ── */
+    .rules-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--surface-raised);
+    }
+    .rules-table th {
+      background: var(--surface-raised);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+      padding: 14px 20px;
+      text-align: left;
+    }
+    .rules-table td {
+      background: var(--surface-recessed);
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding: 14px 20px;
+      border-top: 1px solid var(--surface-raised);
+    }
+    .rules-table td:first-child {
+      font-weight: 600;
+      color: var(--text-primary);
+      width: 200px;
+    }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      border-top: 1px solid var(--surface-raised);
+      padding-top: 24px;
+      text-align: center;
+    }
+    .page-footer p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      line-height: 1.7;
+    }
+    .page-footer p strong {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     SECTION 1 — PAGE HEADER
+     ════════════════════════════════════════════ -->
+<div class="page-header section">
+  <h1>Cyderes Platform Navigation Proposal</h1>
+  <p class="subtitle">Internal UX Architecture &mdash; Unifying MDR, Exposure Management, and Asset Management</p>
+  <p class="date">March 2026</p>
+  <div class="header-divider"></div>
+  <p class="description">
+    This document presents a unified navigation architecture for the Cyderes platform. The goal is to
+    collapse three historically siloed products &mdash; MDR (Detect &amp; Respond), Exposure Management, and
+    Asset/Identity Inventory &mdash; into a single coherent experience. The Issue Map graph visualization
+    serves as the cross-domain connective tissue, enabling analysts to traverse domain boundaries through
+    direct object interaction rather than menu switching. Below you will find the proposed object model,
+    navigation structure, page flows, graph placement strategy, and consistency standards.
+  </p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 2 — PLATFORM OBJECT MODEL
+     ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><span class="num">1</span> Platform Object Model</div>
+  <div class="object-grid">
+    <!-- Asset -->
+    <div class="object-card" style="border-left-color: #61C9D3;">
+      <div class="obj-name">Asset</div>
+      <div class="obj-desc">Any managed entity &mdash; server, endpoint, cloud resource, application.</div>
+      <div class="obj-domains">Domains: <span>MDR, Exposure, Assets</span></div>
+    </div>
+    <!-- Identity -->
+    <div class="object-card" style="border-left-color: #39B985;">
+      <div class="obj-name">Identity</div>
+      <div class="obj-desc">Any actor &mdash; user account, service account, API key, role.</div>
+      <div class="obj-domains">Domains: <span>MDR, Exposure, Assets</span></div>
+    </div>
+    <!-- Exposure -->
+    <div class="object-card" style="border-left-color: #FF7394;">
+      <div class="obj-name">Exposure</div>
+      <div class="obj-desc">Known weakness &mdash; CVE, misconfiguration, policy violation.</div>
+      <div class="obj-domains">Domains: <span>Exposure, Assets</span></div>
+    </div>
+    <!-- Detection -->
+    <div class="object-card" style="border-left-color: #DD6E1E;">
+      <div class="obj-name">Detection</div>
+      <div class="obj-desc">Security event observed in telemetry &mdash; alert, signal, anomaly.</div>
+      <div class="obj-domains">Domains: <span>MDR</span></div>
+    </div>
+    <!-- Incident -->
+    <div class="object-card" style="border-left-color: #FFDB36;">
+      <div class="obj-name">Incident</div>
+      <div class="obj-desc">Grouped detections under active investigation by an analyst.</div>
+      <div class="obj-domains">Domains: <span>MDR</span></div>
+    </div>
+    <!-- Investigation -->
+    <div class="object-card" style="border-left-color: #A154E4;">
+      <div class="obj-name">Investigation</div>
+      <div class="obj-desc">Analyst working session linking objects across domains.</div>
+      <div class="obj-domains">Domains: <span>MDR, Exposure, Assets</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 3 — PROPOSED NAVIGATION
+     ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><span class="num">2</span> Proposed Navigation &mdash; Sitemap &amp; Nav Tree</div>
+  <div class="nav-section-layout">
+
+    <!-- Sidebar Component -->
+    <div class="sidebar-mock">
+      <div class="sidebar-logo">CYDERES</div>
+
+      <!-- Command Center -->
+      <div class="sidebar-item active">
+        <span class="icon">&#9670;</span> Command Center
+      </div>
+
+      <!-- Detect & Respond -->
+      <div class="sidebar-section-label">Detect &amp; Respond</div>
+      <div class="sidebar-item sidebar-sub">
+        <span class="icon">&#9673;</span> Incidents
+      </div>
+      <div class="sidebar-item sidebar-sub">
+        <span class="icon">&#9673;</span> Detections
+      </div>
+      <div class="sidebar-item sidebar-sub">
+        <span class="icon">&#9673;</span> Investigations
+      </div>
+
+      <!-- Exposure -->
+      <div class="sidebar-section-label">Exposure</div>
+      <div class="sidebar-item sidebar-sub">
+        <span class="icon">&#9673;</span> Dashboard
+      </div>
+      <div class="sidebar-item sidebar-sub">
+        <span class="icon">&#9673;</span> Findings
+      </div>
+      <div class="sidebar-item sidebar-sub">
+        <span class="icon">&#9673;</span> Remediation
+      </div>
+
+      <!-- Inventory -->
+      <div class="sidebar-section-label">Inventory</div>
+      <div class="sidebar-item sidebar-sub">
+        <span class="icon">&#9673;</span> Assets
+      </div>
+      <div class="sidebar-item sidebar-sub">
+        <span class="icon">&#9673;</span> Identities
+      </div>
+      <div class="sidebar-item sidebar-sub">
+        <span class="icon">&#9673;</span> Environments
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Issue Map — special -->
+      <div class="sidebar-item special">
+        <span class="icon">&#9670;</span> Issue Map
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Utilities -->
+      <div class="sidebar-item">
+        <span class="icon">&#9633;</span> Reports
+      </div>
+      <div class="sidebar-item">
+        <span class="icon">&#9881;</span> Settings
+      </div>
+    </div>
+
+    <!-- Annotations -->
+    <div class="annotation-panel">
+      <div class="annotation-card">
+        <div class="ann-title">Three domains as peers, not tabs</div>
+        <div class="ann-body">
+          Detect &amp; Respond, Exposure, and Inventory appear as equal top-level sections in the sidebar.
+          No domain is "primary" &mdash; they are parallel entry points into the same underlying data model.
+          This avoids the current pattern where Exposure feels bolted onto an MDR tool.
+        </div>
+      </div>
+      <div class="annotation-card">
+        <div class="ann-title">Issue Map is top-level &mdash; the cross-domain connective tissue</div>
+        <div class="ann-body">
+          The Issue Map sits outside any domain section, separated by dividers. This signals that it is not
+          owned by MDR or Exposure &mdash; it belongs to the platform. It is the primary mechanism for traversing
+          domain boundaries through direct graph interaction.
+        </div>
+      </div>
+      <div class="annotation-card">
+        <div class="ann-title">Object detail pages are NOT nav items</div>
+        <div class="ann-body">
+          Asset Detail, Identity Detail, Incident Detail, and Finding Detail are reached through drill-down
+          (clicking a table row or list item) or through graph node interaction (clicking a node in the Issue Map).
+          They do not appear in the sidebar because they are contextual destinations, not persistent views.
+        </div>
+      </div>
+      <div class="annotation-card">
+        <div class="ann-title">Inventory unifies Assets + Identities as platform objects</div>
+        <div class="ann-body">
+          Rather than scattering asset lists across MDR and Exposure, the Inventory section owns all
+          entity-management views. Assets, Identities, and Environments are platform-level objects that
+          every domain references. This prevents duplicate asset lists and ensures a single source of truth.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 4 — PAGE FLOW DIAGRAMS
+     ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><span class="num">3</span> Page Flow Diagrams</div>
+
+  <!-- Flow 1: MDR -->
+  <div class="flow-section">
+    <div class="flow-title">
+      <span class="dot" style="background: #FFDB36;"></span>
+      Flow 1: Detect &amp; Respond (MDR)
+    </div>
+    <div class="flow-row">
+      <div class="flow-box" style="border-left-color: #FFDB36;">Command Center</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box" style="border-left-color: #FFDB36;">Incidents List</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box" style="border-left-color: #FFDB36;">Incident Detail</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box graph-box">Issue Map: blast radius</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box pivot" style="border-left-color: #61C9D3;">Asset Detail <small>(pivot)</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box pivot" style="border-left-color: #39B985;">Identity Detail <small>(pivot)</small></div>
+    </div>
+    <div class="flow-annotation" style="border-left-color: #FFDB36;">
+      <strong>Graph role: INVESTIGATION</strong> &mdash; Shows the blast radius of the incident. Clicking nodes
+      pivots across domains without switching tools. The analyst stays in context while exploring connected assets,
+      identities, and exposures related to the incident.
+    </div>
+  </div>
+
+  <!-- Flow 2: Exposure -->
+  <div class="flow-section">
+    <div class="flow-title">
+      <span class="dot" style="background: #FF7394;"></span>
+      Flow 2: Exposure Management
+    </div>
+    <div class="flow-row">
+      <div class="flow-box" style="border-left-color: #FF7394;">Exposure Dashboard</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box graph-box">Issue Map: environment posture</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box" style="border-left-color: #FF7394;">Findings List</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box" style="border-left-color: #FF7394;">Finding Detail</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box pivot" style="border-left-color: #61C9D3;">Asset Detail <small>(pivot)</small></div>
+    </div>
+    <div class="flow-annotation" style="border-left-color: #FF7394;">
+      <strong>Graph role: SUMMARY</strong> on dashboard (shows which assets are most exposed), then
+      <strong>INVESTIGATION</strong> on asset detail (shows attack paths). The graph transitions from
+      orientation mode to deep-dive mode as the analyst narrows focus.
+    </div>
+  </div>
+
+  <!-- Flow 3: Inventory -->
+  <div class="flow-section">
+    <div class="flow-title">
+      <span class="dot" style="background: #61C9D3;"></span>
+      Flow 3: Asset Management / Inventory
+    </div>
+    <div class="flow-row">
+      <div class="flow-box" style="border-left-color: #61C9D3;">Assets List</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box" style="border-left-color: #61C9D3;">Asset Detail</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box graph-box">Issue Map: asset-centered</div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box pivot" style="border-left-color: #39B985;">Identity Detail <small>(pivot)</small></div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-box pivot" style="border-left-color: #FF7394;">Finding Detail <small>(pivot)</small></div>
+    </div>
+    <div class="flow-annotation" style="border-left-color: #61C9D3;">
+      <strong>Graph role: CONTEXTUAL</strong> &mdash; Shows what's connected to this asset. Enables cross-domain
+      discovery: from an asset, the analyst can see related identities, exposures, detections, and incidents
+      without leaving the page.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 5 — GRAPH PLACEMENT RULES
+     ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><span class="num">4</span> Graph Placement Rules</div>
+  <div class="placement-grid">
+
+    <!-- Summary Mode -->
+    <div class="placement-card">
+      <div class="pc-header">
+        <span class="pc-dot" style="background: #B3E0FF;"></span>
+        <span class="pc-title">Summary</span>
+      </div>
+      <div class="pc-meta">
+        <strong>When:</strong> Dashboard pages (Command Center, Exposure Dashboard)<br/>
+        <strong>Where:</strong> Hero zone below KPI strip, full width<br/>
+        <strong>Variant:</strong> Environment
+      </div>
+      <div class="pc-purpose">"Orient the analyst &mdash; where are the problems?"</div>
+      <!-- Mini wireframe: graph in hero zone -->
+      <div class="mini-wireframe">
+        <div class="mw-topbar"></div>
+        <div class="mw-kpi"></div>
+        <div class="mw-main mw-highlight" style="border-color: #B3E0FF; background: rgba(179,224,255,0.1); flex: 0 0 50px; border-radius: 4px; position: relative;">
+          <span class="mw-graph-label" style="color: #B3E0FF; top: 4px; left: 6px;">GRAPH &mdash; Summary</span>
+        </div>
+        <div class="mw-body">
+          <div class="mw-main" style="background: var(--surface-raised); opacity: 0.25; border-radius: 4px;"></div>
+          <div class="mw-sidebar-zone"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Investigation Mode -->
+    <div class="placement-card">
+      <div class="pc-header">
+        <span class="pc-dot" style="background: #39B985;"></span>
+        <span class="pc-title">Investigation</span>
+      </div>
+      <div class="pc-meta">
+        <strong>When:</strong> Entity detail pages (Asset, Identity, Incident)<br/>
+        <strong>Where:</strong> Primary content zone, entity-centered<br/>
+        <strong>Variant:</strong> Asset-Centered or Identity-Centered
+      </div>
+      <div class="pc-purpose">"Support the investigation &mdash; what's connected, what's at risk?"</div>
+      <!-- Mini wireframe: graph in main content -->
+      <div class="mini-wireframe">
+        <div class="mw-topbar"></div>
+        <div class="mw-kpi"></div>
+        <div class="mw-body" style="flex: 1;">
+          <div class="mw-main mw-highlight" style="border-color: #39B985; background: rgba(57,185,133,0.1); flex: 1; border-radius: 4px; position: relative;">
+            <span class="mw-graph-label" style="color: #39B985; top: 4px; left: 6px;">GRAPH &mdash; Investigation</span>
+          </div>
+          <div class="mw-sidebar-zone"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exploration Mode -->
+    <div class="placement-card">
+      <div class="pc-header">
+        <span class="pc-dot" style="background: #A154E4;"></span>
+        <span class="pc-title">Exploration</span>
+      </div>
+      <div class="pc-meta">
+        <strong>When:</strong> Issue Map full page (top-level nav)<br/>
+        <strong>Where:</strong> Full viewport canvas<br/>
+        <strong>Variant:</strong> Unscoped or focused on a specific entity
+      </div>
+      <div class="pc-purpose">"Free-form investigation &mdash; trace paths across all domains"</div>
+      <!-- Mini wireframe: graph fills everything -->
+      <div class="mini-wireframe">
+        <div class="mw-topbar"></div>
+        <div class="mw-main mw-highlight" style="border-color: #A154E4; background: rgba(161,84,228,0.1); flex: 1; border-radius: 4px; position: relative;">
+          <span class="mw-graph-label" style="color: #A154E4; top: 4px; left: 6px;">GRAPH &mdash; Exploration (full canvas)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 6 — CROSS-DOMAIN PIVOT MODEL
+     ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><span class="num">5</span> Cross-Domain Pivot Model</div>
+
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <div class="pivot-layout">
+
+      <!-- Top-left: MDR domain -->
+      <div class="pivot-domain">
+        <div class="pd-title">
+          <span class="pd-dot" style="background: #FFDB36;"></span>
+          <span style="color: #FFDB36;">Detect &amp; Respond</span>
+        </div>
+        <div class="pd-chain">
+          <span>Incident</span>
+          <span class="pd-arrow">&rarr;</span>
+          <span>Detection</span>
+          <span class="pd-arrow">&rarr;</span>
+          <span>Identity</span>
+        </div>
+      </div>
+
+      <!-- Center connector left -->
+      <div class="pivot-connector">
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <div class="pivot-connector-line"></div>
+          <span>&larr;&rarr;</span>
+          <div class="pivot-connector-line"></div>
+        </div>
+      </div>
+
+      <!-- Top-right: Exposure domain -->
+      <div class="pivot-domain">
+        <div class="pd-title">
+          <span class="pd-dot" style="background: #FF7394;"></span>
+          <span style="color: #FF7394;">Exposure</span>
+        </div>
+        <div class="pd-chain">
+          <span>Finding</span>
+          <span class="pd-arrow">&rarr;</span>
+          <span>CVE</span>
+          <span class="pd-arrow">&rarr;</span>
+          <span>Asset</span>
+        </div>
+      </div>
+
+      <!-- Spacer row: connector lines going down to center -->
+      <div style="text-align: center; color: var(--accent); font-size: 18px;">&#8597;</div>
+      <div class="pivot-center">
+        <span class="pc-icon">&#9670;</span>
+        <span class="pc-label">Issue Map</span>
+        <span class="pc-sublabel">Cross-Domain Graph</span>
+      </div>
+      <div style="text-align: center; color: var(--accent); font-size: 18px;">&#8597;</div>
+
+      <!-- Bottom: Inventory domain (spans middle or center) -->
+      <div></div>
+      <div class="pivot-domain" style="width: 300px;">
+        <div class="pd-title">
+          <span class="pd-dot" style="background: #61C9D3;"></span>
+          <span style="color: #61C9D3;">Inventory</span>
+        </div>
+        <div class="pd-chain">
+          <span>Asset</span>
+          <span class="pd-arrow">&rarr;</span>
+          <span>Identity</span>
+          <span class="pd-arrow">&rarr;</span>
+          <span>Environment</span>
+        </div>
+      </div>
+      <div></div>
+
+      <!-- Annotation -->
+      <div class="pivot-annotation">
+        The graph is the primary mechanism for cross-domain movement. Clicking nodes traverses domain
+        boundaries invisibly &mdash; the analyst sees connected objects regardless of which product "owns" them.
+        Breadcrumbs record the journey, enabling the analyst to retrace steps across MDR, Exposure, and Inventory
+        without losing context.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 7 — CONSISTENCY RULES
+     ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title"><span class="num">6</span> Consistency Rules</div>
+  <table class="rules-table">
+    <thead>
+      <tr>
+        <th>Rule</th>
+        <th>Standard</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Page anatomy</td>
+        <td>Breadcrumb &rarr; Header &rarr; Filters &rarr; KPI Strip &rarr; Content &rarr; Sidebar</td>
+      </tr>
+      <tr>
+        <td>Entity header</td>
+        <td>Avatar + Name + Type badge + Metadata row + Risk score &mdash; consistent across all detail pages</td>
+      </tr>
+      <tr>
+        <td>Graph visualization</td>
+        <td>Issue Map component only &mdash; delete all other graph variants. One component, three modes (Summary, Investigation, Exploration).</td>
+      </tr>
+      <tr>
+        <td>Data tables</td>
+        <td>Shared component: severity pills, sortable columns, filter chips, pagination. No per-domain table variants.</td>
+      </tr>
+      <tr>
+        <td>Entity cards</td>
+        <td>Standardized layout: type icon + entity name + risk badge + permissions indicator. Same card on every list page.</td>
+      </tr>
+      <tr>
+        <td>Filter bar</td>
+        <td>Severity pills + domain filter toggles + search input + "Add Filter" button. Identical behavior everywhere.</td>
+      </tr>
+      <tr>
+        <td>Action bar</td>
+        <td>Primary (emerald) + Secondary (ghost/outline) + Danger (red). Button hierarchy consistent across all pages.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 8 — FOOTER
+     ════════════════════════════════════════════ -->
+<div class="page-footer">
+  <p>Prepared for Cyderes Product &amp; Design &mdash; March 2026</p>
+  <p><strong>Next steps:</strong> Design navigation shell, Command Center dashboard, MDR pages, Asset Inventory list</p>
+</div>
+
+</body>
+</html>

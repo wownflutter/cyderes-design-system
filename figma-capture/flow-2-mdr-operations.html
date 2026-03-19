@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Cyderes — MDR Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #080C18; color: #ECECF0; width: 1440px; min-height: 100vh; display: flex; }
+
+  /* Sidebar */
+  .sidebar { width: 240px; background: #0D1220; height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 10; }
+  .sidebar-logo { padding: 20px 24px; font-size: 18px; font-weight: 700; color: #39B985; letter-spacing: 4px; }
+  .sidebar-nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 8px; }
+  .nav-section-label { padding: 12px 24px 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6B6B75; letter-spacing: 1px; }
+  .nav-item { display: flex; align-items: center; padding: 9px 24px; font-size: 14px; font-weight: 500; color: #9898A0; cursor: pointer; text-decoration: none; border-left: 3px solid transparent; }
+  .nav-item:hover { color: #ECECF0; background: rgba(28,35,64,0.5); }
+  .nav-item.active { color: #ECECF0; border-left-color: #39B985; background: #1C2340; }
+  .sidebar-bottom { padding: 16px 24px; border-top: 1px solid #2A3055; }
+  .sidebar-bottom .nav-item { padding: 9px 0; border-left: none; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #39B985; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; margin-top: 12px; }
+
+  /* Top Bar */
+  .topbar { position: fixed; top: 0; left: 240px; right: 0; height: 56px; background: #0D1220; border-bottom: 1px solid #2A3055; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 10; }
+  .breadcrumb { font-size: 13px; color: #9898A0; }
+  .topbar-actions { display: flex; align-items: center; gap: 16px; }
+  .search-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #6B6B75; cursor: pointer; }
+  .search-pill kbd { background: #2A3055; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: 'Inter', sans-serif; }
+  .bell-icon { position: relative; color: #9898A0; font-size: 18px; cursor: pointer; }
+  .bell-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #FF7394; border-radius: 50%; }
+  .env-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #ECECF0; }
+  .env-dot { width: 8px; height: 8px; background: #39B985; border-radius: 50%; }
+  .export-btn { padding: 6px 14px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #ECECF0; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  /* Main Content */
+  .main { margin-left: 240px; margin-top: 56px; padding: 24px; width: 1200px; }
+  .card { background: #151A2D; border: 1px solid #2A3055; border-radius: 12px; padding: 24px; }
+  .card-sm { border-radius: 8px; padding: 16px 20px; }
+  .card-header { font-size: 15px; font-weight: 600; color: #ECECF0; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+  .row { display: flex; gap: 16px; margin-bottom: 16px; }
+  .kpi-value { font-size: 28px; font-weight: 700; line-height: 1.2; }
+  .kpi-sub { font-size: 11px; margin-top: 4px; }
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+  .badge-emerald { background: rgba(57,185,133,0.15); color: #39B985; }
+  .link { color: #39B985; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; }
+
+  /* Filter pills */
+  .filter-pills { display: flex; gap: 8px; margin-top: 12px; }
+  .filter-pill { padding: 5px 14px; border-radius: 16px; font-size: 12px; font-weight: 500; background: #1C2340; color: #9898A0; cursor: pointer; border: 1px solid #2A3055; }
+  .filter-pill.active { background: #39B985; color: #080C18; border-color: #39B985; }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #1C2340; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6B6B75; padding: 10px 12px; text-align: left; white-space: nowrap; }
+  tbody td { padding: 10px 12px; font-size: 13px; color: #ECECF0; border-bottom: 1px solid #1C2340; white-space: nowrap; }
+  tbody tr:hover { background: rgba(28,35,64,0.4); }
+  .sev-pill { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; display: inline-block; }
+  .sev-critical { background: rgba(255,115,148,0.15); color: #FF7394; }
+  .sev-high { background: rgba(221,110,30,0.15); color: #DD6E1E; }
+  .sev-medium { background: rgba(255,219,54,0.15); color: #FFDB36; }
+  .sev-low { background: rgba(57,185,133,0.15); color: #39B985; }
+  .status-pill { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 500; display: inline-block; }
+  .status-investigating { background: rgba(255,219,54,0.15); color: #FFDB36; }
+  .status-triaging { background: rgba(179,224,255,0.15); color: #B3E0FF; }
+  .status-escalated { background: rgba(255,115,148,0.15); color: #FF7394; }
+  .status-monitoring { background: rgba(57,185,133,0.15); color: #39B985; }
+  .status-assigned { background: rgba(179,224,255,0.15); color: #B3E0FF; }
+  .status-closed { background: rgba(107,107,117,0.15); color: #6B6B75; }
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 0; font-size: 12px; color: #6B6B75; }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #1C2340; color: #9898A0; font-size: 12px; border: 1px solid #2A3055; cursor: pointer; }
+  .page-btn.active { background: #39B985; color: #080C18; border-color: #39B985; }
+
+  /* Timeline */
+  .timeline { position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: #2A3055; }
+  .tl-event { display: flex; gap: 14px; padding: 10px 0; position: relative; }
+  .tl-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; position: relative; z-index: 1; }
+  .tl-content { flex: 1; }
+  .tl-time { font-size: 11px; color: #6B6B75; margin-bottom: 3px; }
+  .tl-title { font-size: 13px; font-weight: 500; color: #ECECF0; margin-bottom: 2px; }
+  .tl-desc { font-size: 12px; color: #9898A0; }
+  .live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #39B985; margin-right: 6px; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Pivot cards */
+  .pivot-cards { display: flex; gap: 12px; }
+  .pivot-card { flex: 1; background: #1C2340; border: 1px solid #2A3055; border-radius: 8px; padding: 16px; cursor: pointer; transition: background 0.15s; }
+  .pivot-card:first-child { background: #243050; border-color: #39B985; }
+  .pivot-card-label { font-size: 13px; font-weight: 500; color: #ECECF0; }
+  .pivot-card-icon { font-size: 20px; margin-bottom: 8px; }
+
+  /* Toolbar */
+  .toolbar { display: flex; align-items: center; gap: 10px; }
+  .toolbar-btn { padding: 5px 12px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #9898A0; cursor: pointer; font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">CYDERES</div>
+  <div class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Command Center</div>
+      <a class="nav-item">Dashboard</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Detect &amp; Respond</div>
+      <a class="nav-item active">Incidents</a>
+      <a class="nav-item">Detections</a>
+      <a class="nav-item">Investigations</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Exposure</div>
+      <a class="nav-item">Overview</a>
+      <a class="nav-item">Findings</a>
+      <a class="nav-item">Attack Paths</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Inventory</div>
+      <a class="nav-item">Assets</a>
+      <a class="nav-item">Identities</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Analysis</div>
+      <a class="nav-item">Issue Map</a>
+      <a class="nav-item">Reports</a>
+    </div>
+  </div>
+  <div class="sidebar-bottom">
+    <a class="nav-item">Settings</a>
+    <div class="avatar">CM</div>
+  </div>
+</nav>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="breadcrumb">Detect &amp; Respond / Incidents</div>
+  <div class="topbar-actions">
+    <div class="search-pill"><span>Search</span><kbd>&#8984;K</kbd></div>
+    <div class="bell-icon">&#128276;<div class="bell-dot"></div></div>
+    <div class="env-pill"><div class="env-dot"></div>Production</div>
+    <button class="export-btn">Export</button>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="main">
+
+  <!-- Row 1: KPI Cards -->
+  <div class="row">
+    <div class="card card-sm" style="flex:1;">
+      <div style="font-size:12px; color:#9898A0; font-weight:500; margin-bottom:8px;">Active Incidents</div>
+      <div class="kpi-value" style="color:#FF7394;">23</div>
+      <div class="kpi-sub" style="color:#FF7394;">&uarr; 4 new today</div>
+    </div>
+    <div class="card card-sm" style="flex:1;">
+      <div style="font-size:12px; color:#9898A0; font-weight:500; margin-bottom:8px;">Critical / High</div>
+      <div class="kpi-value" style="color:#FF7394;">8</div>
+      <div class="kpi-sub" style="color:#9898A0;">requiring immediate response</div>
+    </div>
+    <div class="card card-sm" style="flex:1;">
+      <div style="font-size:12px; color:#9898A0; font-weight:500; margin-bottom:8px;">Mean Time to Detect</div>
+      <div class="kpi-value" style="color:#FFDB36;">2.4h</div>
+      <div class="kpi-sub" style="color:#39B985;">&darr; 18% from last month</div>
+    </div>
+    <div class="card card-sm" style="flex:1;">
+      <div style="font-size:12px; color:#9898A0; font-weight:500; margin-bottom:8px;">Mean Time to Respond</div>
+      <div class="kpi-value" style="color:#39B985;">4.2h</div>
+      <div class="kpi-sub" style="color:#39B985;">&darr; 12% from last month</div>
+    </div>
+  </div>
+
+  <!-- Row 2: Severity Bar -->
+  <div class="row">
+    <div class="card" style="flex:1;">
+      <div class="card-header">Alert Severity Distribution</div>
+      <div style="display:flex; height:32px; border-radius:6px; overflow:hidden; margin-bottom:4px;">
+        <div style="flex:5; background:#FF7394; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:#080C18;">5</div>
+        <div style="flex:3; background:#DD6E1E; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:#080C18;">3</div>
+        <div style="flex:8; background:#FFDB36; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:#080C18;">8</div>
+        <div style="flex:7; background:#39B985; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:#080C18;">7</div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:#6B6B75; margin-bottom:8px;">
+        <span>Critical</span><span>High</span><span>Medium</span><span>Low</span>
+      </div>
+      <div class="filter-pills">
+        <div class="filter-pill active">All (23)</div>
+        <div class="filter-pill">Critical (5)</div>
+        <div class="filter-pill">High (3)</div>
+        <div class="filter-pill">Medium (8)</div>
+        <div class="filter-pill">Low (7)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Two columns 65/35 -->
+  <div class="row">
+    <!-- Investigation Queue -->
+    <div class="card" style="flex:65; padding:20px;">
+      <div class="card-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:16px; font-weight:600;">Investigation Queue</span>
+          <span class="badge badge-emerald">23 incidents</span>
+        </div>
+        <div class="toolbar">
+          <div class="toolbar-btn">Sort: Severity &#9662;</div>
+          <div class="toolbar-btn">&#8862; Group</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Severity</th>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Assignee</th>
+              <th>Age</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#6B6B75; font-size:12px;">INC-4201</td>
+              <td><span class="sev-pill sev-critical">Critical</span></td>
+              <td>Lateral movement — SMB from srv-web-01 to dc-primary</td>
+              <td><span class="status-pill status-investigating">Investigating</span></td>
+              <td>Sarah K.</td>
+              <td style="color:#6B6B75;">12m</td>
+              <td style="color:#6B6B75; cursor:pointer;">&#8943;</td>
+            </tr>
+            <tr>
+              <td style="color:#6B6B75; font-size:12px;">INC-4199</td>
+              <td><span class="sev-pill sev-critical">Critical</span></td>
+              <td>Ransomware indicator — Encrypted file activity on endpoint-342</td>
+              <td><span class="status-pill status-triaging">Triaging</span></td>
+              <td style="color:#6B6B75;">—</td>
+              <td style="color:#6B6B75;">28m</td>
+              <td style="color:#6B6B75; cursor:pointer;">&#8943;</td>
+            </tr>
+            <tr>
+              <td style="color:#6B6B75; font-size:12px;">INC-4198</td>
+              <td><span class="sev-pill sev-critical">Critical</span></td>
+              <td>Data exfiltration — Unusual outbound to 198.51.100.x</td>
+              <td><span class="status-pill status-escalated">Escalated</span></td>
+              <td>Mike R.</td>
+              <td style="color:#6B6B75;">1h</td>
+              <td style="color:#6B6B75; cursor:pointer;">&#8943;</td>
+            </tr>
+            <tr>
+              <td style="color:#6B6B75; font-size:12px;">INC-4195</td>
+              <td><span class="sev-pill sev-high">High</span></td>
+              <td>Brute force — 847 failed logins on Azure AD</td>
+              <td><span class="status-pill status-investigating">Investigating</span></td>
+              <td>James L.</td>
+              <td style="color:#6B6B75;">2h</td>
+              <td style="color:#6B6B75; cursor:pointer;">&#8943;</td>
+            </tr>
+            <tr>
+              <td style="color:#6B6B75; font-size:12px;">INC-4192</td>
+              <td><span class="sev-pill sev-high">High</span></td>
+              <td>Privilege escalation — svc-deploy gained domain admin</td>
+              <td><span class="status-pill status-triaging">Triaging</span></td>
+              <td style="color:#6B6B75;">—</td>
+              <td style="color:#6B6B75;">3h</td>
+              <td style="color:#6B6B75; cursor:pointer;">&#8943;</td>
+            </tr>
+            <tr>
+              <td style="color:#6B6B75; font-size:12px;">INC-4190</td>
+              <td><span class="sev-pill sev-medium">Medium</span></td>
+              <td>Suspicious DNS — C2 beacon pattern detected</td>
+              <td><span class="status-pill status-monitoring">Monitoring</span></td>
+              <td style="color:#9898A0;">Auto</td>
+              <td style="color:#6B6B75;">4h</td>
+              <td style="color:#6B6B75; cursor:pointer;">&#8943;</td>
+            </tr>
+            <tr>
+              <td style="color:#6B6B75; font-size:12px;">INC-4188</td>
+              <td><span class="sev-pill sev-medium">Medium</span></td>
+              <td>Policy violation — Unencrypted data transfer</td>
+              <td><span class="status-pill status-assigned">Assigned</span></td>
+              <td>Lisa M.</td>
+              <td style="color:#6B6B75;">5h</td>
+              <td style="color:#6B6B75; cursor:pointer;">&#8943;</td>
+            </tr>
+            <tr>
+              <td style="color:#6B6B75; font-size:12px;">INC-4185</td>
+              <td><span class="sev-pill sev-low">Low</span></td>
+              <td>Informational — New device on network segment</td>
+              <td><span class="status-pill status-closed">Closed</span></td>
+              <td style="color:#9898A0;">Auto</td>
+              <td style="color:#6B6B75;">8h</td>
+              <td style="color:#6B6B75; cursor:pointer;">&#8943;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span>Showing 1-8 of 23 incidents</span>
+        <div class="page-btns">
+          <div class="page-btn active">1</div>
+          <div class="page-btn">2</div>
+          <div class="page-btn">3</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Timeline -->
+    <div class="card" style="flex:35;">
+      <div class="card-header">
+        <span>Live Event Feed</span>
+        <span style="font-size:12px; color:#39B985;"><span class="live-dot"></span>Live</span>
+      </div>
+      <div class="timeline">
+        <div class="tl-event">
+          <div class="tl-dot" style="background:#FF7394;"></div>
+          <div class="tl-content">
+            <div class="tl-time">12:47 PM</div>
+            <div class="tl-title">Lateral movement detected</div>
+            <div class="tl-desc">srv-web-01 &rarr; dc-primary via SMB</div>
+          </div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-dot" style="background:#FF7394;"></div>
+          <div class="tl-content">
+            <div class="tl-time">12:35 PM</div>
+            <div class="tl-title">Encrypted file activity</div>
+            <div class="tl-desc">endpoint-342, 47 files modified</div>
+          </div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-dot" style="background:#FF7394;"></div>
+          <div class="tl-content">
+            <div class="tl-time">12:19 PM</div>
+            <div class="tl-title">Outbound anomaly</div>
+            <div class="tl-desc">2.3 GB to external IP 198.51.100.x</div>
+          </div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-dot" style="background:#DD6E1E;"></div>
+          <div class="tl-content">
+            <div class="tl-time">11:42 AM</div>
+            <div class="tl-title">Brute force detected</div>
+            <div class="tl-desc">847 attempts on Azure AD portal</div>
+          </div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-dot" style="background:#DD6E1E;"></div>
+          <div class="tl-content">
+            <div class="tl-time">11:15 AM</div>
+            <div class="tl-title">Privilege change</div>
+            <div class="tl-desc">svc-deploy &rarr; Domain Admin</div>
+          </div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-dot" style="background:#FFDB36;"></div>
+          <div class="tl-content">
+            <div class="tl-time">10:48 AM</div>
+            <div class="tl-title">DNS anomaly</div>
+            <div class="tl-desc">C2 beacon pattern, 15-sec intervals</div>
+          </div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-dot" style="background:#FFDB36;"></div>
+          <div class="tl-content">
+            <div class="tl-time">10:22 AM</div>
+            <div class="tl-title">Policy violation</div>
+            <div class="tl-desc">PII transferred unencrypted</div>
+          </div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-dot" style="background:#39B985;"></div>
+          <div class="tl-content">
+            <div class="tl-time">09:15 AM</div>
+            <div class="tl-title">New device</div>
+            <div class="tl-desc">MAC xx:xx:xx on VLAN 40</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Quick Pivot -->
+  <div class="row">
+    <div class="card" style="flex:1;">
+      <div style="font-size:14px; font-weight:600; color:#ECECF0; margin-bottom:14px;">Quick Pivot</div>
+      <div class="pivot-cards">
+        <div class="pivot-card">
+          <div class="pivot-card-icon">&#9672;</div>
+          <div class="pivot-card-label">View in Graph &rarr;</div>
+        </div>
+        <div class="pivot-card" style="background:#1C2340; border-color:#2A3055;">
+          <div class="pivot-card-icon">&#9641;</div>
+          <div class="pivot-card-label">Related Assets &rarr;</div>
+        </div>
+        <div class="pivot-card" style="background:#1C2340; border-color:#2A3055;">
+          <div class="pivot-card-icon">&#9673;</div>
+          <div class="pivot-card-label">Related Identities &rarr;</div>
+        </div>
+        <div class="pivot-card" style="background:#1C2340; border-color:#2A3055;">
+          <div class="pivot-card-icon">&#10140;</div>
+          <div class="pivot-card-label">Attack Path Analysis &rarr;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

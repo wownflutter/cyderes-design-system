@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Cyderes — Platform Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #080C18; color: #ECECF0; width: 1440px; min-height: 100vh; display: flex; }
+
+  /* Sidebar */
+  .sidebar { width: 240px; background: #0D1220; height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 10; }
+  .sidebar-logo { padding: 20px 24px; font-size: 18px; font-weight: 700; color: #39B985; letter-spacing: 4px; }
+  .sidebar-nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 8px; }
+  .nav-section-label { padding: 12px 24px 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6B6B75; letter-spacing: 1px; }
+  .nav-item { display: flex; align-items: center; padding: 9px 24px; font-size: 14px; font-weight: 500; color: #9898A0; cursor: pointer; text-decoration: none; border-left: 3px solid transparent; }
+  .nav-item:hover { color: #ECECF0; background: rgba(28,35,64,0.5); }
+  .nav-item.active { color: #ECECF0; border-left-color: #39B985; background: #1C2340; }
+  .sidebar-bottom { padding: 16px 24px; border-top: 1px solid #2A3055; }
+  .sidebar-bottom .nav-item { padding: 9px 0; border-left: none; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #39B985; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; margin-top: 12px; }
+
+  /* Top Bar */
+  .topbar { position: fixed; top: 0; left: 240px; right: 0; height: 56px; background: #0D1220; border-bottom: 1px solid #2A3055; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 10; }
+  .breadcrumb { font-size: 13px; color: #9898A0; }
+  .topbar-actions { display: flex; align-items: center; gap: 16px; }
+  .search-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #6B6B75; cursor: pointer; }
+  .search-pill kbd { background: #2A3055; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: 'Inter', sans-serif; }
+  .bell-icon { position: relative; color: #9898A0; font-size: 18px; cursor: pointer; }
+  .bell-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #FF7394; border-radius: 50%; }
+  .env-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #ECECF0; }
+  .env-dot { width: 8px; height: 8px; background: #39B985; border-radius: 50%; }
+  .export-btn { padding: 6px 14px; background: #1C2340; border: 1px solid #2A3055; border-radius: 6px; font-size: 12px; color: #ECECF0; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  /* Main Content */
+  .main { margin-left: 240px; margin-top: 56px; padding: 24px; width: 1200px; }
+
+  /* Cards */
+  .card { background: #151A2D; border: 1px solid #2A3055; border-radius: 12px; padding: 24px; }
+  .card-sm { border-radius: 8px; padding: 16px 20px; }
+  .card-header { font-size: 15px; font-weight: 600; color: #ECECF0; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+
+  /* Row layouts */
+  .row { display: flex; gap: 16px; margin-bottom: 16px; }
+
+  /* KPI */
+  .kpi-value { font-size: 28px; font-weight: 700; line-height: 1.2; }
+  .kpi-sub { font-size: 11px; margin-top: 4px; }
+
+  /* Badge */
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+  .badge-emerald { background: rgba(57,185,133,0.15); color: #39B985; }
+
+  /* Link */
+  .link { color: #39B985; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; }
+
+  /* Metric row */
+  .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1C2340; }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-label { font-size: 13px; color: #ECECF0; font-weight: 500; }
+  .metric-value { font-size: 14px; font-weight: 700; }
+
+  /* Detection list */
+  .detection-item { padding: 12px 0; border-bottom: 1px solid #1C2340; }
+  .detection-item:last-child { border-bottom: none; }
+  .detection-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .detection-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .detection-title { font-size: 13px; font-weight: 500; color: #ECECF0; flex: 1; }
+  .detection-time { font-size: 11px; color: #6B6B75; white-space: nowrap; }
+  .detection-desc { font-size: 12px; color: #9898A0; padding-left: 16px; }
+
+  /* Horizontal bar */
+  .hbar { display: flex; align-items: center; margin-bottom: 10px; }
+  .hbar-label { font-size: 12px; color: #9898A0; width: 90px; flex-shrink: 0; }
+  .hbar-track { flex: 1; height: 20px; background: #1C2340; border-radius: 4px; overflow: hidden; margin: 0 10px; }
+  .hbar-fill { height: 100%; border-radius: 4px; }
+  .hbar-count { font-size: 12px; color: #ECECF0; font-weight: 600; width: 40px; text-align: right; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">CYDERES</div>
+  <div class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Command Center</div>
+      <a class="nav-item active">Dashboard</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Detect &amp; Respond</div>
+      <a class="nav-item">Incidents</a>
+      <a class="nav-item">Detections</a>
+      <a class="nav-item">Investigations</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Exposure</div>
+      <a class="nav-item">Overview</a>
+      <a class="nav-item">Findings</a>
+      <a class="nav-item">Attack Paths</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Inventory</div>
+      <a class="nav-item">Assets</a>
+      <a class="nav-item">Identities</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Analysis</div>
+      <a class="nav-item">Issue Map</a>
+      <a class="nav-item">Reports</a>
+    </div>
+  </div>
+  <div class="sidebar-bottom">
+    <a class="nav-item">Settings</a>
+    <div class="avatar">CM</div>
+  </div>
+</nav>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="breadcrumb">Command Center / Dashboard</div>
+  <div class="topbar-actions">
+    <div class="search-pill"><span>Search</span><kbd>&#8984;K</kbd></div>
+    <div class="bell-icon">&#128276;<div class="bell-dot"></div></div>
+    <div class="env-pill"><div class="env-dot"></div>Production</div>
+    <button class="export-btn">Export</button>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="main">
+
+  <!-- Row 1: Welcome Banner -->
+  <div class="row">
+    <div class="card" style="flex:1; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-size:22px; font-weight:700; color:#ECECF0; margin-bottom:6px;">Platform Security Posture</div>
+        <div style="font-size:13px; color:#9898A0;">Last updated 2 minutes ago &middot; All environments</div>
+      </div>
+      <div style="text-align:center;">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#1C2340" stroke-width="8"/>
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#DD6E1E" stroke-width="8"
+            stroke-dasharray="213.6 72.9" stroke-dashoffset="53.4" stroke-linecap="round"
+            transform="rotate(-90 40 40)"/>
+          <text x="40" y="37" text-anchor="middle" fill="#DD6E1E" font-size="28" font-weight="700" font-family="Inter">73</text>
+          <text x="40" y="52" text-anchor="middle" fill="#9898A0" font-size="10" font-family="Inter">RISK SCORE</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: KPI Cards -->
+  <div class="row">
+    <div class="card card-sm" style="flex:1;">
+      <div style="font-size:12px; color:#9898A0; font-weight:500; margin-bottom:8px;">Active Incidents</div>
+      <div class="kpi-value" style="color:#FF7394;">23</div>
+      <div class="kpi-sub" style="color:#FF7394;">&uarr; 4 today</div>
+    </div>
+    <div class="card card-sm" style="flex:1;">
+      <div style="font-size:12px; color:#9898A0; font-weight:500; margin-bottom:8px;">Critical Exposures</div>
+      <div class="kpi-value" style="color:#FF7394;">342</div>
+      <div class="kpi-sub" style="color:#DD6E1E;">&uarr; 12 this week</div>
+    </div>
+    <div class="card card-sm" style="flex:1;">
+      <div style="font-size:12px; color:#9898A0; font-weight:500; margin-bottom:8px;">Assets at Risk</div>
+      <div class="kpi-value" style="color:#DD6E1E;">1,247</div>
+      <div class="kpi-sub" style="color:#9898A0;">of 12,847 total</div>
+    </div>
+    <div class="card card-sm" style="flex:1;">
+      <div style="font-size:12px; color:#9898A0; font-weight:500; margin-bottom:8px;">Identity Alerts</div>
+      <div class="kpi-value" style="color:#FFDB36;">18</div>
+      <div class="kpi-sub" style="color:#FF7394;">3 critical</div>
+    </div>
+    <div class="card card-sm" style="flex:1;">
+      <div style="font-size:12px; color:#9898A0; font-weight:500; margin-bottom:8px;">Mean Response</div>
+      <div class="kpi-value" style="color:#39B985;">4.2h</div>
+      <div class="kpi-sub" style="color:#39B985;">&darr; 12% improved</div>
+    </div>
+  </div>
+
+  <!-- Row 3: Two columns 60/40 -->
+  <div class="row">
+    <!-- Exposure Trend Chart -->
+    <div class="card" style="flex:6;">
+      <div class="card-header">Exposure Trend — Last 30 Days</div>
+      <svg width="100%" height="220" viewBox="0 0 660 220" preserveAspectRatio="xMidYMid meet">
+        <!-- Y-axis labels -->
+        <text x="0" y="15" fill="#6B6B75" font-size="10" font-family="Inter">400</text>
+        <text x="0" y="65" fill="#6B6B75" font-size="10" font-family="Inter">300</text>
+        <text x="0" y="115" fill="#6B6B75" font-size="10" font-family="Inter">200</text>
+        <text x="0" y="165" fill="#6B6B75" font-size="10" font-family="Inter">100</text>
+        <text x="0" y="210" fill="#6B6B75" font-size="10" font-family="Inter">0</text>
+        <!-- Grid lines -->
+        <line x1="30" y1="10" x2="650" y2="10" stroke="#1C2340" stroke-width="1"/>
+        <line x1="30" y1="60" x2="650" y2="60" stroke="#1C2340" stroke-width="1"/>
+        <line x1="30" y1="110" x2="650" y2="110" stroke="#1C2340" stroke-width="1"/>
+        <line x1="30" y1="160" x2="650" y2="160" stroke="#1C2340" stroke-width="1"/>
+        <line x1="30" y1="205" x2="650" y2="205" stroke="#1C2340" stroke-width="1"/>
+        <!-- Stacked area: Low (green) -->
+        <path d="M30,205 C110,200 190,195 270,190 C350,185 430,188 510,185 C570,183 620,180 650,178 L650,205 L30,205 Z" fill="#39B985" opacity="0.6"/>
+        <!-- Medium (yellow) -->
+        <path d="M30,190 C110,182 190,175 270,168 C350,162 430,165 510,160 C570,157 620,153 650,150 L650,178 C620,180 570,183 510,185 C430,188 350,185 270,190 C190,195 110,200 30,205 Z" fill="#FFDB36" opacity="0.6"/>
+        <!-- High (orange) -->
+        <path d="M30,150 C110,140 190,128 270,120 C350,112 430,118 510,110 C570,105 620,98 650,92 L650,150 C620,153 570,157 510,160 C430,165 350,162 270,168 C190,175 110,182 30,190 Z" fill="#DD6E1E" opacity="0.6"/>
+        <!-- Critical (red) -->
+        <path d="M30,120 C110,108 190,95 270,85 C350,75 430,82 510,72 C570,66 620,58 650,50 L650,92 C620,98 570,105 510,110 C430,118 350,112 270,120 C190,128 110,140 30,150 Z" fill="#FF7394" opacity="0.6"/>
+        <!-- X-axis labels -->
+        <text x="30" y="220" fill="#6B6B75" font-size="10" font-family="Inter">Mar 1</text>
+        <text x="270" y="220" fill="#6B6B75" font-size="10" font-family="Inter">Mar 7</text>
+        <text x="560" y="220" fill="#6B6B75" font-size="10" font-family="Inter">Mar 14</text>
+      </svg>
+    </div>
+    <!-- Detection Summary -->
+    <div class="card" style="flex:4;">
+      <div class="card-header">
+        <span>Recent Detections</span>
+        <span class="badge badge-emerald">23 active</span>
+      </div>
+      <div>
+        <div class="detection-item">
+          <div class="detection-header">
+            <div class="detection-dot" style="background:#FF7394;"></div>
+            <div class="detection-title">Lateral movement detected</div>
+            <div class="detection-time">12m ago</div>
+          </div>
+          <div class="detection-desc">Unusual SMB traffic from srv-web-01</div>
+        </div>
+        <div class="detection-item">
+          <div class="detection-header">
+            <div class="detection-dot" style="background:#FF7394;"></div>
+            <div class="detection-title">Ransomware indicator</div>
+            <div class="detection-time">28m ago</div>
+          </div>
+          <div class="detection-desc">Encrypted file activity on endpoint-342</div>
+        </div>
+        <div class="detection-item">
+          <div class="detection-header">
+            <div class="detection-dot" style="background:#DD6E1E;"></div>
+            <div class="detection-title">Brute force attack</div>
+            <div class="detection-time">1h ago</div>
+          </div>
+          <div class="detection-desc">847 failed logins on Azure AD portal</div>
+        </div>
+        <div class="detection-item">
+          <div class="detection-header">
+            <div class="detection-dot" style="background:#DD6E1E;"></div>
+            <div class="detection-title">Privilege escalation</div>
+            <div class="detection-time">2h ago</div>
+          </div>
+          <div class="detection-desc">svc-deploy gained domain admin access</div>
+        </div>
+        <div class="detection-item">
+          <div class="detection-header">
+            <div class="detection-dot" style="background:#FFDB36;"></div>
+            <div class="detection-title">Suspicious DNS queries</div>
+            <div class="detection-time">4h ago</div>
+          </div>
+          <div class="detection-desc">C2 beacon pattern with 15-sec intervals</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Three columns -->
+  <div class="row">
+    <!-- Asset Inventory -->
+    <div class="card" style="flex:1;">
+      <div class="card-header">
+        <span>Asset Inventory</span>
+        <span class="badge badge-emerald">12,847</span>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div class="hbar">
+          <div class="hbar-label">Servers</div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:65%; background:#61C9D3;"></div></div>
+          <div class="hbar-count">2,341</div>
+        </div>
+        <div class="hbar">
+          <div class="hbar-label">Endpoints</div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:85%; background:#39B985;"></div></div>
+          <div class="hbar-count">5,892</div>
+        </div>
+        <div class="hbar">
+          <div class="hbar-label">Cloud</div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:50%; background:#A154E4;"></div></div>
+          <div class="hbar-count">2,156</div>
+        </div>
+        <div class="hbar">
+          <div class="hbar-label">Network</div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:30%; background:#B3E0FF;"></div></div>
+          <div class="hbar-count">1,423</div>
+        </div>
+        <div class="hbar">
+          <div class="hbar-label">Applications</div>
+          <div class="hbar-track"><div class="hbar-fill" style="width:25%; background:#DD6E1E;"></div></div>
+          <div class="hbar-count">1,035</div>
+        </div>
+      </div>
+      <a class="link">View all assets &rarr;</a>
+    </div>
+
+    <!-- Identity Risk -->
+    <div class="card" style="flex:1;">
+      <div class="card-header">Identity Risk Overview</div>
+      <div style="margin-bottom:16px;">
+        <div class="metric-row">
+          <span class="metric-label">Over-privileged accounts</span>
+          <span class="metric-value" style="color:#FF7394;">80</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Stale credentials</span>
+          <span class="metric-value" style="color:#DD6E1E;">156</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">No MFA</span>
+          <span class="metric-value" style="color:#FFDB36;">67</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">External access</span>
+          <span class="metric-value" style="color:#B3E0FF;">41</span>
+        </div>
+      </div>
+      <a class="link">View identities &rarr;</a>
+    </div>
+
+    <!-- Security Graph -->
+    <div class="card" style="flex:1;">
+      <div class="card-header">
+        <span>&#9670; Security Graph</span>
+        <a class="link">Expand &rarr;</a>
+      </div>
+      <svg width="100%" height="180" viewBox="0 0 300 180">
+        <defs>
+          <filter id="glow-asset"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow-identity"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow-vuln"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow-exposure"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow-db"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <!-- Edges -->
+        <line x1="60" y1="50" x2="150" y2="35" stroke="#2A3055" stroke-width="1.5"/>
+        <line x1="60" y1="50" x2="100" y2="110" stroke="#2A3055" stroke-width="1.5"/>
+        <line x1="150" y1="35" x2="240" y2="55" stroke="#2A3055" stroke-width="1.5"/>
+        <line x1="150" y1="35" x2="150" y2="100" stroke="#2A3055" stroke-width="1.5"/>
+        <line x1="240" y1="55" x2="200" y2="130" stroke="#2A3055" stroke-width="1.5"/>
+        <line x1="100" y1="110" x2="150" y2="100" stroke="#2A3055" stroke-width="1.5"/>
+        <line x1="150" y1="100" x2="200" y2="130" stroke="#2A3055" stroke-width="1.5"/>
+        <line x1="200" y1="130" x2="260" y2="140" stroke="#2A3055" stroke-width="1.5"/>
+        <line x1="100" y1="110" x2="55" y2="140" stroke="#2A3055" stroke-width="1.5"/>
+        <line x1="55" y1="140" x2="150" y2="100" stroke="#2A3055" stroke-width="1.5"/>
+        <!-- Nodes -->
+        <!-- Asset 1 -->
+        <circle cx="60" cy="50" r="12" fill="#61C9D3" opacity="0.9" filter="url(#glow-asset)"/>
+        <!-- Asset 2 -->
+        <circle cx="240" cy="55" r="10" fill="#61C9D3" opacity="0.9" filter="url(#glow-asset)"/>
+        <!-- Identity 1 -->
+        <circle cx="150" cy="35" r="11" fill="#39B985" opacity="0.9" filter="url(#glow-identity)"/>
+        <!-- Identity 2 -->
+        <circle cx="55" cy="140" r="9" fill="#39B985" opacity="0.9" filter="url(#glow-identity)"/>
+        <!-- Vulnerability 1 -->
+        <circle cx="100" cy="110" r="10" fill="#FF7394" opacity="0.9" filter="url(#glow-vuln)"/>
+        <!-- Vulnerability 2 -->
+        <circle cx="200" cy="130" r="11" fill="#FF7394" opacity="0.9" filter="url(#glow-vuln)"/>
+        <!-- Exposure -->
+        <circle cx="150" cy="100" r="10" fill="#DD6E1E" opacity="0.9" filter="url(#glow-exposure)"/>
+        <!-- Database -->
+        <circle cx="260" cy="140" r="10" fill="#A154E4" opacity="0.9" filter="url(#glow-db)"/>
+      </svg>
+      <div style="font-size:11px; color:#9898A0; text-align:center; margin-top:4px;">156 entities &middot; 342 relationships</div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

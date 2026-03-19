@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Cyderes — Assets</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#080C18;color:#ECECF0;width:1440px;min-height:100vh;}
+
+/* TOP NAV */
+.topnav{display:flex;align-items:center;height:56px;background:#0D1220;border-bottom:1px solid #2A3055;padding:0 24px;position:sticky;top:0;z-index:20;}
+.logo{font-size:18px;font-weight:700;color:#39B985;letter-spacing:4px;margin-right:32px;white-space:nowrap;}
+.nav-links{display:flex;gap:4px;}
+.nav-link{padding:8px 16px;font-size:13px;font-weight:500;color:#9898A0;border-radius:6px;cursor:pointer;text-decoration:none;white-space:nowrap;}
+.nav-link:hover{color:#ECECF0;background:rgba(28,35,64,0.5);}
+.nav-link.active{color:#ECECF0;background:#1C2340;}
+.nav-spacer{flex:1;}
+.search-bar{display:flex;align-items:center;gap:8px;padding:7px 14px;background:#1C2340;border:1px solid #2A3055;border-radius:8px;font-size:12px;color:#6B6B75;cursor:pointer;min-width:220px;}
+.search-bar kbd{background:#2A3055;padding:2px 6px;border-radius:4px;font-size:11px;font-family:'Inter',sans-serif;margin-left:auto;}
+.topnav-right{display:flex;align-items:center;gap:14px;margin-left:16px;}
+.env-pill{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid #2A3055;border-radius:20px;font-size:12px;color:#ECECF0;white-space:nowrap;}
+.env-dot{width:8px;height:8px;border-radius:50%;background:#39B985;flex-shrink:0;}
+.time-pill{padding:6px 14px;border:1px solid #2A3055;border-radius:20px;font-size:12px;color:#ECECF0;cursor:pointer;white-space:nowrap;}
+.bell-icon{position:relative;color:#9898A0;font-size:18px;cursor:pointer;line-height:1;}
+.bell-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#FF7394;border-radius:50%;}
+.avatar{width:32px;height:32px;border-radius:50%;background:#39B985;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#080C18;flex-shrink:0;}
+
+/* MAIN LAYOUT */
+.layout{display:flex;gap:0;}
+.content{flex:1;padding:24px 32px;min-width:0;}
+.sidebar{width:280px;flex-shrink:0;padding:24px 24px 24px 0;border-left:1px solid #2A3055;}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:baseline;gap:12px;margin-bottom:24px;}
+.page-title{font-size:24px;font-weight:700;color:#ECECF0;}
+.page-count{font-size:14px;color:#6B6B75;font-weight:400;}
+
+/* KPI ROW */
+.kpi-row{display:flex;gap:16px;margin-bottom:24px;}
+.kpi-card{flex:1;background:#151A2D;border:1px solid #2A3055;border-radius:12px;padding:20px 24px;}
+.kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#9898A0;margin-bottom:10px;}
+.kpi-value{font-size:32px;font-weight:700;line-height:1;margin-bottom:6px;}
+.kpi-sub{font-size:12px;color:#6B6B75;}
+.kpi-value.default{color:#ECECF0;}
+.kpi-value.red{color:#FF7394;}
+.kpi-value.orange{color:#DD6E1E;}
+.kpi-value.yellow{color:#FFDB36;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;background:#151A2D;border:1px solid #2A3055;border-radius:10px;padding:12px 16px;}
+.filter-search{display:flex;align-items:center;gap:8px;flex:1;background:#1C2340;border:1px solid #2A3055;border-radius:8px;padding:8px 14px;font-size:13px;color:#6B6B75;}
+.filter-search svg{flex-shrink:0;}
+.filter-divider{width:1px;height:24px;background:#2A3055;}
+.filter-select{display:flex;align-items:center;gap:6px;padding:8px 14px;background:#1C2340;border:1px solid #2A3055;border-radius:8px;font-size:12px;color:#ECECF0;cursor:pointer;white-space:nowrap;}
+.filter-select-arrow{color:#6B6B75;font-size:10px;margin-left:4px;}
+.filter-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.filter-btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:500;background:#1C2340;border:1px solid #2A3055;color:#9898A0;cursor:pointer;}
+.filter-btn.active-filter{background:rgba(57,185,133,0.1);border-color:rgba(57,185,133,0.3);color:#39B985;}
+
+/* TABLE */
+.table-wrap{background:#151A2D;border:1px solid #2A3055;border-radius:12px;overflow:hidden;margin-bottom:24px;}
+table{width:100%;border-collapse:collapse;}
+thead th{background:#1C2340;font-size:11px;font-weight:600;text-transform:uppercase;color:#6B6B75;padding:11px 16px;text-align:left;white-space:nowrap;letter-spacing:0.5px;border-bottom:1px solid #2A3055;}
+tbody td{padding:13px 16px;font-size:13px;color:#ECECF0;border-bottom:1px solid rgba(42,48,85,0.5);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:rgba(28,35,64,0.35);}
+.asset-name{font-weight:500;color:#ECECF0;}
+.asset-type{font-size:11px;color:#9898A0;margin-top:2px;}
+.score-critical{color:#FF7394;font-weight:600;}
+.score-high{color:#DD6E1E;font-weight:600;}
+.score-medium{color:#FFDB36;font-weight:600;}
+.score-low{color:#39B985;font-weight:600;}
+.score-label{font-size:11px;font-weight:600;margin-left:4px;}
+.count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:20px;border-radius:10px;font-size:11px;font-weight:600;padding:0 6px;}
+.count-exposures{background:rgba(255,115,148,0.12);color:#FF7394;}
+.count-neutral{background:#1C2340;color:#9898A0;}
+.count-zero{color:#2A3055;font-size:12px;}
+.mon-pill{padding:4px 10px;border-radius:10px;font-size:11px;font-weight:600;display:inline-block;}
+.mon-active{background:rgba(57,185,133,0.12);color:#39B985;}
+.mon-partial{background:rgba(255,219,54,0.12);color:#FFDB36;}
+.mon-none{background:rgba(255,115,148,0.12);color:#FF7394;}
+.env-tag{font-size:12px;color:#9898A0;}
+.time-ago{font-size:12px;color:#6B6B75;}
+.link-name{color:#39B985;font-weight:500;cursor:pointer;}
+
+/* PAGINATION */
+.table-footer{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid #2A3055;background:#151A2D;font-size:12px;color:#6B6B75;}
+.page-btns{display:flex;gap:4px;}
+.page-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#1C2340;color:#9898A0;font-size:12px;border:1px solid #2A3055;cursor:pointer;font-family:'Inter',sans-serif;}
+.page-btn.active-page{background:#39B985;color:#080C18;border-color:#39B985;font-weight:600;}
+.page-info{color:#6B6B75;}
+
+/* SIDEBAR */
+.sidebar-inner{padding:24px 0 24px 24px;}
+.sidebar-section{margin-bottom:24px;}
+.sidebar-title{font-size:13px;font-weight:600;color:#ECECF0;margin-bottom:14px;}
+.sidebar-card{background:#151A2D;border:1px solid #2A3055;border-radius:10px;padding:16px;}
+
+/* ENV BARS */
+.env-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.env-bar-label{font-size:12px;color:#9898A0;width:80px;flex-shrink:0;}
+.env-bar-track{flex:1;height:6px;background:#1C2340;border-radius:3px;overflow:hidden;}
+.env-bar-fill{height:100%;border-radius:3px;}
+.env-bar-count{font-size:12px;color:#6B6B75;width:36px;text-align:right;flex-shrink:0;}
+
+/* TYPE BREAKDOWN */
+.type-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(42,48,85,0.5);}
+.type-row:last-child{border-bottom:none;}
+.type-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.type-name{font-size:12px;color:#9898A0;flex:1;margin-left:8px;}
+.type-count{font-size:12px;font-weight:600;color:#ECECF0;}
+.type-pct{font-size:11px;color:#6B6B75;margin-left:6px;}
+
+/* COVERAGE METRICS */
+.coverage-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(42,48,85,0.5);}
+.coverage-item:last-child{border-bottom:none;}
+.coverage-label{font-size:12px;color:#9898A0;}
+.coverage-value{font-size:13px;font-weight:600;}
+.cov-green{color:#39B985;}
+.cov-yellow{color:#FFDB36;}
+.cov-red{color:#FF7394;}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="logo">CYDERES</div>
+  <div class="nav-links">
+    <a class="nav-link">Overview</a>
+    <a class="nav-link">Issues</a>
+    <a class="nav-link">Attack Paths</a>
+    <a class="nav-link active">Assets</a>
+    <a class="nav-link">Identities</a>
+    <a class="nav-link">Investigations</a>
+  </div>
+  <div class="nav-spacer"></div>
+  <div class="search-bar">Search assets, CVEs, IPs&hellip; <kbd>&#8984;K</kbd></div>
+  <div class="topnav-right">
+    <div class="time-pill">&#128197; Last 30 Days &#9660;</div>
+    <div class="env-pill"><div class="env-dot"></div> Production &#9660;</div>
+    <div class="bell-icon">&#128276;<div class="bell-dot"></div></div>
+    <div class="avatar">CM</div>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <span class="page-title">Assets</span>
+      <span class="page-count">12,847 total</span>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Assets</div>
+        <div class="kpi-value default">12,847</div>
+        <div class="kpi-sub">&#8593; 214 since last week</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Internet-Exposed</div>
+        <div class="kpi-value red">89</div>
+        <div class="kpi-sub">Direct internet reachability</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Critical Vulns</div>
+        <div class="kpi-value orange">342</div>
+        <div class="kpi-sub">Across 187 assets</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Unmonitored</div>
+        <div class="kpi-value yellow">67</div>
+        <div class="kpi-sub">No agent or coverage</div>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="filter-search">
+        <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" stroke="#6B6B75" stroke-width="1.5"/><path d="M11 11l3 3" stroke="#6B6B75" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Search assets, hostnames, IPs&hellip;
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-select">Environment: All <span class="filter-select-arrow">&#9660;</span></div>
+      <div class="filter-select">Type: All <span class="filter-select-arrow">&#9660;</span></div>
+      <div class="filter-select">Monitoring: All <span class="filter-select-arrow">&#9660;</span></div>
+      <div class="filter-right">
+        <div class="filter-btn active-filter">&#9888; Internet-Exposed Only</div>
+        <div class="filter-btn">Export CSV</div>
+      </div>
+    </div>
+
+    <!-- ASSET TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th>Type</th>
+            <th>Environment</th>
+            <th>Risk Score</th>
+            <th>Exposures</th>
+            <th>Identities</th>
+            <th>Monitoring</th>
+            <th>Last Seen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1 -->
+          <tr>
+            <td>
+              <div class="link-name">srv-dc-01</div>
+              <div class="asset-type">192.168.1.10 &middot; Windows Server 2019</div>
+            </td>
+            <td><span class="env-tag">Domain Controller</span></td>
+            <td><span class="env-tag">Production</span></td>
+            <td><span class="score-critical">9.8</span><span class="score-label score-critical">Critical</span></td>
+            <td><span class="count-badge count-exposures">4</span></td>
+            <td><span class="count-badge count-neutral">3</span></td>
+            <td><span class="mon-pill mon-active">Active</span></td>
+            <td class="time-ago">2m ago</td>
+          </tr>
+          <!-- Row 2 -->
+          <tr>
+            <td>
+              <div class="link-name">db-prod-02</div>
+              <div class="asset-type">10.0.1.45 &middot; PostgreSQL 14</div>
+            </td>
+            <td><span class="env-tag">Database</span></td>
+            <td><span class="env-tag">Production</span></td>
+            <td><span class="score-critical">9.4</span><span class="score-label score-critical">Critical</span></td>
+            <td><span class="count-badge count-exposures">3</span></td>
+            <td><span class="count-badge count-neutral">2</span></td>
+            <td><span class="mon-pill mon-active">Active</span></td>
+            <td class="time-ago">5m ago</td>
+          </tr>
+          <!-- Row 3 -->
+          <tr>
+            <td>
+              <div class="link-name">api-gateway-east</div>
+              <div class="asset-type">54.214.88.12 &middot; AWS API Gateway</div>
+            </td>
+            <td><span class="env-tag">API Gateway</span></td>
+            <td><span class="env-tag">Production</span></td>
+            <td><span class="score-high">8.7</span><span class="score-label score-high">High</span></td>
+            <td><span class="count-badge count-exposures">2</span></td>
+            <td><span class="count-badge count-neutral">1</span></td>
+            <td><span class="mon-pill mon-active">Active</span></td>
+            <td class="time-ago">1m ago</td>
+          </tr>
+          <!-- Row 4 -->
+          <tr>
+            <td>
+              <div class="link-name">web-dmz-03</div>
+              <div class="asset-type">203.0.113.22 &middot; Nginx 1.24</div>
+            </td>
+            <td><span class="env-tag">Web Server</span></td>
+            <td><span class="env-tag">DMZ</span></td>
+            <td><span class="score-high">8.2</span><span class="score-label score-high">High</span></td>
+            <td><span class="count-badge count-exposures">5</span></td>
+            <td><span class="count-zero">—</span></td>
+            <td><span class="mon-pill mon-active">Active</span></td>
+            <td class="time-ago">3m ago</td>
+          </tr>
+          <!-- Row 5 -->
+          <tr>
+            <td>
+              <div class="link-name">vpn-gw-01</div>
+              <div class="asset-type">198.51.100.5 &middot; Cisco ASA 9.16</div>
+            </td>
+            <td><span class="env-tag">VPN Gateway</span></td>
+            <td><span class="env-tag">Network</span></td>
+            <td><span class="score-high">7.5</span><span class="score-label score-high">High</span></td>
+            <td><span class="count-badge count-exposures">2</span></td>
+            <td><span class="count-badge count-neutral">4</span></td>
+            <td><span class="mon-pill mon-active">Active</span></td>
+            <td class="time-ago">1m ago</td>
+          </tr>
+          <!-- Row 6 -->
+          <tr>
+            <td>
+              <div class="link-name">ws-finance-12</div>
+              <div class="asset-type">10.10.4.88 &middot; Windows 11 Pro</div>
+            </td>
+            <td><span class="env-tag">Workstation</span></td>
+            <td><span class="env-tag">Corporate</span></td>
+            <td><span class="score-medium">6.8</span><span class="score-label score-medium">Medium</span></td>
+            <td><span class="count-badge count-neutral">1</span></td>
+            <td><span class="count-badge count-neutral">1</span></td>
+            <td><span class="mon-pill mon-active">Active</span></td>
+            <td class="time-ago">15m ago</td>
+          </tr>
+          <!-- Row 7 -->
+          <tr>
+            <td>
+              <div class="link-name">s3-prod-data</div>
+              <div class="asset-type">arn:aws:s3:::acme-prod-data &middot; AWS S3</div>
+            </td>
+            <td><span class="env-tag">Cloud Storage</span></td>
+            <td><span class="env-tag">AWS</span></td>
+            <td><span class="score-high">8.5</span><span class="score-label score-high">High</span></td>
+            <td><span class="count-badge count-exposures">1</span></td>
+            <td><span class="count-zero">—</span></td>
+            <td><span class="mon-pill mon-partial">Partial</span></td>
+            <td class="time-ago">10m ago</td>
+          </tr>
+          <!-- Row 8 -->
+          <tr>
+            <td>
+              <div class="link-name">srv-app-03</div>
+              <div class="asset-type">10.0.2.67 &middot; Ubuntu 22.04 LTS</div>
+            </td>
+            <td><span class="env-tag">App Server</span></td>
+            <td><span class="env-tag">Production</span></td>
+            <td><span class="score-high">7.9</span><span class="score-label score-high">High</span></td>
+            <td><span class="count-badge count-exposures">3</span></td>
+            <td><span class="count-badge count-neutral">2</span></td>
+            <td><span class="mon-pill mon-active">Active</span></td>
+            <td class="time-ago">4m ago</td>
+          </tr>
+          <!-- Row 9 -->
+          <tr>
+            <td>
+              <div class="link-name">fw-edge-01</div>
+              <div class="asset-type">203.0.113.1 &middot; Palo Alto PAN-OS 11</div>
+            </td>
+            <td><span class="env-tag">Firewall</span></td>
+            <td><span class="env-tag">Network</span></td>
+            <td><span class="score-medium">5.2</span><span class="score-label score-medium">Medium</span></td>
+            <td><span class="count-badge count-neutral">1</span></td>
+            <td><span class="count-zero">—</span></td>
+            <td><span class="mon-pill mon-active">Active</span></td>
+            <td class="time-ago">1m ago</td>
+          </tr>
+          <!-- Row 10 -->
+          <tr>
+            <td>
+              <div class="link-name">container-k8s-node-07</div>
+              <div class="asset-type">k8s-cluster-prod &middot; Kubernetes 1.28</div>
+            </td>
+            <td><span class="env-tag">Container</span></td>
+            <td><span class="env-tag">Kubernetes</span></td>
+            <td><span class="score-medium">4.1</span><span class="score-label score-medium">Medium</span></td>
+            <td><span class="count-zero">—</span></td>
+            <td><span class="count-zero">—</span></td>
+            <td><span class="mon-pill mon-none">None</span></td>
+            <td class="time-ago">2h ago</td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- PAGINATION FOOTER -->
+      <div class="table-footer">
+        <span class="page-info">Showing 1–10 of 12,847 assets</span>
+        <div class="page-btns">
+          <button class="page-btn">&#8592;</button>
+          <button class="page-btn active-page">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">&#8230;</button>
+          <button class="page-btn">1285</button>
+          <button class="page-btn">&#8594;</button>
+        </div>
+        <span class="page-info">10 per page</span>
+      </div>
+    </div>
+
+  </div><!-- end .content -->
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-inner">
+
+      <!-- Asset Distribution by Environment -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">Asset Distribution by Environment</div>
+        <div class="sidebar-card">
+          <div class="env-bar-row">
+            <span class="env-bar-label">Production</span>
+            <div class="env-bar-track"><div class="env-bar-fill" style="width:62%;background:#39B985;"></div></div>
+            <span class="env-bar-count">7,965</span>
+          </div>
+          <div class="env-bar-row">
+            <span class="env-bar-label">Staging</span>
+            <div class="env-bar-track"><div class="env-bar-fill" style="width:18%;background:#61C9D3;"></div></div>
+            <span class="env-bar-count">2,312</span>
+          </div>
+          <div class="env-bar-row">
+            <span class="env-bar-label">Dev</span>
+            <div class="env-bar-track"><div class="env-bar-fill" style="width:11%;background:#B3E0FF;"></div></div>
+            <span class="env-bar-count">1,414</span>
+          </div>
+          <div class="env-bar-row">
+            <span class="env-bar-label">AWS</span>
+            <div class="env-bar-track"><div class="env-bar-fill" style="width:7%;background:#A154E4;"></div></div>
+            <span class="env-bar-count">900</span>
+          </div>
+          <div class="env-bar-row">
+            <span class="env-bar-label">Network</span>
+            <div class="env-bar-track"><div class="env-bar-fill" style="width:2%;background:#FFDB36;"></div></div>
+            <span class="env-bar-count">256</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset Types -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">Asset Types</div>
+        <div class="sidebar-card">
+          <div class="type-row">
+            <div class="type-dot" style="background:#61C9D3;"></div>
+            <span class="type-name">Servers</span>
+            <span class="type-count">4,821</span>
+            <span class="type-pct">37.5%</span>
+          </div>
+          <div class="type-row">
+            <div class="type-dot" style="background:#39B985;"></div>
+            <span class="type-name">Workstations</span>
+            <span class="type-count">3,204</span>
+            <span class="type-pct">24.9%</span>
+          </div>
+          <div class="type-row">
+            <div class="type-dot" style="background:#A154E4;"></div>
+            <span class="type-name">Cloud Resources</span>
+            <span class="type-count">2,541</span>
+            <span class="type-pct">19.8%</span>
+          </div>
+          <div class="type-row">
+            <div class="type-dot" style="background:#B3E0FF;"></div>
+            <span class="type-name">Containers</span>
+            <span class="type-count">1,388</span>
+            <span class="type-pct">10.8%</span>
+          </div>
+          <div class="type-row">
+            <div class="type-dot" style="background:#FFDB36;"></div>
+            <span class="type-name">Network Devices</span>
+            <span class="type-count">893</span>
+            <span class="type-pct">6.9%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coverage Metrics -->
+      <div class="sidebar-section">
+        <div class="sidebar-title">Coverage Metrics</div>
+        <div class="sidebar-card">
+          <div class="coverage-item">
+            <span class="coverage-label">Agent Coverage</span>
+            <span class="coverage-value cov-green">94.7%</span>
+          </div>
+          <div class="coverage-item">
+            <span class="coverage-label">Fully Monitored</span>
+            <span class="coverage-value cov-green">87.3%</span>
+          </div>
+          <div class="coverage-item">
+            <span class="coverage-label">Partial Coverage</span>
+            <span class="coverage-value cov-yellow">7.4%</span>
+          </div>
+          <div class="coverage-item">
+            <span class="coverage-label">No Coverage</span>
+            <span class="coverage-value cov-red">5.3%</span>
+          </div>
+          <div class="coverage-item">
+            <span class="coverage-label">Patch Compliance</span>
+            <span class="coverage-value cov-yellow">78.1%</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end .sidebar -->
+
+</div><!-- end .layout -->
+
+</body>
+</html>

@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440" />
+  <title>Cyderes — Asset Investigation: fw-edge-01</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --surface-base: #080C18;
+      --surface-raised: #0D1220;
+      --surface-card: #151A2D;
+      --surface-elevated: #1C2340;
+      --border: #2A3055;
+      --text-primary: #ECECF0;
+      --text-secondary: #9898A0;
+      --text-tertiary: #6B6B75;
+      --accent: #39B985;
+      --critical: #FF7394;
+      --high: #DD6E1E;
+      --medium: #FFDB36;
+      --low: #39B985;
+      --info: #B3E0FF;
+      --node-asset: #61C9D3;
+      --node-identity: #39B985;
+      --node-vulnerability: #FF7394;
+      --node-exposure: #DD6E1E;
+      --node-database: #A154E4;
+      --node-environment: #B3E0FF;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--surface-base);
+      color: var(--text-primary);
+      width: 1440px;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+    }
+
+    /* ══════════════════════════════════
+       LEFT SIDEBAR
+       ══════════════════════════════════ */
+    .sidebar {
+      width: 240px;
+      min-height: 100vh;
+      background: var(--surface-raised);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 10;
+    }
+
+    .sidebar-logo {
+      padding: 20px 20px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 3px;
+    }
+
+    .nav-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 16px 20px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-item:hover {
+      color: var(--text-primary);
+      background: rgba(57, 185, 133, 0.04);
+    }
+    .nav-item.active {
+      color: var(--text-primary);
+      background: var(--surface-elevated);
+      border-left-color: var(--accent);
+      font-weight: 600;
+    }
+    .nav-item .icon {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+    .nav-item.active .icon { opacity: 1; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding: 12px 0;
+    }
+    .sidebar-avatar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .sidebar-avatar .avatar-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* ══════════════════════════════════
+       MAIN AREA
+       ══════════════════════════════════ */
+    .main-area {
+      margin-left: 240px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── Top Bar ── */
+    .topbar {
+      height: 56px;
+      background: var(--surface-raised);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+    .breadcrumb span { color: var(--text-tertiary); }
+    .breadcrumb .sep { color: var(--text-tertiary); opacity: 0.5; }
+    .breadcrumb .current { color: var(--text-primary); font-weight: 600; }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .topbar-search {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--surface-base);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      cursor: pointer;
+    }
+    .topbar-search kbd {
+      font-family: inherit;
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-tertiary);
+      margin-left: 8px;
+    }
+    .bell-icon {
+      position: relative;
+      font-size: 16px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .bell-icon .dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--critical);
+      border: 1.5px solid var(--surface-raised);
+    }
+    .env-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      background: rgba(57, 185, 133, 0.1);
+      border: 1px solid rgba(57, 185, 133, 0.25);
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .env-pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .export-btn {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    /* ── Content ── */
+    .content {
+      padding: 24px;
+      flex: 1;
+    }
+
+    /* ══════════════════════════════════
+       ENTITY HEADER CARD
+       ══════════════════════════════════ */
+    .entity-header {
+      background: var(--surface-card);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .entity-left { flex: 1; min-width: 0; }
+    .entity-title-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .entity-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(97, 201, 211, 0.15);
+      border: 2px solid var(--node-asset);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--node-asset);
+      flex-shrink: 0;
+    }
+    .entity-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .entity-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 4px;
+    }
+    .badge-critical {
+      padding: 3px 10px;
+      border-radius: 10px;
+      background: rgba(255, 115, 148, 0.2);
+      color: var(--critical);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-meta {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .entity-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .entity-meta .sep { color: var(--text-tertiary); }
+    .entity-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .btn-danger {
+      background: transparent;
+      border: 1px solid rgba(255, 115, 148, 0.4);
+      color: var(--critical);
+    }
+
+    .entity-stats {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .stat-box {
+      background: var(--surface-elevated);
+      border-radius: 8px;
+      padding: 14px 16px;
+      text-align: center;
+      min-width: 100px;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ══════════════════════════════════
+       TWO-COLUMN LAYOUT
+       ══════════════════════════════════ */
+    .two-col {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .col-left { width: 65%; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
+    .col-right { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface-card);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-left: 4px;
+    }
+    .card-badge {
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--surface-elevated);
+      color: var(--text-secondary);
+    }
+    .card-link {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      cursor: pointer;
+    }
+    .card-body { padding: 20px; }
+
+    /* ══════════════════════════════════
+       RELATIONSHIP GRAPH
+       ══════════════════════════════════ */
+    .graph-container {
+      width: 100%;
+      height: 420px;
+      position: relative;
+    }
+    .graph-container svg { width: 100%; height: 100%; }
+
+    .graph-legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* ══════════════════════════════════
+       RISK FINDINGS TABLE
+       ══════════════════════════════════ */
+    .findings-table { width: 100%; border-collapse: collapse; }
+    .findings-table thead th {
+      background: var(--surface-elevated);
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .findings-table tbody td {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-primary);
+      border-bottom: 1px solid rgba(42, 48, 85, 0.5);
+      vertical-align: middle;
+    }
+    .findings-table tbody tr:last-child td { border-bottom: none; }
+    .findings-table tbody tr:hover { background: rgba(28, 35, 64, 0.4); }
+
+    .finding-name {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .finding-desc {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .severity-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .severity-critical { background: rgba(255, 115, 148, 0.15); color: var(--critical); }
+    .severity-high { background: rgba(221, 110, 30, 0.15); color: var(--high); }
+    .severity-medium { background: rgba(255, 219, 54, 0.15); color: var(--medium); }
+    .severity-low { background: rgba(57, 185, 133, 0.15); color: var(--low); }
+
+    .status-pill {
+      display: inline-flex;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .status-exploitable { background: rgba(255, 115, 148, 0.12); color: var(--critical); }
+    .status-open { background: rgba(221, 110, 30, 0.12); color: var(--high); }
+    .status-overprivileged { background: rgba(255, 219, 54, 0.12); color: var(--medium); }
+
+    .cvss-score {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .age {
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ══════════════════════════════════
+       EVIDENCE TIMELINE
+       ══════════════════════════════════ */
+    .timeline {
+      padding: 4px 0;
+    }
+    .timeline-event {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      padding-bottom: 20px;
+    }
+    .timeline-event:last-child { padding-bottom: 0; }
+    .timeline-track {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 16px;
+      flex-shrink: 0;
+    }
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .timeline-line {
+      width: 2px;
+      flex: 1;
+      background: var(--border);
+      margin-top: 4px;
+    }
+    .timeline-event:last-child .timeline-line { display: none; }
+
+    .timeline-content { flex: 1; min-width: 0; }
+    .timeline-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+      line-height: 1.4;
+    }
+    .timeline-desc {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      line-height: 1.4;
+    }
+    .timeline-time {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 3px;
+    }
+
+    /* ══════════════════════════════════
+       RELATED ENTITIES GRID
+       ══════════════════════════════════ */
+    .entity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .entity-card {
+      background: var(--surface-elevated);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .entity-card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .entity-card-info { flex: 1; min-width: 0; }
+    .entity-card-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .entity-card-type {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+    .entity-card-sev {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     LEFT SIDEBAR NAVIGATION
+     ══════════════════════════════════════════════════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">CYDERES</div>
+
+  <div class="nav-section-label">Command Center</div>
+  <div class="nav-item"><span class="icon">◫</span> Dashboard</div>
+
+  <div class="nav-section-label">Detect &amp; Respond</div>
+  <div class="nav-item"><span class="icon">⚡</span> Incidents</div>
+  <div class="nav-item"><span class="icon">◉</span> Detections</div>
+  <div class="nav-item"><span class="icon">🔍</span> Investigations</div>
+
+  <div class="nav-section-label">Exposure</div>
+  <div class="nav-item"><span class="icon">◈</span> Overview</div>
+  <div class="nav-item"><span class="icon">▣</span> Findings</div>
+  <div class="nav-item"><span class="icon">⤳</span> Attack Paths</div>
+
+  <div class="nav-section-label">Inventory</div>
+  <div class="nav-item active"><span class="icon">☰</span> Assets</div>
+  <div class="nav-item"><span class="icon">⊙</span> Identities</div>
+
+  <div class="nav-section-label">Analysis</div>
+  <div class="nav-item"><span class="icon">◇</span> Issue Map</div>
+  <div class="nav-item"><span class="icon">▤</span> Reports</div>
+
+  <div class="sidebar-bottom">
+    <div class="nav-item"><span class="icon">⚙</span> Settings</div>
+    <div class="sidebar-avatar">
+      <div class="avatar-circle">CM</div>
+      <span>Curtis M.</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MAIN AREA
+     ══════════════════════════════════════════════════════════════ -->
+<div class="main-area">
+
+  <!-- ── Top Bar ── -->
+  <header class="topbar">
+    <div class="breadcrumb">
+      <span>Inventory</span>
+      <span class="sep">/</span>
+      <span>Assets</span>
+      <span class="sep">/</span>
+      <span class="current">fw-edge-01</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-search">🔎 Search assets, IPs, CVEs... <kbd>⌘K</kbd></div>
+      <div class="bell-icon">🔔<div class="dot"></div></div>
+      <div class="env-pill"><span class="dot"></span> Production</div>
+      <button class="export-btn">↓ Export</button>
+    </div>
+  </header>
+
+  <!-- ── Content ── -->
+  <div class="content">
+
+    <!-- ════════════════════════════════
+         ENTITY HEADER CARD
+         ════════════════════════════════ -->
+    <div class="entity-header">
+      <div class="entity-left">
+        <div class="entity-title-row">
+          <div class="entity-icon">FW</div>
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span class="entity-name">fw-edge-01</span>
+              <span class="badge-critical">Critical Risk</span>
+              <span class="badge-meta">FortiGate 600F · Firmware v7.2.3</span>
+            </div>
+          </div>
+        </div>
+        <div class="entity-meta">
+          🔌 Network Appliance
+          <span class="sep">·</span>
+          🏢 Production
+          <span class="sep">·</span>
+          🔄 Last scan: 2h ago
+          <span class="sep">·</span>
+          🌐 Internet-facing
+          <span class="sep">·</span>
+          📍 10.0.1.1 / DMZ
+        </div>
+        <div class="entity-actions">
+          <button class="btn btn-primary">Create Remediation Ticket</button>
+          <button class="btn btn-outline">Isolate Asset</button>
+          <button class="btn btn-outline">Suppress Finding</button>
+          <button class="btn btn-danger">⚠ Escalate</button>
+        </div>
+      </div>
+      <div class="entity-stats">
+        <div class="stat-box">
+          <div class="stat-value" style="color:var(--critical);">9.8</div>
+          <div class="stat-label">Risk Score</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">7</div>
+          <div class="stat-label">Exposures</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Identities</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">12</div>
+          <div class="stat-label">Connections</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         TWO-COLUMN LAYOUT
+         ════════════════════════════════ -->
+    <div class="two-col">
+
+      <!-- LEFT COLUMN (65%) -->
+      <div class="col-left">
+
+        <!-- ── Asset Relationship Graph ── -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-left">
+              <span class="card-title">◈ Asset Relationship Graph</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="card-badge">12 connections</span>
+              <span class="card-link">Expand ↗</span>
+            </div>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <div class="graph-container">
+              <svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <!-- Glow filters -->
+                  <filter id="glow-asset" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="6" result="blur"/>
+                    <feFlood flood-color="#61C9D3" flood-opacity="0.4"/>
+                    <feComposite in2="blur" operator="in"/>
+                    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <filter id="glow-vuln" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="5" result="blur"/>
+                    <feFlood flood-color="#FF7394" flood-opacity="0.35"/>
+                    <feComposite in2="blur" operator="in"/>
+                    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <filter id="glow-exposure" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="blur"/>
+                    <feFlood flood-color="#DD6E1E" flood-opacity="0.3"/>
+                    <feComposite in2="blur" operator="in"/>
+                    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <filter id="glow-identity" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="blur"/>
+                    <feFlood flood-color="#39B985" flood-opacity="0.3"/>
+                    <feComposite in2="blur" operator="in"/>
+                    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <filter id="glow-db" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="blur"/>
+                    <feFlood flood-color="#A154E4" flood-opacity="0.3"/>
+                    <feComposite in2="blur" operator="in"/>
+                    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <filter id="glow-env" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="blur"/>
+                    <feFlood flood-color="#B3E0FF" flood-opacity="0.25"/>
+                    <feComposite in2="blur" operator="in"/>
+                    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <filter id="edge-glow-crit" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                    <feFlood flood-color="#FF7394" flood-opacity="0.5"/>
+                    <feComposite in2="blur" operator="in"/>
+                    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+
+                <!-- Cluster backgrounds -->
+                <rect x="100" y="50" width="230" height="170" rx="12" fill="none" stroke="rgba(255,115,148,0.12)" stroke-width="1.5" stroke-dasharray="6 4"/>
+                <text x="120" y="72" fill="rgba(255,115,148,0.4)" font-size="10" font-weight="500" font-family="Inter">Vulnerabilities</text>
+
+                <rect x="430" y="260" width="260" height="140" rx="12" fill="none" stroke="rgba(179,224,255,0.1)" stroke-width="1.5" stroke-dasharray="6 4"/>
+                <text x="450" y="282" fill="rgba(179,224,255,0.35)" font-size="10" font-weight="500" font-family="Inter">Infrastructure</text>
+
+                <!-- Edges — critical paths (highlighted) -->
+                <line x1="360" y1="210" x2="190" y2="120" stroke="#FF7394" stroke-width="2" opacity="0.6" filter="url(#edge-glow-crit)"/>
+                <line x1="360" y1="210" x2="330" y2="100" stroke="#FF7394" stroke-width="2" opacity="0.6" filter="url(#edge-glow-crit)"/>
+                <!-- Normal edges -->
+                <line x1="360" y1="210" x2="520" y2="110" stroke="#DD6E1E" stroke-width="1.5" opacity="0.4"/>
+                <line x1="360" y1="210" x2="580" y2="200" stroke="#39B985" stroke-width="1.5" opacity="0.35"/>
+                <line x1="360" y1="210" x2="160" y2="310" stroke="#B3E0FF" stroke-width="1.5" opacity="0.3"/>
+                <line x1="360" y1="210" x2="310" y2="340" stroke="#61C9D3" stroke-width="1.5" opacity="0.35"/>
+                <line x1="360" y1="210" x2="440" y2="340" stroke="#61C9D3" stroke-width="1.5" opacity="0.35"/>
+                <line x1="360" y1="210" x2="570" y2="330" stroke="#A154E4" stroke-width="1.5" opacity="0.35"/>
+                <line x1="360" y1="210" x2="620" y2="290" stroke="#B3E0FF" stroke-width="1.5" opacity="0.3"/>
+
+                <!-- CENTER NODE: fw-edge-01 -->
+                <circle cx="360" cy="210" r="28" fill="rgba(97,201,211,0.12)" stroke="#61C9D3" stroke-width="2.5" filter="url(#glow-asset)"/>
+                <text x="360" y="214" text-anchor="middle" fill="#61C9D3" font-size="12" font-weight="700" font-family="Inter">FW</text>
+                <text x="360" y="252" text-anchor="middle" fill="#9898A0" font-size="10" font-family="Inter">fw-edge-01</text>
+
+                <!-- CVE-2024-21762 — top left -->
+                <circle cx="190" cy="120" r="21" fill="rgba(255,115,148,0.12)" stroke="#FF7394" stroke-width="2" filter="url(#glow-vuln)"/>
+                <text x="190" y="124" text-anchor="middle" fill="#FF7394" font-size="8" font-weight="600" font-family="Inter">CVE</text>
+                <text x="190" y="152" text-anchor="middle" fill="#9898A0" font-size="9" font-family="Inter">CVE-2024-21762</text>
+                <text x="190" y="164" text-anchor="middle" fill="#FF7394" font-size="8" font-weight="600" font-family="Inter">CRITICAL</text>
+
+                <!-- CVE-2023-27997 — top center -->
+                <circle cx="330" cy="100" r="21" fill="rgba(255,115,148,0.12)" stroke="#FF7394" stroke-width="2" filter="url(#glow-vuln)"/>
+                <text x="330" y="104" text-anchor="middle" fill="#FF7394" font-size="8" font-weight="600" font-family="Inter">CVE</text>
+                <text x="330" y="78" text-anchor="middle" fill="#9898A0" font-size="9" font-family="Inter">CVE-2023-27997</text>
+
+                <!-- Exposed mgmt port — top right -->
+                <circle cx="520" cy="110" r="21" fill="rgba(221,110,30,0.1)" stroke="#DD6E1E" stroke-width="2" filter="url(#glow-exposure)"/>
+                <text x="520" y="113" text-anchor="middle" fill="#DD6E1E" font-size="8" font-weight="600" font-family="Inter">EXP</text>
+                <text x="520" y="142" text-anchor="middle" fill="#9898A0" font-size="9" font-family="Inter">Exposed mgmt port</text>
+
+                <!-- svc-deploy-ci — right -->
+                <circle cx="580" cy="200" r="21" fill="rgba(57,185,133,0.1)" stroke="#39B985" stroke-width="2" filter="url(#glow-identity)"/>
+                <text x="580" y="204" text-anchor="middle" fill="#39B985" font-size="8" font-weight="600" font-family="Inter">SVC</text>
+                <text x="580" y="228" text-anchor="middle" fill="#9898A0" font-size="9" font-family="Inter">svc-deploy-ci</text>
+
+                <!-- Internet (WAN) — bottom left -->
+                <circle cx="160" cy="310" r="19" fill="rgba(179,224,255,0.08)" stroke="#B3E0FF" stroke-width="1.5" filter="url(#glow-env)"/>
+                <text x="160" y="314" text-anchor="middle" fill="#B3E0FF" font-size="8" font-weight="600" font-family="Inter">WAN</text>
+                <text x="160" y="340" text-anchor="middle" fill="#9898A0" font-size="9" font-family="Inter">Internet (WAN)</text>
+
+                <!-- VPN Gateway — bottom center-left -->
+                <circle cx="310" cy="340" r="19" fill="rgba(97,201,211,0.08)" stroke="#61C9D3" stroke-width="1.5" filter="url(#glow-asset)"/>
+                <text x="310" y="344" text-anchor="middle" fill="#61C9D3" font-size="8" font-weight="600" font-family="Inter">VPN</text>
+                <text x="310" y="370" text-anchor="middle" fill="#9898A0" font-size="9" font-family="Inter">VPN Gateway</text>
+
+                <!-- DNS Server — bottom center-right -->
+                <circle cx="440" cy="340" r="19" fill="rgba(97,201,211,0.08)" stroke="#61C9D3" stroke-width="1.5" filter="url(#glow-asset)"/>
+                <text x="440" y="344" text-anchor="middle" fill="#61C9D3" font-size="8" font-weight="600" font-family="Inter">DNS</text>
+                <text x="440" y="370" text-anchor="middle" fill="#9898A0" font-size="9" font-family="Inter">DNS Server</text>
+
+                <!-- db-prod-pg01 — bottom right -->
+                <circle cx="570" cy="330" r="19" fill="rgba(161,84,228,0.1)" stroke="#A154E4" stroke-width="1.5" filter="url(#glow-db)"/>
+                <text x="570" y="334" text-anchor="middle" fill="#A154E4" font-size="8" font-weight="600" font-family="Inter">DB</text>
+                <text x="570" y="360" text-anchor="middle" fill="#9898A0" font-size="9" font-family="Inter">db-prod-pg01</text>
+
+                <!-- Internal LAN — right -->
+                <circle cx="620" cy="290" r="19" fill="rgba(179,224,255,0.08)" stroke="#B3E0FF" stroke-width="1.5" filter="url(#glow-env)"/>
+                <text x="620" y="294" text-anchor="middle" fill="#B3E0FF" font-size="8" font-weight="600" font-family="Inter">LAN</text>
+                <text x="620" y="318" text-anchor="middle" fill="#9898A0" font-size="9" font-family="Inter">Internal LAN</text>
+              </svg>
+            </div>
+          </div>
+          <div class="graph-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#61C9D3;"></div> Asset</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#39B985;"></div> Identity</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#FF7394;"></div> Vulnerability</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#DD6E1E;"></div> Exposure</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#A154E4;"></div> Database</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#B3E0FF;"></div> Environment</div>
+          </div>
+        </div>
+
+        <!-- ── Risk Findings ── -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-left">
+              <span class="card-title">Risk Findings</span>
+              <span class="card-subtitle">Vulnerabilities, identity risks, and network exposure</span>
+            </div>
+            <span class="card-badge">7 findings</span>
+          </div>
+          <table class="findings-table">
+            <thead>
+              <tr>
+                <th style="width:40%;">Finding</th>
+                <th>Severity</th>
+                <th>CVSS</th>
+                <th>Age</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="finding-name">CVE-2024-21762</div>
+                  <div class="finding-desc">FortiOS buffer overflow</div>
+                </td>
+                <td><span class="severity-pill severity-critical">Critical</span></td>
+                <td class="cvss-score" style="color:var(--critical);">9.8</td>
+                <td class="age">14d</td>
+                <td><span class="status-pill status-exploitable">Exploitable</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="finding-name">CVE-2023-27997</div>
+                  <div class="finding-desc">FortiOS SSL VPN Pre-auth RCE</div>
+                </td>
+                <td><span class="severity-pill severity-critical">Critical</span></td>
+                <td class="cvss-score" style="color:var(--critical);">9.2</td>
+                <td class="age">55d</td>
+                <td><span class="status-pill status-exploitable">Exploitable</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="finding-name">Exposed Management Port</div>
+                  <div class="finding-desc">HTTPS mgmt port 4431</div>
+                </td>
+                <td><span class="severity-pill severity-high">High</span></td>
+                <td class="cvss-score" style="color:var(--high);">8.1</td>
+                <td class="age">7d</td>
+                <td><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="finding-name">Stale Service Account</div>
+                  <div class="finding-desc">svc-deploy admin access</div>
+                </td>
+                <td><span class="severity-pill severity-high">High</span></td>
+                <td class="cvss-score" style="color:var(--high);">7.5</td>
+                <td class="age">21d</td>
+                <td><span class="status-pill status-overprivileged">Over-privileged</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="finding-name">Weak TLS Configuration</div>
+                  <div class="finding-desc">TLS 1.0/1.1 enabled</div>
+                </td>
+                <td><span class="severity-pill severity-medium">Medium</span></td>
+                <td class="cvss-score" style="color:var(--medium);">6.8</td>
+                <td class="age">45d</td>
+                <td><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="finding-name">Unencrypted Syslog</div>
+                  <div class="finding-desc">UDP without TLS</div>
+                </td>
+                <td><span class="severity-pill severity-medium">Medium</span></td>
+                <td class="cvss-score" style="color:var(--medium);">6.1</td>
+                <td class="age">60d</td>
+                <td><span class="status-pill status-open">Open</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN (35%) -->
+      <div class="col-right">
+
+        <!-- ── Evidence Timeline ── -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-left">
+              <span class="card-title">Evidence Timeline</span>
+              <span class="card-subtitle">Recent security events</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="timeline">
+
+              <div class="timeline-event">
+                <div class="timeline-track">
+                  <div class="timeline-dot" style="background:var(--critical);"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-title">Exploit attempt detected</div>
+                  <div class="timeline-desc">CVE-2024-21762</div>
+                  <div class="timeline-time">2h ago · IDS Alert #621</div>
+                </div>
+              </div>
+
+              <div class="timeline-event">
+                <div class="timeline-track">
+                  <div class="timeline-dot" style="background:var(--critical);"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-title">Anomalous outbound traffic</div>
+                  <div class="timeline-desc">Connection to 198.51.100.23</div>
+                  <div class="timeline-time">3h ago · NDR Alert</div>
+                </div>
+              </div>
+
+              <div class="timeline-event">
+                <div class="timeline-track">
+                  <div class="timeline-dot" style="background:var(--medium);"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-title">svc-deploy-ci authenticated via SSH</div>
+                  <div class="timeline-desc">Service account login</div>
+                  <div class="timeline-time">17h ago · Auth log</div>
+                </div>
+              </div>
+
+              <div class="timeline-event">
+                <div class="timeline-track">
+                  <div class="timeline-dot" style="background:var(--low);"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-title">Vulnerability scan completed</div>
+                  <div class="timeline-desc">7 findings identified</div>
+                  <div class="timeline-time">1d ago · Scanner</div>
+                </div>
+              </div>
+
+              <div class="timeline-event">
+                <div class="timeline-track">
+                  <div class="timeline-dot" style="background:var(--low);"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-title">Configuration backup exported</div>
+                  <div class="timeline-desc">Exported to SFTP</div>
+                  <div class="timeline-time">2d ago · System</div>
+                </div>
+              </div>
+
+              <div class="timeline-event">
+                <div class="timeline-track">
+                  <div class="timeline-dot" style="background:var(--info);"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-title">Firmware update available</div>
+                  <div class="timeline-desc">v7.4.1 released</div>
+                  <div class="timeline-time">3d ago · Advisory</div>
+                </div>
+              </div>
+
+              <div class="timeline-event">
+                <div class="timeline-track">
+                  <div class="timeline-dot" style="background:var(--low);"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-title">Asset discovered and added to inventory</div>
+                  <div class="timeline-desc">Network discovery scan</div>
+                  <div class="timeline-time">14d ago · Discovery</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Related Entities ── -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-left">
+              <span class="card-title">Related Entities</span>
+            </div>
+            <span class="card-badge">8 entities</span>
+          </div>
+          <div class="card-body">
+            <div class="entity-grid">
+
+              <div class="entity-card">
+                <div class="entity-card-icon" style="background:rgba(57,185,133,0.12);color:#39B985;">SV</div>
+                <div class="entity-card-info">
+                  <div class="entity-card-name">svc-deploy-ci</div>
+                  <div class="entity-card-type">Service Account</div>
+                </div>
+                <span class="entity-card-sev" style="background:rgba(221,110,30,0.15);color:#DD6E1E;">High</span>
+              </div>
+
+              <div class="entity-card">
+                <div class="entity-card-icon" style="background:rgba(57,185,133,0.12);color:#39B985;">AD</div>
+                <div class="entity-card-info">
+                  <div class="entity-card-name">admin-jblue</div>
+                  <div class="entity-card-type">Human</div>
+                </div>
+                <span class="entity-card-sev" style="background:rgba(255,115,148,0.15);color:#FF7394;">Crit</span>
+              </div>
+
+              <div class="entity-card">
+                <div class="entity-card-icon" style="background:rgba(97,201,211,0.12);color:#61C9D3;">WB</div>
+                <div class="entity-card-info">
+                  <div class="entity-card-name">srv-web-01</div>
+                  <div class="entity-card-type">Web Server</div>
+                </div>
+                <span class="entity-card-sev" style="background:rgba(255,219,54,0.15);color:#FFDB36;">Med</span>
+              </div>
+
+              <div class="entity-card">
+                <div class="entity-card-icon" style="background:rgba(97,201,211,0.12);color:#61C9D3;">VP</div>
+                <div class="entity-card-info">
+                  <div class="entity-card-name">vpn-gw-01</div>
+                  <div class="entity-card-type">VPN Gateway</div>
+                </div>
+                <span class="entity-card-sev" style="background:rgba(57,185,133,0.15);color:#39B985;">Low</span>
+              </div>
+
+              <div class="entity-card">
+                <div class="entity-card-icon" style="background:rgba(161,84,228,0.12);color:#A154E4;">DB</div>
+                <div class="entity-card-info">
+                  <div class="entity-card-name">db-prod-pg01</div>
+                  <div class="entity-card-type">Database</div>
+                </div>
+                <span class="entity-card-sev" style="background:var(--surface-elevated);color:var(--text-tertiary);">—</span>
+              </div>
+
+              <div class="entity-card">
+                <div class="entity-card-icon" style="background:rgba(97,201,211,0.12);color:#61C9D3;">DN</div>
+                <div class="entity-card-info">
+                  <div class="entity-card-name">dns-core-01</div>
+                  <div class="entity-card-type">DNS</div>
+                </div>
+                <span class="entity-card-sev" style="background:rgba(57,185,133,0.15);color:#39B985;">Low</span>
+              </div>
+
+              <div class="entity-card">
+                <div class="entity-card-icon" style="background:rgba(179,224,255,0.1);color:#B3E0FF;">IN</div>
+                <div class="entity-card-info">
+                  <div class="entity-card-name">Internet (WAN)</div>
+                  <div class="entity-card-type">Network</div>
+                </div>
+                <span class="entity-card-sev" style="background:var(--surface-elevated);color:var(--text-tertiary);">—</span>
+              </div>
+
+              <div class="entity-card">
+                <div class="entity-card-icon" style="background:rgba(97,201,211,0.12);color:#61C9D3;">K8</div>
+                <div class="entity-card-info">
+                  <div class="entity-card-name">k8s-node-03</div>
+                  <div class="entity-card-type">Container</div>
+                </div>
+                <span class="entity-card-sev" style="background:rgba(255,219,54,0.15);color:#FFDB36;">Med</span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

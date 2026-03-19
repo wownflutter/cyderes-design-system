@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Asset Management — Cyderes Darkstar</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #080C18;
+    color: #ECECF0;
+    width: 1440px;
+    min-height: 100vh;
+    display: flex;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: #0D1220;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 10;
+  }
+  .sidebar-logo {
+    padding: 20px 24px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #39B985;
+    letter-spacing: 4px;
+  }
+  .nav-sections { flex: 1; overflow-y: auto; padding: 0 0 16px; }
+  .nav-section { margin-bottom: 8px; }
+  .nav-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6B6B75;
+    padding: 16px 24px 6px;
+    letter-spacing: 0.5px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #9898A0;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { color: #ECECF0; background: rgba(28,35,64,0.5); }
+  .nav-item.active {
+    color: #ECECF0;
+    border-left-color: #39B985;
+    background: #1C2340;
+  }
+  .sidebar-bottom {
+    padding: 16px 24px;
+    border-top: 1px solid #2A3055;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sidebar-bottom .nav-item { padding: 8px 0; border-left: none; }
+  .sidebar-avatar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0 4px;
+  }
+  .avatar-circle {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #39B985;
+    color: #fff;
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Main Area ── */
+  .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+
+  /* ── Top Bar ── */
+  .topbar {
+    height: 56px;
+    background: #0D1220;
+    border-bottom: 1px solid #2A3055;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    flex-shrink: 0;
+  }
+  .breadcrumb { font-size: 13px; color: #9898A0; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .search-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    font-size: 12px; color: #6B6B75;
+    cursor: pointer;
+  }
+  .search-pill kbd {
+    background: #1C2340;
+    border: 1px solid #2A3055;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    color: #6B6B75;
+  }
+  .icon-btn {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    background: transparent;
+    border: 1px solid #2A3055;
+    color: #9898A0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative; font-size: 14px;
+  }
+  .icon-btn .dot {
+    position: absolute; top: 4px; right: 4px;
+    width: 7px; height: 7px;
+    background: #FF7394;
+    border-radius: 50%;
+    border: 1.5px solid #0D1220;
+  }
+  .env-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    border-radius: 14px;
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    font-size: 12px; font-weight: 500; color: #9898A0;
+  }
+  .env-pill .dot-green { width: 6px; height: 6px; border-radius: 50%; background: #39B985; }
+  .export-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: #1C2340;
+    border: 1px solid #2A3055;
+    font-size: 12px; font-weight: 500; color: #ECECF0;
+    cursor: pointer;
+  }
+
+  /* ── Content ── */
+  .content { padding: 24px; }
+  .row { display: flex; gap: 16px; margin-bottom: 16px; }
+  .card {
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .card-header {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ECECF0;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* ── KPI Cards ── */
+  .kpi-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+  .kpi-card {
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .kpi-label { font-size: 13px; font-weight: 500; color: #9898A0; margin-bottom: 8px; }
+  .kpi-value { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+  .kpi-sub { font-size: 12px; }
+
+  /* ── Search Bar ── */
+  .search-bar {
+    background: #151A2D;
+    border: 1px solid #2A3055;
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .search-input {
+    background: none;
+    border: none;
+    color: #6B6B75;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    flex: 1;
+  }
+  .search-hint {
+    background: #1C2340;
+    border: 1px solid #2A3055;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: #6B6B75;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── Classification Grid ── */
+  .class-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .class-card {
+    background: #1C2340;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .class-icon {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    background: rgba(97,201,211,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  .class-name { font-size: 14px; font-weight: 600; color: #ECECF0; margin-bottom: 4px; }
+  .class-count { font-size: 20px; font-weight: 700; color: #ECECF0; margin-bottom: 8px; }
+  .health-bar-track {
+    width: 100%; height: 6px;
+    background: #2A3055;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .health-bar-fill { height: 100%; border-radius: 3px; }
+
+  /* ── Filter Bar ── */
+  .filter-bar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .filter-pills { display: flex; gap: 8px; }
+  .filter-pill {
+    padding: 5px 12px;
+    border-radius: 14px;
+    font-size: 12px; font-weight: 500;
+    background: #1C2340;
+    border: 1px solid #2A3055;
+    color: #9898A0;
+    cursor: pointer;
+  }
+  .filter-pill.active {
+    background: rgba(57,185,133,0.15);
+    border-color: #39B985;
+    color: #39B985;
+  }
+  .filter-dropdowns { display: flex; gap: 8px; }
+  .filter-drop {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 500;
+    background: #1C2340;
+    border: 1px solid #2A3055;
+    color: #9898A0;
+    cursor: pointer;
+  }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: #1C2340;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase;
+    color: #6B6B75;
+    padding: 10px 12px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #ECECF0;
+    border-bottom: 1px solid #1C2340;
+    white-space: nowrap;
+  }
+  tbody tr:hover { background: rgba(28,35,64,0.4); }
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .pill-critical { background: rgba(255,115,148,0.15); color: #FF7394; }
+  .pill-high { background: rgba(221,110,30,0.15); color: #DD6E1E; }
+  .pill-medium { background: rgba(255,219,54,0.15); color: #FFDB36; }
+  .pill-low { background: rgba(57,185,133,0.15); color: #39B985; }
+
+  .badge-emerald {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 2px 10px;
+    border-radius: 10px;
+    background: rgba(57,185,133,0.15);
+    color: #39B985;
+    font-size: 12px; font-weight: 600;
+    margin-left: 8px;
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0 0;
+    font-size: 12px;
+    color: #6B6B75;
+  }
+  .page-numbers { display: flex; gap: 4px; }
+  .page-num {
+    width: 28px; height: 28px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #9898A0;
+    cursor: pointer;
+  }
+  .page-num.active { background: #39B985; color: #fff; }
+
+  .link-green { font-size: 12px; font-weight: 500; color: #39B985; cursor: pointer; }
+  .row-arrow { color: #6B6B75; font-size: 14px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">CYDERES</div>
+  <div class="nav-sections">
+    <div class="nav-section">
+      <div class="nav-section-label">Command Center</div>
+      <div class="nav-item">Dashboard</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Detect &amp; Respond</div>
+      <div class="nav-item">Incidents</div>
+      <div class="nav-item">Detections</div>
+      <div class="nav-item">Investigations</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Exposure</div>
+      <div class="nav-item">Overview</div>
+      <div class="nav-item">Findings</div>
+      <div class="nav-item">Attack Paths</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Inventory</div>
+      <div class="nav-item active">Assets</div>
+      <div class="nav-item">Identities</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Analysis</div>
+      <div class="nav-item">Issue Map</div>
+      <div class="nav-item">Reports</div>
+    </div>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="nav-item">Settings</div>
+    <div class="sidebar-avatar">
+      <div class="avatar-circle">CM</div>
+      <span style="font-size:13px;color:#9898A0">Curtis M.</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<div class="main">
+  <header class="topbar">
+    <span class="breadcrumb">Inventory / Assets</span>
+    <div class="topbar-right">
+      <div class="search-pill"><span>Search</span><kbd>&#8984;K</kbd></div>
+      <div class="icon-btn">&#128276;<span class="dot"></span></div>
+      <div class="env-pill"><span class="dot-green"></span>Production</div>
+      <button class="export-btn">Export</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Row 1: Search Bar -->
+    <div class="search-bar">
+      <input class="search-input" placeholder="Search assets by name, IP, type, environment..." readonly>
+      <span class="search-hint">&#8984;K</span>
+    </div>
+
+    <!-- Row 2: KPI Cards -->
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Assets</div>
+        <div class="kpi-value" style="color:#ECECF0">12,847</div>
+        <div class="kpi-sub" style="color:#9898A0">across 4 environments</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Assets at Risk</div>
+        <div class="kpi-value" style="color:#FF7394">1,247</div>
+        <div class="kpi-sub" style="color:#9898A0">9.7% of inventory</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Unscanned (30d)</div>
+        <div class="kpi-value" style="color:#FFDB36">342</div>
+        <div class="kpi-sub" style="color:#9898A0">scan scheduled</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">New This Week</div>
+        <div class="kpi-value" style="color:#39B985">89</div>
+        <div class="kpi-sub" style="color:#39B985">&uarr; 12% from last week</div>
+      </div>
+    </div>
+
+    <!-- Row 3: Classification + Relationship Viz -->
+    <div class="row">
+      <!-- Left: Asset Classification -->
+      <div class="card" style="flex:60">
+        <div class="card-header">Asset Classification</div>
+        <div class="class-grid">
+          <div class="class-card">
+            <div class="class-icon" style="background:rgba(97,201,211,0.15);color:#61C9D3">&#9632;</div>
+            <div class="class-name">Servers</div>
+            <div class="class-count">2,341</div>
+            <div class="health-bar-track"><div class="health-bar-fill" style="width:72%;background:#39B985"></div></div>
+          </div>
+          <div class="class-card">
+            <div class="class-icon" style="background:rgba(57,185,133,0.15);color:#39B985">&#9632;</div>
+            <div class="class-name">Endpoints</div>
+            <div class="class-count">4,892</div>
+            <div class="health-bar-track"><div class="health-bar-fill" style="width:85%;background:#39B985"></div></div>
+          </div>
+          <div class="class-card">
+            <div class="class-icon" style="background:rgba(179,224,255,0.15);color:#B3E0FF">&#9632;</div>
+            <div class="class-name">Cloud Resources</div>
+            <div class="class-count">3,156</div>
+            <div class="health-bar-track"><div class="health-bar-fill" style="width:64%;background:#FFDB36"></div></div>
+          </div>
+          <div class="class-card">
+            <div class="class-icon" style="background:rgba(221,110,30,0.15);color:#DD6E1E">&#9632;</div>
+            <div class="class-name">Network Devices</div>
+            <div class="class-count">891</div>
+            <div class="health-bar-track"><div class="health-bar-fill" style="width:58%;background:#DD6E1E"></div></div>
+          </div>
+          <div class="class-card">
+            <div class="class-icon" style="background:rgba(161,84,228,0.15);color:#A154E4">&#9632;</div>
+            <div class="class-name">Applications</div>
+            <div class="class-count">1,203</div>
+            <div class="health-bar-track"><div class="health-bar-fill" style="width:91%;background:#39B985"></div></div>
+          </div>
+          <div class="class-card">
+            <div class="class-icon" style="background:rgba(255,115,148,0.15);color:#FF7394">&#9632;</div>
+            <div class="class-name">Databases</div>
+            <div class="class-count">364</div>
+            <div class="health-bar-track"><div class="health-bar-fill" style="width:45%;background:#FF7394"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Asset Relationship Visualization -->
+      <div class="card" style="flex:40">
+        <div class="card-header">
+          <span>&#9670; Asset Relationships</span>
+          <span class="link-green">Expand &rarr;</span>
+        </div>
+        <svg width="100%" height="280" viewBox="0 0 380 280">
+          <defs>
+            <filter id="glow2">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <!-- Cluster border -->
+          <rect x="20" y="20" width="340" height="230" rx="12" fill="none" stroke="#2A3055" stroke-dasharray="4,4" opacity="0.5"/>
+
+          <!-- Connecting lines -->
+          <line x1="190" y1="130" x2="90" y2="65" stroke="#2A3055" stroke-width="1.5" filter="url(#glow2)"/>
+          <line x1="190" y1="130" x2="290" y2="65" stroke="#2A3055" stroke-width="1.5" filter="url(#glow2)"/>
+          <line x1="190" y1="130" x2="55" y2="155" stroke="#2A3055" stroke-width="1.5" filter="url(#glow2)"/>
+          <line x1="190" y1="130" x2="325" y2="155" stroke="#2A3055" stroke-width="1.5" filter="url(#glow2)"/>
+          <line x1="190" y1="130" x2="100" y2="220" stroke="#2A3055" stroke-width="1.5" filter="url(#glow2)"/>
+          <line x1="190" y1="130" x2="280" y2="220" stroke="#2A3055" stroke-width="1.5" filter="url(#glow2)"/>
+          <!-- Cross-links -->
+          <line x1="90" y1="65" x2="55" y2="155" stroke="#1C2340" stroke-width="1"/>
+          <line x1="290" y1="65" x2="325" y2="155" stroke="#1C2340" stroke-width="1"/>
+          <line x1="55" y1="155" x2="100" y2="220" stroke="#1C2340" stroke-width="1"/>
+          <line x1="325" y1="155" x2="280" y2="220" stroke="#1C2340" stroke-width="1"/>
+
+          <!-- Center: Network Core -->
+          <circle cx="190" cy="130" r="26" fill="#61C9D3" opacity="0.9"/>
+          <text x="190" y="127" fill="#080C18" font-size="8" font-weight="600" text-anchor="middle" font-family="Inter">NETWORK</text>
+          <text x="190" y="137" fill="#080C18" font-size="8" font-weight="600" text-anchor="middle" font-family="Inter">CORE</text>
+
+          <!-- Servers -->
+          <circle cx="90" cy="65" r="20" fill="#61C9D3" opacity="0.85"/>
+          <text x="90" y="69" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">SRV</text>
+          <text x="90" y="95" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Servers</text>
+
+          <!-- Endpoints -->
+          <circle cx="290" cy="65" r="19" fill="#61C9D3" opacity="0.8"/>
+          <text x="290" y="69" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">END</text>
+          <text x="290" y="95" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Endpoints</text>
+
+          <!-- Cloud -->
+          <circle cx="55" cy="155" r="20" fill="#B3E0FF" opacity="0.85"/>
+          <text x="55" y="159" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">CLD</text>
+          <text x="55" y="185" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Cloud</text>
+
+          <!-- DBs -->
+          <circle cx="325" cy="155" r="19" fill="#A154E4" opacity="0.85"/>
+          <text x="325" y="159" fill="#fff" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">DB</text>
+          <text x="325" y="185" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Databases</text>
+
+          <!-- Apps -->
+          <circle cx="100" cy="220" r="19" fill="#DD6E1E" opacity="0.85"/>
+          <text x="100" y="224" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">APP</text>
+          <text x="100" y="250" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Apps</text>
+
+          <!-- Identity -->
+          <circle cx="280" cy="220" r="19" fill="#39B985" opacity="0.85"/>
+          <text x="280" y="224" fill="#080C18" font-size="9" font-weight="600" text-anchor="middle" font-family="Inter">IDN</text>
+          <text x="280" y="250" fill="#9898A0" font-size="10" text-anchor="middle" font-family="Inter">Identity</text>
+        </svg>
+        <div style="text-align:center;font-size:11px;color:#9898A0;margin-top:4px">12,847 assets &middot; 8,421 relationships</div>
+      </div>
+    </div>
+
+    <!-- Row 4: Filter bar -->
+    <div class="card" style="margin-bottom:16px;padding:14px 20px">
+      <div class="filter-bar-row">
+        <div class="filter-pills">
+          <div class="filter-pill active">All Types</div>
+          <div class="filter-pill">Servers</div>
+          <div class="filter-pill">Endpoints</div>
+          <div class="filter-pill">Cloud</div>
+          <div class="filter-pill">Network</div>
+          <div class="filter-pill">Applications</div>
+          <div class="filter-pill">Databases</div>
+        </div>
+        <div class="filter-dropdowns">
+          <div class="filter-drop">Environment: All &#9662;</div>
+          <div class="filter-drop">Risk: All &#9662;</div>
+          <div class="filter-drop">Status: All &#9662;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 5: Asset Inventory Table -->
+    <div class="card">
+      <div class="card-header">
+        <div style="display:flex;align-items:center">
+          Asset Inventory
+          <span class="badge-emerald">12,847</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Type</th>
+              <th>Environment</th>
+              <th>Risk Score</th>
+              <th>Exposures</th>
+              <th>Last Scan</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600;color:#61C9D3">fw-edge-01</td>
+              <td>Firewall</td>
+              <td>Production</td>
+              <td><span class="pill pill-critical">9.8</span></td>
+              <td>7</td>
+              <td style="color:#9898A0">2h ago</td>
+              <td><span class="pill pill-critical">Critical</span></td>
+              <td class="row-arrow">&rarr;</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#61C9D3">srv-web-01</td>
+              <td>Web Server</td>
+              <td>Production</td>
+              <td><span class="pill pill-critical">8.4</span></td>
+              <td>5</td>
+              <td style="color:#9898A0">1h ago</td>
+              <td><span class="pill pill-high">High</span></td>
+              <td class="row-arrow">&rarr;</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#61C9D3">dc-primary</td>
+              <td>Domain Controller</td>
+              <td>Production</td>
+              <td><span class="pill pill-high">7.9</span></td>
+              <td>3</td>
+              <td style="color:#9898A0">4h ago</td>
+              <td><span class="pill pill-high">High</span></td>
+              <td class="row-arrow">&rarr;</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#61C9D3">endpoint-342</td>
+              <td>Workstation</td>
+              <td>Corporate</td>
+              <td><span class="pill pill-high">7.2</span></td>
+              <td>4</td>
+              <td style="color:#9898A0">12h ago</td>
+              <td><span class="pill pill-medium">Medium</span></td>
+              <td class="row-arrow">&rarr;</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#61C9D3">s3-prod-data</td>
+              <td>S3 Bucket</td>
+              <td>AWS us-east-1</td>
+              <td><span class="pill pill-critical">8.5</span></td>
+              <td>2</td>
+              <td style="color:#9898A0">6h ago</td>
+              <td><span class="pill pill-high">High</span></td>
+              <td class="row-arrow">&rarr;</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#61C9D3">db-prod-pg01</td>
+              <td>PostgreSQL</td>
+              <td>Production</td>
+              <td><span class="pill pill-medium">6.8</span></td>
+              <td>2</td>
+              <td style="color:#9898A0">3h ago</td>
+              <td><span class="pill pill-medium">Medium</span></td>
+              <td class="row-arrow">&rarr;</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#61C9D3">k8s-node-03</td>
+              <td>Container Host</td>
+              <td>AWS us-east-1</td>
+              <td><span class="pill pill-medium">5.4</span></td>
+              <td>1</td>
+              <td style="color:#9898A0">1h ago</td>
+              <td><span class="pill pill-low">Low</span></td>
+              <td class="row-arrow">&rarr;</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#61C9D3">api-gateway-east</td>
+              <td>API Gateway</td>
+              <td>Production</td>
+              <td><span class="pill pill-medium">5.3</span></td>
+              <td>1</td>
+              <td style="color:#9898A0">2h ago</td>
+              <td><span class="pill pill-low">Low</span></td>
+              <td class="row-arrow">&rarr;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span>Showing 1&ndash;8 of 12,847</span>
+        <div class="page-numbers">
+          <div class="page-num active">1</div>
+          <div class="page-num">2</div>
+          <div class="page-num">3</div>
+          <div class="page-num">...</div>
+          <div class="page-num">1,606</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

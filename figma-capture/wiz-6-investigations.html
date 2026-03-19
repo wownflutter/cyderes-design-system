@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440" />
+  <title>Cyderes — Investigations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #080C18;
+      color: #ECECF0;
+      min-height: 100vh;
+      width: 1440px;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─────────────────────────────────────────────────── */
+    .nav {
+      height: 56px;
+      background: #0D1220;
+      border-bottom: 1px solid #2A3055;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 4px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #39B985;
+      margin-right: 32px;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .nav-link {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #9898A0;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .nav-link.active {
+      background: #1C2340;
+      color: #ECECF0;
+      border-radius: 6px;
+    }
+
+    .nav-spacer { flex: 1; }
+
+    .nav-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #151A2D;
+      border: 1px solid #2A3055;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: #6B6B75;
+      cursor: pointer;
+      min-width: 200px;
+    }
+
+    .nav-search-icon {
+      font-size: 13px;
+      color: #6B6B75;
+    }
+
+    .nav-search-kbd {
+      margin-left: auto;
+      background: #2A3055;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      color: #6B6B75;
+    }
+
+    .nav-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #151A2D;
+      border: 1px solid #2A3055;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #9898A0;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .env-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #39B985;
+    }
+
+    .nav-icon-btn {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #9898A0;
+      font-size: 16px;
+    }
+
+    .nav-icon-btn:hover { background: #151A2D; }
+
+    .notif-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #FF7394;
+      border: 1.5px solid #0D1220;
+    }
+
+    .nav-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #39B985, #2A8F65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #0D1220;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 20px;
+      background: #2A3055;
+      margin: 0 8px;
+    }
+
+    /* ─── PAGE ────────────────────────────────────────────────── */
+    .page {
+      padding: 28px 32px;
+      max-width: 1440px;
+    }
+
+    /* Page header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ECECF0;
+    }
+
+    .page-badge {
+      background: #1C2340;
+      border: 1px solid #2A3055;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #39B985;
+    }
+
+    /* ─── KPI ROW ─────────────────────────────────────────────── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: #0D1220;
+      border: 1px solid #2A3055;
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #6B6B75;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ECECF0;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .kpi-sub {
+      font-size: 11px;
+      color: #6B6B75;
+    }
+
+    .kpi-value.critical { color: #FF7394; }
+    .kpi-value.high { color: #DD6E1E; }
+    .kpi-value.medium { color: #FFDB36; }
+    .kpi-value.accent { color: #39B985; }
+
+    /* ─── MAIN COLUMNS ────────────────────────────────────────── */
+    .main-columns {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .col-left { flex: 0 0 60%; }
+    .col-right { flex: 1; }
+
+    /* ─── CARD ────────────────────────────────────────────────── */
+    .card {
+      background: #0D1220;
+      border: 1px solid #2A3055;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #2A3055;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ECECF0;
+    }
+
+    /* Filter tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .filter-tab {
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #9898A0;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+    }
+
+    .filter-tab.active {
+      background: #1C2340;
+      color: #ECECF0;
+    }
+
+    /* ─── TABLE ───────────────────────────────────────────────── */
+    .inv-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .inv-table thead tr {
+      border-bottom: 1px solid #2A3055;
+    }
+
+    .inv-table th {
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #6B6B75;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .inv-table tbody tr {
+      border-bottom: 1px solid #151A2D;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .inv-table tbody tr:hover { background: #151A2D; }
+    .inv-table tbody tr:last-child { border-bottom: none; }
+
+    .inv-table td {
+      padding: 12px 16px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .inv-id {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6B6B75;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      white-space: nowrap;
+    }
+
+    .inv-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #ECECF0;
+      max-width: 220px;
+    }
+
+    .severity-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .sev-critical { background: rgba(255,115,148,0.12); color: #FF7394; }
+    .sev-high { background: rgba(221,110,30,0.12); color: #DD6E1E; }
+    .sev-medium { background: rgba(255,219,54,0.12); color: #FFDB36; }
+    .sev-low { background: rgba(57,185,133,0.12); color: #39B985; }
+
+    .sev-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .dot-critical { background: #FF7394; }
+    .dot-high { background: #DD6E1E; }
+    .dot-medium { background: #FFDB36; }
+    .dot-low { background: #39B985; }
+
+    .stat-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ECECF0;
+      text-align: center;
+    }
+
+    .assignee-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #9898A0;
+    }
+
+    .assignee-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #1C2340;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: #ECECF0;
+    }
+
+    .auto-chip {
+      background: #151A2D;
+      border: 1px dashed #2A3055;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #6B6B75;
+    }
+
+    .age-text {
+      font-size: 12px;
+      color: #6B6B75;
+      white-space: nowrap;
+    }
+
+    /* ─── DETECTION FEED ──────────────────────────────────────── */
+    .feed-header-count {
+      font-size: 12px;
+      font-weight: 500;
+      color: #6B6B75;
+    }
+
+    .feed-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feed-item {
+      display: grid;
+      grid-template-columns: 10px 1fr auto;
+      gap: 10px;
+      align-items: start;
+      padding: 14px 20px;
+      border-bottom: 1px solid #151A2D;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .feed-item:last-child { border-bottom: none; }
+    .feed-item:hover { background: #151A2D; }
+
+    .feed-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .feed-content { min-width: 0; }
+
+    .feed-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #ECECF0;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .feed-meta {
+      font-size: 11px;
+      color: #6B6B75;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .feed-meta-sep { color: #2A3055; }
+
+    .feed-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .feed-time {
+      font-size: 11px;
+      color: #6B6B75;
+      white-space: nowrap;
+    }
+
+    .btn-investigate {
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid #39B985;
+      background: transparent;
+      color: #39B985;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .btn-investigate:hover {
+      background: rgba(57,185,133,0.1);
+    }
+
+    /* Live indicator */
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #39B985;
+    }
+
+    .live-pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #39B985;
+      position: relative;
+    }
+
+    .live-pulse::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1.5px solid #39B985;
+      opacity: 0.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ──────────────────────────────────────────────────── -->
+  <nav class="nav">
+    <span class="nav-logo">CYDERES</span>
+
+    <div class="nav-links">
+      <a class="nav-link" href="#">Overview</a>
+      <a class="nav-link" href="#">Issues</a>
+      <a class="nav-link" href="#">Attack Paths</a>
+      <a class="nav-link" href="#">Assets</a>
+      <a class="nav-link" href="#">Identities</a>
+      <a class="nav-link active" href="#">Investigations</a>
+    </div>
+
+    <div class="nav-spacer"></div>
+
+    <div class="nav-search">
+      <span class="nav-search-icon">⌕</span>
+      <span>Search…</span>
+      <span class="nav-search-kbd">⌘K</span>
+    </div>
+
+    <div style="width:10px;"></div>
+
+    <div class="nav-pill">Last 30 Days</div>
+
+    <div style="width:8px;"></div>
+
+    <div class="nav-pill">
+      <span class="env-dot"></span>
+      Production
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-icon-btn">
+      🔔
+      <span class="notif-dot"></span>
+    </div>
+
+    <div class="nav-avatar">CM</div>
+  </nav>
+
+  <!-- ─── PAGE CONTENT ─────────────────────────────────────────── -->
+  <div class="page">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Investigations</h1>
+      <span class="page-badge">8 Active</span>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Active Investigations</div>
+        <div class="kpi-value critical">8</div>
+        <div class="kpi-sub">2 critical priority</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Open Detections</div>
+        <div class="kpi-value high">23</div>
+        <div class="kpi-sub">5 new in last hour</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Mean Response</div>
+        <div class="kpi-value medium">2.1h</div>
+        <div class="kpi-sub">↓ 18% vs last week</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Escalated</div>
+        <div class="kpi-value high">3</div>
+        <div class="kpi-sub">Requires immediate review</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Resolved Today</div>
+        <div class="kpi-value accent">12</div>
+        <div class="kpi-sub">+4 vs yesterday</div>
+      </div>
+    </div>
+
+    <!-- Main Columns -->
+    <div class="main-columns">
+
+      <!-- Left: Investigation Queue -->
+      <div class="col-left">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Investigation Queue</span>
+            <div class="filter-tabs">
+              <button class="filter-tab active">Active</button>
+              <button class="filter-tab">Escalated</button>
+              <button class="filter-tab">Pending</button>
+              <button class="filter-tab">Resolved</button>
+            </div>
+          </div>
+          <table class="inv-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Severity</th>
+                <th style="text-align:center;">Assets</th>
+                <th style="text-align:center;">Identities</th>
+                <th style="text-align:center;">Detections</th>
+                <th>Assigned</th>
+                <th>Age</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="inv-id">INV-2024-0847</span></td>
+                <td><span class="inv-title">Lateral Movement via Compromised SA</span></td>
+                <td><span class="severity-pill sev-critical"><span class="sev-dot dot-critical"></span>Critical</span></td>
+                <td><span class="stat-val">6</span></td>
+                <td><span class="stat-val">3</span></td>
+                <td><span class="stat-val">12</span></td>
+                <td>
+                  <div class="assignee-chip">
+                    <div class="assignee-avatar">JM</div>
+                    J. Mitchell
+                  </div>
+                </td>
+                <td><span class="age-text">2h</span></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-2024-0845</span></td>
+                <td><span class="inv-title">Ransomware Indicator on Endpoint</span></td>
+                <td><span class="severity-pill sev-critical"><span class="sev-dot dot-critical"></span>Critical</span></td>
+                <td><span class="stat-val">2</span></td>
+                <td><span class="stat-val">1</span></td>
+                <td><span class="stat-val">8</span></td>
+                <td>
+                  <div class="assignee-chip">
+                    <div class="assignee-avatar">SC</div>
+                    S. Chen
+                  </div>
+                </td>
+                <td><span class="age-text">4h</span></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-2024-0842</span></td>
+                <td><span class="inv-title">Brute Force on VPN Gateway</span></td>
+                <td><span class="severity-pill sev-high"><span class="sev-dot dot-high"></span>High</span></td>
+                <td><span class="stat-val">1</span></td>
+                <td><span class="stat-val">4</span></td>
+                <td><span class="stat-val">6</span></td>
+                <td><span class="auto-chip">Auto</span></td>
+                <td><span class="age-text">8h</span></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-2024-0839</span></td>
+                <td><span class="inv-title">Suspicious DNS to C2 Domain</span></td>
+                <td><span class="severity-pill sev-high"><span class="sev-dot dot-high"></span>High</span></td>
+                <td><span class="stat-val">3</span></td>
+                <td><span class="stat-val">0</span></td>
+                <td><span class="stat-val">4</span></td>
+                <td>
+                  <div class="assignee-chip">
+                    <div class="assignee-avatar">MJ</div>
+                    M. Johnson
+                  </div>
+                </td>
+                <td><span class="age-text">12h</span></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-2024-0836</span></td>
+                <td><span class="inv-title">Privilege Escalation Attempt</span></td>
+                <td><span class="severity-pill sev-medium"><span class="sev-dot dot-medium"></span>Medium</span></td>
+                <td><span class="stat-val">1</span></td>
+                <td><span class="stat-val">2</span></td>
+                <td><span class="stat-val">3</span></td>
+                <td>
+                  <div class="assignee-chip">
+                    <div class="assignee-avatar">JM</div>
+                    J. Mitchell
+                  </div>
+                </td>
+                <td><span class="age-text">1d</span></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-2024-0831</span></td>
+                <td><span class="inv-title">Failed MFA Bypass Pattern</span></td>
+                <td><span class="severity-pill sev-medium"><span class="sev-dot dot-medium"></span>Medium</span></td>
+                <td><span class="stat-val">0</span></td>
+                <td><span class="stat-val">1</span></td>
+                <td><span class="stat-val">2</span></td>
+                <td>
+                  <div class="assignee-chip">
+                    <div class="assignee-avatar">SC</div>
+                    S. Chen
+                  </div>
+                </td>
+                <td><span class="age-text">2d</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right: Detection Feed -->
+      <div class="col-right">
+        <div class="card">
+          <div class="card-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="card-title">Live Detection Feed</span>
+              <div class="live-badge">
+                <span class="live-pulse"></span>
+                LIVE
+              </div>
+            </div>
+            <span class="feed-header-count">23 active</span>
+          </div>
+          <div class="feed-list">
+
+            <!-- Detection 1 -->
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#FF7394;box-shadow:0 0 6px #FF7394;"></div>
+              <div class="feed-content">
+                <div class="feed-title">Lateral movement — SMB relay</div>
+                <div class="feed-meta">
+                  <span>srv-dc-01</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>svc-backup</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>EDR</span>
+                </div>
+              </div>
+              <div class="feed-right">
+                <span class="feed-time">12m ago</span>
+                <button class="btn-investigate">Investigate</button>
+              </div>
+            </div>
+
+            <!-- Detection 2 -->
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#FF7394;box-shadow:0 0 6px #FF7394;"></div>
+              <div class="feed-content">
+                <div class="feed-title">Abnormal Kerberos TGT request</div>
+                <div class="feed-meta">
+                  <span>srv-dc-01</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>jason.mitchell</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>SIEM</span>
+                </div>
+              </div>
+              <div class="feed-right">
+                <span class="feed-time">18m ago</span>
+                <button class="btn-investigate">Investigate</button>
+              </div>
+            </div>
+
+            <!-- Detection 3 -->
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#DD6E1E;box-shadow:0 0 6px #DD6E1E;"></div>
+              <div class="feed-content">
+                <div class="feed-title">Privilege escalation CVE-2024-30088</div>
+                <div class="feed-meta">
+                  <span>srv-app-03</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>svc-deploy-ci</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>Vuln Scan</span>
+                </div>
+              </div>
+              <div class="feed-right">
+                <span class="feed-time">34m ago</span>
+                <button class="btn-investigate">Investigate</button>
+              </div>
+            </div>
+
+            <!-- Detection 4 -->
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#DD6E1E;box-shadow:0 0 6px #DD6E1E;"></div>
+              <div class="feed-content">
+                <div class="feed-title">Anomalous RDP from VPN</div>
+                <div class="feed-meta">
+                  <span>vpn-gw-01</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>admin-ops</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>NDR</span>
+                </div>
+              </div>
+              <div class="feed-right">
+                <span class="feed-time">1h ago</span>
+                <button class="btn-investigate">Investigate</button>
+              </div>
+            </div>
+
+            <!-- Detection 5 -->
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#FFDB36;box-shadow:0 0 6px #FFDB36;"></div>
+              <div class="feed-content">
+                <div class="feed-title">Failed MFA bypass brute force</div>
+                <div class="feed-meta">
+                  <span>okta-prod</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>sarah.chen</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>IdP Logs</span>
+                </div>
+              </div>
+              <div class="feed-right">
+                <span class="feed-time">2h ago</span>
+                <button class="btn-investigate">Investigate</button>
+              </div>
+            </div>
+
+            <!-- Detection 6 -->
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#FFDB36;box-shadow:0 0 6px #FFDB36;"></div>
+              <div class="feed-content">
+                <div class="feed-title">Suspicious DNS C2 queries</div>
+                <div class="feed-meta">
+                  <span>ws-finance-12</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>—</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>DNS Sensor</span>
+                </div>
+              </div>
+              <div class="feed-right">
+                <span class="feed-time">3h ago</span>
+                <button class="btn-investigate">Investigate</button>
+              </div>
+            </div>
+
+            <!-- Detection 7 -->
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#FFDB36;box-shadow:0 0 6px #FFDB36;"></div>
+              <div class="feed-content">
+                <div class="feed-title">Unusual data exfil volume</div>
+                <div class="feed-meta">
+                  <span>db-prod-02</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>svc-backup</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>DLP</span>
+                </div>
+              </div>
+              <div class="feed-right">
+                <span class="feed-time">4h ago</span>
+                <button class="btn-investigate">Investigate</button>
+              </div>
+            </div>
+
+            <!-- Detection 8 -->
+            <div class="feed-item">
+              <div class="feed-dot" style="background:#39B985;box-shadow:0 0 6px #39B985;"></div>
+              <div class="feed-content">
+                <div class="feed-title">Port scan from internal host</div>
+                <div class="feed-meta">
+                  <span>ws-dev-04</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>—</span>
+                  <span class="feed-meta-sep">·</span>
+                  <span>IDS</span>
+                </div>
+              </div>
+              <div class="feed-right">
+                <span class="feed-time">5h ago</span>
+                <button class="btn-investigate">Investigate</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
