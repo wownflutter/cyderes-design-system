@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1440" />
+<title>Cyderes Design System — Component Additions</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* ================================================================
+     CYDERES DESIGN SYSTEM TOKENS
+     ================================================================ */
+  :root {
+    --zodiac-100:#C8CBE0; --zodiac-150:#9196C0; --zodiac-200:#181F48;
+    --teal-100:#D4F1F4; --teal-150:#9AE0E7; --teal-200:#61C9D3;
+    --prime-100:#C6C8D5; --prime-150:#444B73; --prime-200:#080C18;
+    --prussian-100:#CCCEDE; --prussian-150:#6A6F92; --prussian-200:#242944;
+    --navy-100:#C8C7D6; --navy-150:#5C598D; --navy-200:#151428;
+    --bluegray-100:#D1D4E6; --bluegray-150:#8085B3; --bluegray-200:#4C5491;
+    --bluegray-dk-100:#C9CBD8; --bluegray-dk-150:#5D6180; --bluegray-dk-200:#181D2D;
+    --red-100:#FFD5DE; --red-150:#FFA4B9; --red-200:#FF7394;
+    --orange-100:#FFE2D3; --orange-150:#FFC0A6; --orange-200:#FF9F79;
+    --yellow-100:#F5EACE; --yellow-150:#ECD9A7; --yellow-200:#E2C885;
+    --green-100:#E1F6D6; --green-150:#BEECAD; --green-200:#9BE285;
+    --purple-100:#DED0EC; --purple-150:#B591D4; --purple-200:#8D5EB6;
+    --pink-100:#F0CAE1; --pink-150:#DD8AC0; --pink-200:#CA4BA0;
+    --blue-100:#E4F3FF; --blue-150:#CCE9FF; --blue-200:#B3E0FF;
+    --lavender-100:#D9CCFF; --lavender-150:#B094FF; --lavender-200:#875BFF;
+    --text-primary:#ECECF0; --text-secondary:#9898A0;
+    --text-tertiary:rgba(152,152,160,0.6); --text-accent:#61C9D3;
+    --bg-page:#080C18; --bg-card:#242944;
+    --border-card:rgba(76,84,145,0.3); --border-divider:rgba(76,84,145,0.2);
+    --radius-card:12px; --radius-btn:4px; --btn-height:44px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--bg-page);color:var(--text-primary);-webkit-font-smoothing:antialiased;}
+
+  /* ── Layout ── */
+  .page{max-width:1376px;margin:0 auto;padding:64px 32px;}
+  .section{margin-bottom:80px;}
+  .section-header{margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid var(--border-divider);}
+  .section-title{font-size:24px;font-weight:500;line-height:1.5;color:var(--text-primary);margin-bottom:4px;}
+  .section-desc{font-size:14px;font-weight:400;line-height:1.5;color:var(--text-secondary);}
+  .subsection{margin-bottom:48px;}
+  .subsection-label{font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--text-secondary);margin-bottom:16px;}
+  .component-row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;margin-bottom:24px;}
+  .component-col{display:flex;flex-direction:column;gap:16px;}
+  .token-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:500;color:var(--text-secondary);background:rgba(76,84,145,0.15);margin-top:8px;}
+
+  /* ── Typography (Cyderes spec) ── */
+  .h1{font-size:28px;font-weight:600;line-height:1.5;}
+  .h2{font-size:24px;font-weight:500;line-height:1.5;}
+  .h3{font-size:20px;font-weight:600;line-height:1.5;}
+  .body-text{font-size:16px;font-weight:400;line-height:1.5;}
+  .subtext{font-size:12px;font-weight:500;line-height:1.5;color:var(--text-secondary);}
+  .label{font-size:12px;font-weight:700;line-height:1.33;letter-spacing:0.6px;text-transform:uppercase;color:var(--text-secondary);}
+
+  /* ── Card (existing) ── */
+  .card{background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-card);overflow:hidden;}
+
+  /* ── Buttons (existing) ── */
+  .btn{display:inline-flex;align-items:center;gap:8px;height:var(--btn-height);padding:0 20px;border-radius:var(--radius-btn);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:1px solid transparent;white-space:nowrap;}
+  .btn-primary{background:var(--teal-200);color:#131313;}
+  .btn-primary-outlined{background:transparent;border-color:var(--teal-200);color:var(--teal-200);}
+  .btn-secondary{background:var(--prussian-200);color:var(--text-primary);}
+  .btn-tertiary{background:transparent;border-color:var(--bluegray-200);color:var(--text-primary);}
+  .btn-ghost{background:transparent;color:var(--teal-200);}
+  .btn-danger{background:rgba(255,115,148,0.15);border-color:rgba(255,115,148,0.4);color:var(--red-200);}
+  .btn-sm{height:32px;padding:0 12px;font-size:12px;}
+
+  /* ── Spec table ── */
+  .spec-table{width:100%;border-collapse:collapse;margin-top:16px;}
+  .spec-table th{padding:10px 20px;font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--text-secondary);text-align:left;background:var(--bg-card);border-bottom:1px solid var(--border-divider);}
+  .spec-table td{padding:10px 20px;font-size:13px;color:var(--text-secondary);border-bottom:1px solid var(--border-divider);vertical-align:top;}
+  .spec-table td.name{color:var(--text-primary);font-weight:600;}
+  .spec-table td code{font-family:'SF Mono','Fira Code',monospace;font-size:11px;padding:2px 6px;background:rgba(76,84,145,0.15);border-radius:3px;color:var(--teal-200);}
+
+  /* ================================================================
+     PAGE TITLE
+     ================================================================ */
+  .page-title-block{margin-bottom:48px;}
+  .page-title-block h1{font-size:28px;font-weight:600;line-height:1.5;color:var(--text-primary);}
+  .page-title-block p{font-size:14px;font-weight:400;line-height:1.5;color:var(--text-secondary);margin-top:8px;}
+  .page-title-block .divider{width:100%;height:2px;background:var(--border-divider);margin-top:24px;}
+
+
+  /* ================================================================
+     NEW COMPONENT: Severity Badge
+     ================================================================ */
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:600;line-height:1.5;}
+  .badge-critical{background:rgba(255,115,148,0.15);color:var(--red-200);}
+  .badge-high{background:rgba(255,159,121,0.15);color:var(--orange-200);}
+  .badge-medium{background:rgba(226,200,133,0.15);color:var(--yellow-200);}
+  .badge-low{background:rgba(155,226,133,0.15);color:var(--green-200);}
+  .badge-info{background:rgba(97,201,211,0.15);color:var(--teal-200);}
+  .badge-neutral{background:rgba(152,152,160,0.15);color:var(--text-secondary);}
+
+  /* dot inside badge */
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
+  .dot-critical{background:var(--red-200);}
+  .dot-high{background:var(--orange-200);}
+  .dot-medium{background:var(--yellow-200);}
+  .dot-low{background:var(--green-200);}
+  .dot-info{background:var(--teal-200);}
+
+  /* ================================================================
+     NEW COMPONENT: Filter Chip
+     ================================================================ */
+  .filter-chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;background:rgba(76,84,145,0.15);border:1px solid var(--border-card);border-radius:100px;font-size:12px;font-weight:500;color:var(--text-secondary);cursor:pointer;white-space:nowrap;}
+  .filter-chip.active{border-color:var(--teal-200);color:var(--teal-200);background:rgba(97,201,211,0.08);}
+  .filter-chip.removable::after{content:'×';margin-left:4px;font-size:14px;opacity:0.6;}
+  .filter-chip .dot{width:6px;height:6px;}
+
+  /* ================================================================
+     NEW COMPONENT: Form Input
+     ================================================================ */
+  .input{height:40px;padding:0 16px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-btn);color:var(--text-primary);font-family:inherit;font-size:14px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;}
+  .input-placeholder{color:var(--text-tertiary);}
+  .input:focus-within{border-color:var(--teal-200);}
+
+  /* ================================================================
+     NEW COMPONENT: Select Control
+     ================================================================ */
+  .select{height:40px;padding:0 16px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-btn);color:var(--text-primary);font-family:inherit;font-size:14px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap;}
+  .chevron{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--text-secondary);margin-left:4px;}
+
+  /* ================================================================
+     NEW COMPONENT: KPI Stat Card
+     ================================================================ */
+  .kpi-card{padding:24px;display:flex;flex-direction:column;gap:8px;min-width:200px;}
+  .kpi-label{font-size:12px;font-weight:500;line-height:1.5;color:var(--text-secondary);}
+  .kpi-value{font-size:28px;font-weight:600;line-height:1.2;color:var(--text-primary);}
+  .kpi-trend{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;}
+  .kpi-trend.up-bad{color:var(--red-200);}
+  .kpi-trend.down-good{color:var(--green-200);}
+  .kpi-trend.neutral{color:var(--text-secondary);}
+  .kpi-bar{width:100%;height:3px;border-radius:2px;margin-top:auto;}
+
+  /* ================================================================
+     NEW COMPONENT: Visualization Container
+     ================================================================ */
+  .viz-container{padding:24px;display:flex;flex-direction:column;min-height:280px;}
+  .viz-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+  .viz-title{font-size:16px;font-weight:600;color:var(--text-primary);}
+  .viz-subtitle{font-size:12px;font-weight:500;color:var(--text-secondary);margin-top:4px;}
+  .viz-body{flex:1;border:1px dashed var(--border-divider);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);font-size:14px;font-weight:500;}
+  .viz-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+
+  /* ================================================================
+     NEW COMPONENT: Data Table
+     ================================================================ */
+  .table-bar{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border-divider);}
+  .table-bar .left{display:flex;align-items:center;gap:12px;}
+  .table-bar .right{display:flex;align-items:center;gap:8px;}
+  .table-count{background:rgba(97,201,211,0.12);color:var(--teal-200);font-size:11px;font-weight:700;padding:2px 10px;border-radius:100px;}
+  table{width:100%;border-collapse:collapse;}
+  thead th{padding:12px 24px;font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--text-secondary);text-align:left;background:var(--bg-card);border-bottom:1px solid var(--border-divider);}
+  tbody td{padding:14px 24px;font-size:14px;color:var(--text-secondary);border-bottom:1px solid var(--border-divider);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  td.name-cell{color:var(--text-primary);font-weight:500;}
+  .table-footer{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-top:1px solid var(--border-divider);}
+  .pagination{display:flex;align-items:center;gap:4px;}
+  .page-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-btn);font-size:13px;font-weight:500;color:var(--text-secondary);background:transparent;border:none;cursor:pointer;}
+  .page-btn.active{background:var(--bluegray-200);color:var(--text-primary);}
+
+  /* ================================================================
+     NEW COMPONENT: Progress Bar
+     ================================================================ */
+  .progress-track{height:6px;border-radius:3px;width:100%;}
+  .progress-fill{height:100%;border-radius:3px;}
+
+  /* ================================================================
+     NEW COMPONENT: Activity Item
+     ================================================================ */
+  .activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border-divider);}
+  .activity-item:last-child{border-bottom:none;}
+  .activity-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .activity-content{flex:1;}
+  .activity-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:2px;}
+  .activity-desc{font-size:12px;font-weight:400;color:var(--text-secondary);line-height:1.5;}
+  .activity-meta{font-size:11px;font-weight:500;color:var(--text-tertiary);margin-top:4px;}
+
+  /* ================================================================
+     NEW COMPONENT: Priority Action Item
+     ================================================================ */
+  .action-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-divider);}
+  .action-item:last-child{border-bottom:none;}
+  .action-left{display:flex;align-items:center;gap:10px;}
+  .action-number{width:24px;height:24px;border-radius:6px;background:rgba(97,201,211,0.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--teal-200);}
+  .action-text{font-size:13px;font-weight:500;color:var(--text-primary);}
+  .action-sub{font-size:11px;color:var(--text-tertiary);margin-top:2px;}
+  .action-impact{font-size:11px;font-weight:600;}
+
+  /* ================================================================
+     NEW COMPONENT: Side Panel Card
+     ================================================================ */
+  .panel-card{padding:24px;display:flex;flex-direction:column;gap:16px;}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;}
+  .panel-title{font-size:16px;font-weight:600;color:var(--text-primary);}
+  .panel-desc{font-size:12px;font-weight:500;color:var(--text-secondary);}
+
+  /* ================================================================
+     NEW COMPONENT: Page Header
+     ================================================================ */
+  .page-header-component{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border-divider);}
+  .page-header-left{display:flex;align-items:baseline;gap:16px;}
+  .page-header-right{display:flex;align-items:center;gap:12px;}
+
+  /* ── Helpers ── */
+  .flex-row{display:flex;align-items:center;gap:8px;}
+  .flex-col{display:flex;flex-direction:column;}
+  .gap-4{gap:4px;} .gap-8{gap:8px;} .gap-12{gap:12px;} .gap-16{gap:16px;} .gap-24{gap:24px;}
+  svg{vertical-align:middle;}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ================================================================
+       PAGE HEADER
+       ================================================================ -->
+  <div class="page-title-block">
+    <h1>Cyderes Design System — Component Additions</h1>
+    <p>New reusable patterns for dashboards, data pages, and operational views. Built on existing Cyderes tokens.</p>
+    <div class="divider"></div>
+  </div>
+
+
+  <!-- ================================================================
+       1. SEVERITY BADGE
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Severity Badge</div>
+      <div class="section-desc">Status indicators for severity levels, risk categories, and general-purpose labeling</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">With Dot Indicator</div>
+      <div class="component-row">
+        <span class="badge badge-critical"><span class="dot dot-critical"></span>Critical</span>
+        <span class="badge badge-high"><span class="dot dot-high"></span>High</span>
+        <span class="badge badge-medium"><span class="dot dot-medium"></span>Medium</span>
+        <span class="badge badge-low"><span class="dot dot-low"></span>Low</span>
+        <span class="badge badge-info"><span class="dot dot-info"></span>Info</span>
+        <span class="badge badge-neutral"><span class="dot" style="background:var(--text-secondary);"></span>None</span>
+      </div>
+      <div class="component-row" style="margin-top:-8px;">
+        <span class="token-tag">accent-{color}-200 @ 15% bg</span>
+        <span class="token-tag">accent-{color}-200 text</span>
+        <span class="token-tag">border-radius: 100px</span>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Text Only</div>
+      <div class="component-row">
+        <span class="badge badge-critical">Critical</span>
+        <span class="badge badge-high">High</span>
+        <span class="badge badge-medium">Medium</span>
+        <span class="badge badge-low">Low</span>
+        <span class="badge badge-info">Info</span>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Standalone Dot</div>
+      <div class="component-row" style="gap:12px;">
+        <span class="dot dot-critical"></span>
+        <span class="dot dot-high"></span>
+        <span class="dot dot-medium"></span>
+        <span class="dot dot-low"></span>
+        <span class="dot dot-info"></span>
+      </div>
+      <div class="component-row" style="margin-top:4px;">
+        <span class="token-tag">8×8px circle</span>
+        <span class="token-tag">accent-{color}-200 fill</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-radius:var(--radius-card);overflow:clip;">
+      <table class="spec-table">
+        <thead><tr><th>Variant</th><th>Background</th><th>Text / Dot</th><th>Padding</th><th>Radius</th><th>Font</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Critical</td><td><code>rgba(255,115,148, 0.15)</code></td><td><code>#FF7394</code></td><td>4px 12px</td><td>100px</td><td>12px / Semi Bold 600</td></tr>
+          <tr><td class="name">High</td><td><code>rgba(255,159,121, 0.15)</code></td><td><code>#FF9F79</code></td><td>4px 12px</td><td>100px</td><td>12px / Semi Bold 600</td></tr>
+          <tr><td class="name">Medium</td><td><code>rgba(226,200,133, 0.15)</code></td><td><code>#E2C885</code></td><td>4px 12px</td><td>100px</td><td>12px / Semi Bold 600</td></tr>
+          <tr><td class="name">Low</td><td><code>rgba(155,226,133, 0.15)</code></td><td><code>#9BE285</code></td><td>4px 12px</td><td>100px</td><td>12px / Semi Bold 600</td></tr>
+          <tr><td class="name">Info</td><td><code>rgba(97,201,211, 0.15)</code></td><td><code>#61C9D3</code></td><td>4px 12px</td><td>100px</td><td>12px / Semi Bold 600</td></tr>
+          <tr><td class="name">Neutral</td><td><code>rgba(152,152,160, 0.15)</code></td><td><code>#9898A0</code></td><td>4px 12px</td><td>100px</td><td>12px / Semi Bold 600</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       2. FILTER CHIP
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Filter Chip</div>
+      <div class="section-desc">Toggleable pills for filter bars, table controls, and tag selectors</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">States</div>
+      <div class="component-row">
+        <div class="filter-chip">Default</div>
+        <div class="filter-chip active">Active</div>
+        <div class="filter-chip active removable">Removable</div>
+        <div class="filter-chip" style="opacity:0.4;cursor:not-allowed;">Disabled</div>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">With Severity Dot</div>
+      <div class="component-row">
+        <div class="filter-chip active"><span class="dot dot-critical"></span>Critical</div>
+        <div class="filter-chip active"><span class="dot dot-high"></span>High</div>
+        <div class="filter-chip"><span class="dot dot-medium"></span>Medium</div>
+        <div class="filter-chip"><span class="dot dot-low"></span>Low</div>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">With Icon</div>
+      <div class="component-row">
+        <div class="filter-chip">
+          <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Add Filter
+        </div>
+        <div class="filter-chip">All Types <span class="chevron"></span></div>
+      </div>
+      <div class="component-row" style="margin-top:0;">
+        <span class="token-tag">height: 32px</span>
+        <span class="token-tag">radius: 100px</span>
+        <span class="token-tag">bg: bluegray @ 15%</span>
+        <span class="token-tag">border: border-card</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-radius:var(--radius-card);overflow:clip;">
+      <table class="spec-table">
+        <thead><tr><th>State</th><th>Background</th><th>Border</th><th>Text</th><th>Height</th><th>Radius</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Default</td><td><code>rgba(76,84,145, 0.15)</code></td><td><code>rgba(76,84,145, 0.3)</code></td><td><code>#9898A0</code></td><td>32px</td><td>100px</td></tr>
+          <tr><td class="name">Active</td><td><code>rgba(97,201,211, 0.08)</code></td><td><code>#61C9D3</code></td><td><code>#61C9D3</code></td><td>32px</td><td>100px</td></tr>
+          <tr><td class="name">Disabled</td><td><code>rgba(76,84,145, 0.15)</code></td><td><code>rgba(76,84,145, 0.3)</code></td><td><code>#9898A0 @ 40%</code></td><td>32px</td><td>100px</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       3. FORM CONTROLS
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Form Controls</div>
+      <div class="section-desc">Input fields, selects, and search — extends the button sizing system</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Search Input</div>
+      <div class="component-row">
+        <div class="input" style="min-width:260px;">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span class="input-placeholder">Search exposures...</span>
+        </div>
+        <div class="input" style="min-width:260px;border-color:var(--teal-200);">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" stroke="var(--teal-200)" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="var(--teal-200)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span style="color:var(--text-primary);">CVE-2024</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Select / Dropdown</div>
+      <div class="component-row">
+        <div class="select">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="3" stroke="var(--text-secondary)" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" stroke="var(--text-secondary)" stroke-width="1.5"/></svg>
+          Production
+          <span class="chevron"></span>
+        </div>
+        <div class="select">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="11" rx="2" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M1.5 6.5h13" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M5 1v3M11 1v3" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Last 30 Days
+          <span class="chevron"></span>
+        </div>
+      </div>
+      <div class="component-row" style="margin-top:0;">
+        <span class="token-tag">height: 40px</span>
+        <span class="token-tag">bg: prussian-200</span>
+        <span class="token-tag">border: border-card</span>
+        <span class="token-tag">radius: 4px</span>
+        <span class="token-tag">focus: teal-200 border</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-radius:var(--radius-card);overflow:clip;">
+      <table class="spec-table">
+        <thead><tr><th>Control</th><th>Background</th><th>Border</th><th>Text</th><th>Placeholder</th><th>Height</th><th>Radius</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Search Input</td><td><code>#242944</code></td><td><code>rgba(76,84,145,0.3)</code></td><td><code>#ECECF0</code></td><td><code>rgba(152,152,160,0.6)</code></td><td>40px</td><td>4px</td></tr>
+          <tr><td class="name">Select</td><td><code>#242944</code></td><td><code>rgba(76,84,145,0.3)</code></td><td><code>#ECECF0</code></td><td>—</td><td>40px</td><td>4px</td></tr>
+          <tr><td class="name">Focus State</td><td><code>#242944</code></td><td><code>#61C9D3</code></td><td><code>#ECECF0</code></td><td>—</td><td>40px</td><td>4px</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       4. KPI STAT CARD
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">KPI Stat Card</div>
+      <div class="section-desc">Metric summary tiles for dashboard headers — shows value, trend direction, and category accent</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Variants</div>
+      <div class="component-row" style="gap:16px;">
+
+        <div class="card kpi-card" style="width:220px;">
+          <span class="kpi-label">Total Exposed Assets</span>
+          <span class="kpi-value">12,847</span>
+          <span class="kpi-trend up-bad">
+            <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 9V3m0 0L3 6m3-3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            +3.2% from last period
+          </span>
+          <div class="kpi-bar" style="background:var(--teal-200);"></div>
+        </div>
+
+        <div class="card kpi-card" style="width:220px;">
+          <span class="kpi-label">Critical Exposures</span>
+          <span class="kpi-value" style="color:var(--red-200);">342</span>
+          <span class="kpi-trend up-bad">
+            <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 9V3m0 0L3 6m3-3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            +12 new this week
+          </span>
+          <div class="kpi-bar" style="background:var(--red-200);"></div>
+        </div>
+
+        <div class="card kpi-card" style="width:220px;">
+          <span class="kpi-label">Resolved This Month</span>
+          <span class="kpi-value" style="color:var(--green-200);">1,205</span>
+          <span class="kpi-trend down-good">
+            <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 3v6m0 0L3 6m3 3l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            −2.1% from last period
+          </span>
+          <div class="kpi-bar" style="background:var(--green-200);"></div>
+        </div>
+
+        <div class="card kpi-card" style="width:220px;">
+          <span class="kpi-label">Identities at Risk</span>
+          <span class="kpi-value">89</span>
+          <span class="kpi-trend neutral">
+            <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M2 6h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            No change
+          </span>
+          <div class="kpi-bar" style="background:var(--yellow-200);"></div>
+        </div>
+
+      </div>
+      <div class="component-row" style="margin-top:0;">
+        <span class="token-tag">card container</span>
+        <span class="token-tag">padding: 24px</span>
+        <span class="token-tag">H1 for value</span>
+        <span class="token-tag">Subtext for label</span>
+        <span class="token-tag">3px accent bar</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-radius:var(--radius-card);overflow:clip;">
+      <table class="spec-table">
+        <thead><tr><th>Element</th><th>Token</th><th>Size</th><th>Weight</th><th>Color</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Card Container</td><td><code>bg-card / border-card</code></td><td>—</td><td>—</td><td><code>#242944</code></td></tr>
+          <tr><td class="name">Label</td><td><code>Subtext</code></td><td>12px</td><td>Medium 500</td><td><code>#9898A0</code></td></tr>
+          <tr><td class="name">Value</td><td><code>H1</code></td><td>28px</td><td>Semi Bold 600</td><td><code>#ECECF0</code> or accent</td></tr>
+          <tr><td class="name">Trend — Bad</td><td>—</td><td>12px</td><td>Medium 500</td><td><code>#FF7394</code> (red-200)</td></tr>
+          <tr><td class="name">Trend — Good</td><td>—</td><td>12px</td><td>Medium 500</td><td><code>#9BE285</code> (green-200)</td></tr>
+          <tr><td class="name">Trend — Neutral</td><td>—</td><td>12px</td><td>Medium 500</td><td><code>#9898A0</code></td></tr>
+          <tr><td class="name">Accent Bar</td><td>—</td><td>100% × 3px</td><td>—</td><td>Any accent-200</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       5. VISUALIZATION CONTAINER
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Visualization Container</div>
+      <div class="section-desc">Chart wrapper card with title, subtitle, action slot, and content area — used for all graph, heatmap, and timeline panels</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Empty / Placeholder State</div>
+      <div class="component-row" style="gap:16px;">
+
+        <div class="card viz-container" style="width:480px;min-height:240px;">
+          <div class="viz-header">
+            <div>
+              <div class="viz-title">Attack Path Visualization</div>
+              <div class="viz-subtitle">Interactive graph of exploitable paths</div>
+            </div>
+            <button class="btn btn-ghost btn-sm">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Expand
+            </button>
+          </div>
+          <div class="viz-body">
+            <div style="text-align:center;">
+              <div class="viz-icon" style="background:rgba(97,201,211,0.1);">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5" stroke="var(--teal-200)" stroke-width="1.5"/><circle cx="18" cy="6" r="2.5" stroke="var(--teal-200)" stroke-width="1.5"/><circle cx="12" cy="18" r="2.5" stroke="var(--teal-200)" stroke-width="1.5"/><path d="M8 7.5l2.5 8M16 7.5l-2.5 8M8.5 6h7" stroke="var(--teal-200)" stroke-width="1" stroke-dasharray="3 2"/></svg>
+              </div>
+              Visualization content renders here
+            </div>
+          </div>
+        </div>
+
+        <div class="card viz-container" style="width:480px;min-height:240px;">
+          <div class="viz-header">
+            <div>
+              <div class="viz-title">Risk Heatmap</div>
+              <div class="viz-subtitle">Severity × likelihood matrix</div>
+            </div>
+            <button class="btn btn-ghost btn-sm">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Expand
+            </button>
+          </div>
+          <div class="viz-body">
+            <div style="text-align:center;">
+              <div class="viz-icon" style="background:rgba(255,115,148,0.1);">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="5" rx="1" fill="var(--green-200)" opacity="0.5"/><rect x="9.5" y="3" width="5" height="5" rx="1" fill="var(--yellow-200)" opacity="0.5"/><rect x="16" y="3" width="5" height="5" rx="1" fill="var(--red-200)" opacity="0.5"/><rect x="3" y="9.5" width="5" height="5" rx="1" fill="var(--yellow-200)" opacity="0.5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" fill="var(--orange-200)" opacity="0.5"/><rect x="16" y="9.5" width="5" height="5" rx="1" fill="var(--red-200)" opacity="0.6"/></svg>
+              </div>
+              Visualization content renders here
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="component-row" style="margin-top:0;">
+        <span class="token-tag">card container</span>
+        <span class="token-tag">padding: 24px</span>
+        <span class="token-tag">min-height: 280px</span>
+        <span class="token-tag">dashed border placeholder</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-radius:var(--radius-card);overflow:clip;">
+      <table class="spec-table">
+        <thead><tr><th>Element</th><th>Token</th><th>Spec</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Card</td><td><code>card</code></td><td>bg-card, border-card, radius-card</td></tr>
+          <tr><td class="name">Title</td><td><code>Body</code></td><td>16px / Semi Bold 600 / text-primary</td></tr>
+          <tr><td class="name">Subtitle</td><td><code>Subtext</code></td><td>12px / Medium 500 / text-secondary</td></tr>
+          <tr><td class="name">Action Slot</td><td><code>btn-ghost btn-sm</code></td><td>32px height, Ghost variant</td></tr>
+          <tr><td class="name">Placeholder Area</td><td>—</td><td>dashed border-divider, radius 8px</td></tr>
+          <tr><td class="name">Placeholder Icon</td><td>—</td><td>48×48px, radius 12px, accent @ 10% bg</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       6. DATA TABLE
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Data Table</div>
+      <div class="section-desc">Full-featured data table with header bar, column headers, severity cells, pagination, and row actions</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Complete Example</div>
+
+      <div class="card" style="border-radius:var(--radius-card);overflow:clip;">
+        <div class="table-bar">
+          <div class="left">
+            <span style="font-size:16px;font-weight:600;color:var(--text-primary);">Prioritized Exposures</span>
+            <span class="table-count">342</span>
+          </div>
+          <div class="right">
+            <div class="filter-chip" style="height:28px;font-size:11px;">All Types</div>
+            <div class="filter-chip active" style="height:28px;font-size:11px;"><span class="dot dot-critical"></span>Critical First</div>
+            <button class="btn btn-ghost btn-sm">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M1.5 3.5h11M1.5 7h8M1.5 10.5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Sort
+            </button>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Exposure</th>
+              <th>Severity</th>
+              <th>Asset</th>
+              <th>CVSS</th>
+              <th>Age</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name-cell">CVE-2024-21762 — FortiOS Out-of-Bound Write</td>
+              <td><span class="badge badge-critical"><span class="dot dot-critical"></span>Critical</span></td>
+              <td>fw-edge-01</td>
+              <td><span style="color:var(--red-200);font-weight:600;">9.8</span></td>
+              <td>14d</td>
+              <td><button class="btn btn-primary btn-sm" style="font-weight:600;">Remediate</button></td>
+            </tr>
+            <tr>
+              <td class="name-cell">Exposed S3 Bucket — Public ACL</td>
+              <td><span class="badge badge-critical"><span class="dot dot-critical"></span>Critical</span></td>
+              <td>s3-prod-data</td>
+              <td><span style="color:var(--red-200);font-weight:600;">9.6</span></td>
+              <td>3d</td>
+              <td><button class="btn btn-primary btn-sm" style="font-weight:600;">Remediate</button></td>
+            </tr>
+            <tr>
+              <td class="name-cell">CVE-2024-3094 — XZ Utils Backdoor</td>
+              <td><span class="badge badge-high"><span class="dot dot-high"></span>High</span></td>
+              <td>srv-app-12</td>
+              <td><span style="color:var(--orange-200);font-weight:600;">8.8</span></td>
+              <td>7d</td>
+              <td><button class="btn btn-primary-outlined btn-sm">Review</button></td>
+            </tr>
+            <tr>
+              <td class="name-cell">TLS 1.0 Enabled — Legacy Gateway</td>
+              <td><span class="badge badge-medium"><span class="dot dot-medium"></span>Medium</span></td>
+              <td>gw-api-legacy</td>
+              <td><span style="color:var(--yellow-200);font-weight:600;">5.3</span></td>
+              <td>60d</td>
+              <td><button class="btn btn-ghost btn-sm">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="table-footer">
+          <span class="subtext">Showing 1–4 of 342</span>
+          <div class="pagination">
+            <div class="page-btn">‹</div>
+            <div class="page-btn active">1</div>
+            <div class="page-btn">2</div>
+            <div class="page-btn">3</div>
+            <div class="page-btn">…</div>
+            <div class="page-btn">57</div>
+            <div class="page-btn">›</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card" style="border-radius:var(--radius-card);overflow:clip;margin-top:24px;">
+      <table class="spec-table">
+        <thead><tr><th>Element</th><th>Spec</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Header Bar</td><td>padding 20px 24px · Body semibold title · teal count badge · filter chips + ghost buttons</td></tr>
+          <tr><td class="name">Column Header</td><td>11px / Bold 700 / <code>letter-spacing: 0.6px</code> / uppercase / <code>#9898A0</code> / bg-card</td></tr>
+          <tr><td class="name">Data Cell</td><td>14px / Regular 400 / <code>#9898A0</code> · padding 14px 24px</td></tr>
+          <tr><td class="name">Name Cell</td><td>14px / Medium 500 / <code>#ECECF0</code></td></tr>
+          <tr><td class="name">Row Divider</td><td><code>1px solid rgba(76,84,145,0.2)</code></td></tr>
+          <tr><td class="name">Pagination</td><td>32×32px buttons · active = bg bluegray-200 · Subtext for count</td></tr>
+          <tr><td class="name">Row Actions</td><td>btn-primary btn-sm for critical · btn-primary-outlined for high · btn-ghost for lower</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       7. PROGRESS BAR
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Progress Bar</div>
+      <div class="section-desc">Horizontal bar for metric breakdowns, severity distributions, and completion tracking</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Severity Variants</div>
+      <div style="display:flex;flex-direction:column;gap:16px;max-width:400px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:600;color:var(--red-200);">Critical</span>
+            <span style="font-size:12px;font-weight:600;color:var(--text-primary);">342</span>
+          </div>
+          <div class="progress-track" style="background:rgba(255,115,148,0.15);">
+            <div class="progress-fill" style="width:27%;background:var(--red-200);"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:600;color:var(--orange-200);">High</span>
+            <span style="font-size:12px;font-weight:600;color:var(--text-primary);">1,024</span>
+          </div>
+          <div class="progress-track" style="background:rgba(255,159,121,0.15);">
+            <div class="progress-fill" style="width:80%;background:var(--orange-200);"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:600;color:var(--yellow-200);">Medium</span>
+            <span style="font-size:12px;font-weight:600;color:var(--text-primary);">4,891</span>
+          </div>
+          <div class="progress-track" style="background:rgba(226,200,133,0.15);">
+            <div class="progress-fill" style="width:100%;background:var(--yellow-200);"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:600;color:var(--green-200);">Low</span>
+            <span style="font-size:12px;font-weight:600;color:var(--text-primary);">6,590</span>
+          </div>
+          <div class="progress-track" style="background:rgba(155,226,133,0.15);">
+            <div class="progress-fill" style="width:52%;background:var(--green-200);"></div>
+          </div>
+        </div>
+      </div>
+      <div class="component-row" style="margin-top:12px;">
+        <span class="token-tag">track: accent @ 15%</span>
+        <span class="token-tag">fill: accent-200</span>
+        <span class="token-tag">height: 6px</span>
+        <span class="token-tag">radius: 3px</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       8. ACTIVITY ITEM
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Activity Item</div>
+      <div class="section-desc">Timeline entry for recent events, audit logs, and notification feeds</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Variants</div>
+      <div style="max-width:500px;">
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(155,226,133,0.12);">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M4 8.5l2.5 2.5L12 5" stroke="var(--green-200)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">CVE-2024-1086 Patched</div>
+            <div class="activity-desc">Linux kernel vulnerability remediated across 34 servers</div>
+            <div class="activity-meta">2 hours ago · Auto-remediation</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(255,115,148,0.12);">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 3v5M8 11v1" stroke="var(--red-200)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">New Critical Exposure</div>
+            <div class="activity-desc">Public-facing RDP detected on srv-win-07</div>
+            <div class="activity-meta">5 hours ago · Scan discovery</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(97,201,211,0.12);">
+            <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 2v12M2 8h12" stroke="var(--teal-200)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">Policy Updated</div>
+            <div class="activity-desc">TLS 1.0 deprecation policy applied to 12 gateways</div>
+            <div class="activity-meta">1 day ago · Policy engine</div>
+          </div>
+        </div>
+      </div>
+      <div class="component-row" style="margin-top:8px;">
+        <span class="token-tag">icon: 36×36px, radius 8px, accent @ 12%</span>
+        <span class="token-tag">title: 14px semi bold</span>
+        <span class="token-tag">desc: 12px regular secondary</span>
+        <span class="token-tag">meta: 11px medium tertiary</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       9. PRIORITY ACTION ITEM
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Priority Action Item</div>
+      <div class="section-desc">Numbered, ranked action items with impact metrics — used in remediation panels and priority lists</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Example</div>
+      <div style="max-width:420px;">
+        <div class="action-item">
+          <div class="action-left">
+            <div class="action-number">1</div>
+            <div>
+              <div class="action-text">Patch FortiOS edge devices</div>
+              <div class="action-sub">12 assets affected</div>
+            </div>
+          </div>
+          <div class="action-impact" style="color:var(--red-200);">−38 risk</div>
+        </div>
+        <div class="action-item">
+          <div class="action-left">
+            <div class="action-number">2</div>
+            <div>
+              <div class="action-text">Restrict S3 bucket ACLs</div>
+              <div class="action-sub">3 buckets exposed</div>
+            </div>
+          </div>
+          <div class="action-impact" style="color:var(--red-200);">−31 risk</div>
+        </div>
+        <div class="action-item">
+          <div class="action-left">
+            <div class="action-number">3</div>
+            <div>
+              <div class="action-text">Rotate stale service credentials</div>
+              <div class="action-sub">89 identities</div>
+            </div>
+          </div>
+          <div class="action-impact" style="color:var(--orange-200);">−24 risk</div>
+        </div>
+      </div>
+      <div class="component-row" style="margin-top:8px;">
+        <span class="token-tag">number: 24×24px, teal @ 12% bg</span>
+        <span class="token-tag">text: 13px medium</span>
+        <span class="token-tag">sub: 11px tertiary</span>
+        <span class="token-tag">impact: 11px semibold accent</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       10. SIDE PANEL CARD
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Side Panel Card</div>
+      <div class="section-desc">Right-column panel for insights, breakdowns, and detail views — stacks vertically in 340px column</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">With Priority Actions</div>
+      <div class="card panel-card" style="width:340px;">
+        <div class="panel-header">
+          <span class="panel-title">Remediation Priority</span>
+          <button class="btn btn-ghost btn-sm">View All</button>
+        </div>
+        <div class="panel-desc">Top actions by risk reduction impact</div>
+        <div>
+          <div class="action-item">
+            <div class="action-left">
+              <div class="action-number">1</div>
+              <div><div class="action-text">Patch FortiOS</div><div class="action-sub">12 assets</div></div>
+            </div>
+            <div class="action-impact" style="color:var(--red-200);">−38</div>
+          </div>
+          <div class="action-item">
+            <div class="action-left">
+              <div class="action-number">2</div>
+              <div><div class="action-text">Restrict S3 ACLs</div><div class="action-sub">3 buckets</div></div>
+            </div>
+            <div class="action-impact" style="color:var(--red-200);">−31</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">With Progress Breakdown</div>
+      <div class="card panel-card" style="width:340px;">
+        <span class="panel-title">Exposure Breakdown</span>
+        <div class="panel-desc">Distribution by severity</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:12px;font-weight:600;color:var(--red-200);">Critical</span>
+              <span style="font-size:12px;font-weight:600;color:var(--text-primary);">342</span>
+            </div>
+            <div class="progress-track" style="background:rgba(255,115,148,0.15);">
+              <div class="progress-fill" style="width:27%;background:var(--red-200);"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:12px;font-weight:600;color:var(--orange-200);">High</span>
+              <span style="font-size:12px;font-weight:600;color:var(--text-primary);">1,024</span>
+            </div>
+            <div class="progress-track" style="background:rgba(255,159,121,0.15);">
+              <div class="progress-fill" style="width:80%;background:var(--orange-200);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-row" style="margin-top:0;">
+      <span class="token-tag">width: 340px</span>
+      <span class="token-tag">card container</span>
+      <span class="token-tag">padding: 24px</span>
+      <span class="token-tag">gap: 16px vertical</span>
+      <span class="token-tag">header: title + ghost action</span>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       11. PAGE HEADER
+       ================================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Page Header</div>
+      <div class="section-desc">Top-level page layout with title, subtitle, and control toolbar — used at the top of every product page</div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-label">Full Width Example</div>
+      <div style="background:var(--bg-page);padding:24px;border-radius:var(--radius-card);border:1px solid var(--border-card);">
+        <div class="page-header-component">
+          <div class="page-header-left">
+            <span class="h1">Exposure Management</span>
+            <span class="subtext" style="color:var(--text-tertiary);">Real-time attack surface visibility</span>
+          </div>
+          <div class="page-header-right">
+            <div class="select" style="height:36px;font-size:13px;padding:0 14px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="2.5" stroke="var(--text-secondary)" stroke-width="1.3"/><circle cx="7" cy="7" r="2" stroke="var(--text-secondary)" stroke-width="1.3"/></svg>
+              Production
+              <span class="chevron"></span>
+            </div>
+            <div class="select" style="height:36px;font-size:13px;padding:0 14px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1.5" y="2.5" width="11" height="9" rx="1.5" stroke="var(--text-secondary)" stroke-width="1.3"/><path d="M1.5 5.5h11" stroke="var(--text-secondary)" stroke-width="1.3"/><path d="M4.5 1v2.5M9.5 1v2.5" stroke="var(--text-secondary)" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Last 30 Days
+              <span class="chevron"></span>
+            </div>
+            <div class="input" style="height:36px;font-size:13px;padding:0 14px;min-width:200px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="6" cy="6" r="4" stroke="var(--text-secondary)" stroke-width="1.3"/><path d="M9.5 9.5L12.5 12.5" stroke="var(--text-secondary)" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <span class="input-placeholder">Search exposures...</span>
+            </div>
+            <button class="btn btn-tertiary" style="height:36px;padding:0 14px;font-size:13px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M1.5 3.5h11M3.5 7h7M5.5 10.5h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Filters
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="component-row" style="margin-top:12px;">
+        <span class="token-tag">H1 title</span>
+        <span class="token-tag">Subtext subtitle</span>
+        <span class="token-tag">border-bottom divider</span>
+        <span class="token-tag">selects + input + btn-tertiary</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       FOOTER
+       ================================================================ -->
+  <div style="padding-top:24px;border-top:1px solid var(--border-divider);display:flex;gap:8px;align-items:center;">
+    <span style="font-size:12px;font-weight:500;color:var(--text-secondary);">Cyderes Design System</span>
+    <span style="color:var(--text-tertiary);">·</span>
+    <span style="font-size:12px;font-weight:500;color:var(--text-secondary);">Component Additions</span>
+    <span style="color:var(--text-tertiary);">·</span>
+    <span style="font-size:12px;font-weight:500;color:var(--text-secondary);">Darkstar-derived</span>
+    <span style="color:var(--text-tertiary);">·</span>
+    <span style="font-size:12px;font-weight:500;color:var(--text-secondary);">Tailwind CSS</span>
+  </div>
+
+</div>
+
+</body>
+</html>

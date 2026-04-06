@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440, initial-scale=1.0" />
+  <title>Cyderes Design System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        },
+        extend: {
+          colors: {
+            /* ── Primary ─────────────────────────── */
+            zodiac: {
+              100: '#C8CBE0',
+              150: '#9196C0',
+              200: '#181F48',
+            },
+            teal: {
+              100: '#D4F1F4',
+              150: '#9AE0E7',
+              200: '#61C9D3',
+            },
+            /* ── Secondary / Surfaces ────────────── */
+            prime: {
+              100: '#C6C8D5',
+              150: '#444B73',
+              200: '#080C18',
+            },
+            prussian: {
+              100: '#CCCEDE',
+              150: '#6A6F92',
+              200: '#242944',
+            },
+            navy: {
+              100: '#C8C7D6',
+              150: '#5C598D',
+              200: '#151428',
+            },
+            bluegray: {
+              100: '#D1D4E6',
+              150: '#8085B3',
+              200: '#4C5491',
+            },
+            bluegray100: {
+              100: '#C9CBD8',
+              150: '#5D6180',
+              200: '#181D2D',
+            },
+            /* ── Accent ──────────────────────────── */
+            accent: {
+              red:      { 100: '#FFD5DE', 150: '#FFA4B9', 200: '#FF7394' },
+              orange:   { 100: '#FFE2D3', 150: '#FFC0A6', 200: '#FF9F79' },
+              yellow:   { 100: '#F5EACE', 150: '#ECD9A7', 200: '#E2C885' },
+              green:    { 100: '#E1F6D6', 150: '#BEECAD', 200: '#9BE285' },
+              purple:   { 100: '#DED0EC', 150: '#B591D4', 200: '#8D5EB6' },
+              teal:     { 100: '#D4F1F4', 150: '#9AE0E7', 200: '#61C9D3' },
+              pink:     { 100: '#F0CAE1', 150: '#DD8AC0', 200: '#CA4BA0' },
+              blue:     { 100: '#E4F3FF', 150: '#CCE9FF', 200: '#B3E0FF' },
+              lavender: { 100: '#D9CCFF', 150: '#B094FF', 200: '#875BFF' },
+            },
+            /* ── Typography ──────────────────────── */
+            typo: {
+              white: '#ECECF0',
+              black: '#131313',
+              gray:  '#9898A0',
+              teal:  '#61C9D3',
+            },
+            /* ── Surfaces ────────────────────────── */
+            surface: {
+              sunken: '#00020B',
+              base:   '#080C18',
+              raised: '#242944',
+              overlay:'#151428',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .swatch {
+      transition: transform 0.15s ease;
+    }
+    .swatch:hover { transform: translateY(-2px); }
+  </style>
+</head>
+
+<body class="bg-surface-sunken text-typo-white min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-16 py-16 flex flex-col gap-20">
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- HEADER                                      -->
+    <!-- ════════════════════════════════════════════ -->
+    <header class="flex flex-col gap-3">
+      <h1 class="text-[44px] font-bold tracking-tight leading-none">Cyderes Design System</h1>
+      <p class="text-lg text-typo-gray">Tailwind CSS tokens &middot; Darkstar-derived palette &middot; Inter typeface</p>
+      <div class="h-[2px] w-full bg-bluegray-200/40 mt-4"></div>
+    </header>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- PRIMARY PALETTE                             -->
+    <!-- ════════════════════════════════════════════ -->
+    <section class="flex flex-col gap-8">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-2xl font-semibold">Primary Palette</h2>
+        <p class="text-sm text-typo-gray">Core brand colors — Zodiac Blue &amp; Teal</p>
+      </div>
+      <div class="grid grid-cols-2 gap-8">
+        <!-- Zodiac Blue -->
+        <div class="flex flex-col gap-3">
+          <p class="text-xs font-medium text-typo-gray uppercase tracking-wider">Zodiac Blue</p>
+          <div class="flex gap-3">
+            <div class="swatch flex flex-col items-center gap-2">
+              <div class="w-[120px] h-[80px] rounded-lg bg-zodiac-100 border border-white/5"></div>
+              <span class="text-[11px] text-typo-gray font-mono">100</span>
+              <span class="text-[10px] text-typo-gray/60 font-mono">#C8CBE0</span>
+            </div>
+            <div class="swatch flex flex-col items-center gap-2">
+              <div class="w-[120px] h-[80px] rounded-lg bg-zodiac-150 border border-white/5"></div>
+              <span class="text-[11px] text-typo-gray font-mono">150</span>
+              <span class="text-[10px] text-typo-gray/60 font-mono">#9196C0</span>
+            </div>
+            <div class="swatch flex flex-col items-center gap-2">
+              <div class="w-[120px] h-[80px] rounded-lg bg-zodiac-200 border border-white/5"></div>
+              <span class="text-[11px] text-typo-white font-mono">200</span>
+              <span class="text-[10px] text-typo-gray/60 font-mono">#181F48</span>
+            </div>
+          </div>
+        </div>
+        <!-- Teal -->
+        <div class="flex flex-col gap-3">
+          <p class="text-xs font-medium text-typo-gray uppercase tracking-wider">Teal</p>
+          <div class="flex gap-3">
+            <div class="swatch flex flex-col items-center gap-2">
+              <div class="w-[120px] h-[80px] rounded-lg bg-teal-100 border border-white/5"></div>
+              <span class="text-[11px] text-typo-gray font-mono">100</span>
+              <span class="text-[10px] text-typo-gray/60 font-mono">#D4F1F4</span>
+            </div>
+            <div class="swatch flex flex-col items-center gap-2">
+              <div class="w-[120px] h-[80px] rounded-lg bg-teal-150 border border-white/5"></div>
+              <span class="text-[11px] text-typo-gray font-mono">150</span>
+              <span class="text-[10px] text-typo-gray/60 font-mono">#9AE0E7</span>
+            </div>
+            <div class="swatch flex flex-col items-center gap-2">
+              <div class="w-[120px] h-[80px] rounded-lg bg-teal-200 border border-white/5"></div>
+              <span class="text-[11px] text-typo-gray font-mono">200</span>
+              <span class="text-[10px] text-typo-gray/60 font-mono">#61C9D3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- SURFACE / SECONDARY PALETTE                 -->
+    <!-- ════════════════════════════════════════════ -->
+    <section class="flex flex-col gap-8">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-2xl font-semibold">Surface &amp; Secondary Palette</h2>
+        <p class="text-sm text-typo-gray">Darkstar surfaces and neutral tones</p>
+      </div>
+      <div class="grid grid-cols-5 gap-5">
+        <!-- Prime Blue -->
+        <div class="flex flex-col gap-3">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Prime Blue</p>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-prime-100 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">100</span><span class="text-[10px] text-typo-gray/60 font-mono">#C6C8D5</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-prime-150 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">150</span><span class="text-[10px] text-typo-gray/60 font-mono">#444B73</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-prime-200 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">200</span><span class="text-[10px] text-typo-gray/60 font-mono">#080C18</span></div>
+          </div>
+        </div>
+        <!-- Prussian Blue -->
+        <div class="flex flex-col gap-3">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Prussian Blue</p>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-prussian-100 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">100</span><span class="text-[10px] text-typo-gray/60 font-mono">#CCCEDE</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-prussian-150 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">150</span><span class="text-[10px] text-typo-gray/60 font-mono">#6A6F92</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-prussian-200 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">200</span><span class="text-[10px] text-typo-gray/60 font-mono">#242944</span></div>
+          </div>
+        </div>
+        <!-- Navy Blue -->
+        <div class="flex flex-col gap-3">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Navy Blue</p>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-navy-100 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">100</span><span class="text-[10px] text-typo-gray/60 font-mono">#C8C7D6</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-navy-150 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">150</span><span class="text-[10px] text-typo-gray/60 font-mono">#5C598D</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-navy-200 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">200</span><span class="text-[10px] text-typo-gray/60 font-mono">#151428</span></div>
+          </div>
+        </div>
+        <!-- Blue Gray -->
+        <div class="flex flex-col gap-3">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Blue Gray</p>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-bluegray-100 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">100</span><span class="text-[10px] text-typo-gray/60 font-mono">#D1D4E6</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-bluegray-150 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">150</span><span class="text-[10px] text-typo-gray/60 font-mono">#8085B3</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-bluegray-200 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">200</span><span class="text-[10px] text-typo-gray/60 font-mono">#4C5491</span></div>
+          </div>
+        </div>
+        <!-- Blue Gray 100 -->
+        <div class="flex flex-col gap-3">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Blue Gray Dark</p>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-bluegray100-100 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">100</span><span class="text-[10px] text-typo-gray/60 font-mono">#C9CBD8</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-bluegray100-150 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">150</span><span class="text-[10px] text-typo-gray/60 font-mono">#5D6180</span></div>
+          </div>
+          <div class="swatch flex flex-col gap-2">
+            <div class="w-full h-[56px] rounded-lg bg-bluegray100-200 border border-white/5"></div>
+            <div class="flex justify-between"><span class="text-[10px] text-typo-gray font-mono">200</span><span class="text-[10px] text-typo-gray/60 font-mono">#181D2D</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- ACCENT PALETTE                              -->
+    <!-- ════════════════════════════════════════════ -->
+    <section class="flex flex-col gap-8">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-2xl font-semibold">Accent Palette</h2>
+        <p class="text-sm text-typo-gray">Status, severity, and data visualization</p>
+      </div>
+      <div class="grid grid-cols-9 gap-4">
+        <!-- Red -->
+        <div class="flex flex-col gap-2 items-center">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Red</p>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-red-100 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#FFD5DE</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-red-150 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#FFA4B9</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-red-200 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#FF7394</span>
+        </div>
+        <!-- Orange -->
+        <div class="flex flex-col gap-2 items-center">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Orange</p>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-orange-100 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#FFE2D3</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-orange-150 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#FFC0A6</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-orange-200 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#FF9F79</span>
+        </div>
+        <!-- Yellow -->
+        <div class="flex flex-col gap-2 items-center">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Yellow</p>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-yellow-100 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#F5EACE</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-yellow-150 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#ECD9A7</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-yellow-200 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#E2C885</span>
+        </div>
+        <!-- Green -->
+        <div class="flex flex-col gap-2 items-center">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Green</p>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-green-100 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#E1F6D6</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-green-150 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#BEECAD</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-green-200 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#9BE285</span>
+        </div>
+        <!-- Purple -->
+        <div class="flex flex-col gap-2 items-center">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Purple</p>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-purple-100 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#DED0EC</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-purple-150 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#B591D4</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-purple-200 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#8D5EB6</span>
+        </div>
+        <!-- Teal -->
+        <div class="flex flex-col gap-2 items-center">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Teal</p>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-teal-100 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#D4F1F4</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-teal-150 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#9AE0E7</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-teal-200 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#61C9D3</span>
+        </div>
+        <!-- Pink -->
+        <div class="flex flex-col gap-2 items-center">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Pink</p>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-pink-100 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#F0CAE1</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-pink-150 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#DD8AC0</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-pink-200 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#CA4BA0</span>
+        </div>
+        <!-- Blue -->
+        <div class="flex flex-col gap-2 items-center">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Blue</p>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-blue-100 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#E4F3FF</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-blue-150 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#CCE9FF</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-blue-200 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#B3E0FF</span>
+        </div>
+        <!-- Lavender -->
+        <div class="flex flex-col gap-2 items-center">
+          <p class="text-[10px] font-medium text-typo-gray uppercase tracking-wider">Lavender</p>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-lavender-100 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#D9CCFF</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-lavender-150 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#B094FF</span>
+          <div class="swatch w-full h-[48px] rounded-lg bg-accent-lavender-200 border border-white/5"></div>
+          <span class="text-[9px] text-typo-gray/60 font-mono">#875BFF</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- TYPOGRAPHY                                  -->
+    <!-- ════════════════════════════════════════════ -->
+    <section class="flex flex-col gap-8">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-2xl font-semibold">Typography</h2>
+        <p class="text-sm text-typo-gray">Inter typeface &middot; hierarchy &amp; text styles</p>
+      </div>
+
+      <!-- Specimens on dark card -->
+      <div class="bg-surface-raised rounded-xl border border-bluegray-200/30 overflow-hidden">
+
+        <!-- H1 -->
+        <div class="flex items-baseline gap-8 px-8 py-6 border-b border-bluegray-200/20">
+          <div class="w-[180px] shrink-0 flex flex-col gap-1">
+            <span class="text-xs font-semibold text-teal-200 uppercase tracking-wider">H1</span>
+            <span class="text-[11px] text-typo-gray font-mono">28px / Semi Bold 600</span>
+            <span class="text-[11px] text-typo-gray font-mono">line-height: 1.5</span>
+          </div>
+          <p class="text-[28px] font-semibold leading-[1.5] text-typo-white">
+            The quick brown fox jumps over the lazy dog
+          </p>
+        </div>
+
+        <!-- H2 -->
+        <div class="flex items-baseline gap-8 px-8 py-6 border-b border-bluegray-200/20">
+          <div class="w-[180px] shrink-0 flex flex-col gap-1">
+            <span class="text-xs font-semibold text-teal-200 uppercase tracking-wider">H2</span>
+            <span class="text-[11px] text-typo-gray font-mono">24px / Medium 500</span>
+            <span class="text-[11px] text-typo-gray font-mono">line-height: 1.5</span>
+          </div>
+          <p class="text-[24px] font-medium leading-[1.5] text-typo-white">
+            The quick brown fox jumps over the lazy dog
+          </p>
+        </div>
+
+        <!-- H3 -->
+        <div class="flex items-baseline gap-8 px-8 py-6 border-b border-bluegray-200/20">
+          <div class="w-[180px] shrink-0 flex flex-col gap-1">
+            <span class="text-xs font-semibold text-teal-200 uppercase tracking-wider">H3</span>
+            <span class="text-[11px] text-typo-gray font-mono">20px / Semi Bold 600</span>
+            <span class="text-[11px] text-typo-gray font-mono">line-height: 1.5</span>
+          </div>
+          <p class="text-[20px] font-semibold leading-[1.5] text-typo-white">
+            The quick brown fox jumps over the lazy dog
+          </p>
+        </div>
+
+        <!-- Body -->
+        <div class="flex items-baseline gap-8 px-8 py-6 border-b border-bluegray-200/20">
+          <div class="w-[180px] shrink-0 flex flex-col gap-1">
+            <span class="text-xs font-semibold text-teal-200 uppercase tracking-wider">Body</span>
+            <span class="text-[11px] text-typo-gray font-mono">16px / Regular 400</span>
+            <span class="text-[11px] text-typo-gray font-mono">line-height: 1.5</span>
+          </div>
+          <p class="text-[16px] font-normal leading-[1.5] text-typo-white">
+            The quick brown fox jumps over the lazy dog. Body text is used for paragraphs, descriptions, and general content throughout the application interface.
+          </p>
+        </div>
+
+        <!-- Subtext -->
+        <div class="flex items-baseline gap-8 px-8 py-6">
+          <div class="w-[180px] shrink-0 flex flex-col gap-1">
+            <span class="text-xs font-semibold text-teal-200 uppercase tracking-wider">Subtext</span>
+            <span class="text-[11px] text-typo-gray font-mono">12px / Medium 500</span>
+            <span class="text-[11px] text-typo-gray font-mono">line-height: 1.5</span>
+          </div>
+          <p class="text-[12px] font-medium leading-[1.5] text-typo-gray">
+            The quick brown fox jumps over the lazy dog. Subtext is used for captions, hints, timestamps, and assistive labels.
+          </p>
+        </div>
+      </div>
+
+      <!-- Type scale summary table -->
+      <div class="bg-surface-base rounded-xl border border-bluegray-200/30 overflow-hidden">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="bg-surface-raised text-typo-gray text-xs font-semibold uppercase tracking-wider">
+              <th class="px-6 py-3">Style</th>
+              <th class="px-6 py-3">Font</th>
+              <th class="px-6 py-3">Size</th>
+              <th class="px-6 py-3">Weight</th>
+              <th class="px-6 py-3">Line Height</th>
+              <th class="px-6 py-3">Tailwind Class</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr class="border-t border-bluegray-200/20">
+              <td class="px-6 py-3 font-semibold text-typo-white">H1</td>
+              <td class="px-6 py-3 text-typo-gray">Inter</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">28px</td>
+              <td class="px-6 py-3 text-typo-gray">Semi Bold (600)</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">1.5</td>
+              <td class="px-6 py-3 font-mono text-teal-200 text-xs">text-[28px] font-semibold</td>
+            </tr>
+            <tr class="border-t border-bluegray-200/20">
+              <td class="px-6 py-3 font-semibold text-typo-white">H2</td>
+              <td class="px-6 py-3 text-typo-gray">Inter</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">24px</td>
+              <td class="px-6 py-3 text-typo-gray">Medium (500)</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">1.5</td>
+              <td class="px-6 py-3 font-mono text-teal-200 text-xs">text-[24px] font-medium</td>
+            </tr>
+            <tr class="border-t border-bluegray-200/20">
+              <td class="px-6 py-3 font-semibold text-typo-white">H3</td>
+              <td class="px-6 py-3 text-typo-gray">Inter</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">20px</td>
+              <td class="px-6 py-3 text-typo-gray">Semi Bold (600)</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">1.5</td>
+              <td class="px-6 py-3 font-mono text-teal-200 text-xs">text-[20px] font-semibold</td>
+            </tr>
+            <tr class="border-t border-bluegray-200/20">
+              <td class="px-6 py-3 font-semibold text-typo-white">Body</td>
+              <td class="px-6 py-3 text-typo-gray">Inter</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">16px</td>
+              <td class="px-6 py-3 text-typo-gray">Regular (400)</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">1.5</td>
+              <td class="px-6 py-3 font-mono text-teal-200 text-xs">text-[16px] font-normal</td>
+            </tr>
+            <tr class="border-t border-bluegray-200/20">
+              <td class="px-6 py-3 font-semibold text-typo-white">Subtext</td>
+              <td class="px-6 py-3 text-typo-gray">Inter</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">12px</td>
+              <td class="px-6 py-3 text-typo-gray">Medium (500)</td>
+              <td class="px-6 py-3 text-typo-gray font-mono">1.5</td>
+              <td class="px-6 py-3 font-mono text-teal-200 text-xs">text-[12px] font-medium</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- FOOTER                                      -->
+    <!-- ════════════════════════════════════════════ -->
+    <footer class="flex items-center gap-3 pt-4 border-t border-bluegray-200/20">
+      <span class="text-xs text-typo-gray">Cyderes Design System</span>
+      <span class="text-xs text-bluegray-200">&middot;</span>
+      <span class="text-xs text-typo-gray">Darkstar-derived</span>
+      <span class="text-xs text-bluegray-200">&middot;</span>
+      <span class="text-xs text-typo-gray">Tailwind CSS</span>
+    </footer>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1440" />
+<title>Exposure Management — Cyderes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* ================================================================
+     CYDERES DESIGN SYSTEM TOKENS
+     Darkstar-derived · Tailwind CSS · Inter typeface
+     ================================================================ */
+
+  :root {
+    /* ── Primary Palette ── */
+    --zodiac-100: #C8CBE0;
+    --zodiac-150: #9196C0;
+    --zodiac-200: #181F48;
+    --teal-100: #D4F1F4;
+    --teal-150: #9AE0E7;
+    --teal-200: #61C9D3;
+
+    /* ── Surface / Secondary Palette ── */
+    --prime-100: #C6C8D5;
+    --prime-150: #444B73;
+    --prime-200: #080C18;
+    --prussian-100: #CCCEDE;
+    --prussian-150: #6A6F92;
+    --prussian-200: #242944;
+    --navy-100: #C8C7D6;
+    --navy-150: #5C598D;
+    --navy-200: #151428;
+    --bluegray-100: #D1D4E6;
+    --bluegray-150: #8085B3;
+    --bluegray-200: #4C5491;
+    --bluegray-dk-100: #C9CBD8;
+    --bluegray-dk-150: #5D6180;
+    --bluegray-dk-200: #181D2D;
+
+    /* ── Accent Palette ── */
+    --red-100: #FFD5DE;
+    --red-150: #FFA4B9;
+    --red-200: #FF7394;
+    --orange-100: #FFE2D3;
+    --orange-150: #FFC0A6;
+    --orange-200: #FF9F79;
+    --yellow-100: #F5EACE;
+    --yellow-150: #ECD9A7;
+    --yellow-200: #E2C885;
+    --green-100: #E1F6D6;
+    --green-150: #BEECAD;
+    --green-200: #9BE285;
+    --purple-100: #DED0EC;
+    --purple-150: #B591D4;
+    --purple-200: #8D5EB6;
+    --pink-100: #F0CAE1;
+    --pink-150: #DD8AC0;
+    --pink-200: #CA4BA0;
+    --blue-100: #E4F3FF;
+    --blue-150: #CCE9FF;
+    --blue-200: #B3E0FF;
+    --lavender-100: #D9CCFF;
+    --lavender-150: #B094FF;
+    --lavender-200: #875BFF;
+
+    /* ── Text ── */
+    --text-primary: #ECECF0;
+    --text-secondary: #9898A0;
+    --text-tertiary: rgba(152,152,160,0.6);
+    --text-accent: #61C9D3;
+
+    /* ── Surfaces ── */
+    --bg-page: #080C18;
+    --bg-card: #242944;
+    --bg-card-elevated: #1a1f38;
+    --border-card: rgba(76,84,145,0.3);
+    --border-divider: rgba(76,84,145,0.2);
+
+    /* ── Sizing ── */
+    --radius-card: 12px;
+    --radius-btn: 4px;
+    --btn-height: 44px;
+  }
+
+  /* ── Reset ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Typography (Cyderes spec) ── */
+  .h1 { font-size: 28px; font-weight: 600; line-height: 1.5; color: var(--text-primary); }
+  .h2 { font-size: 24px; font-weight: 500; line-height: 1.5; color: var(--text-primary); }
+  .h3 { font-size: 20px; font-weight: 600; line-height: 1.5; color: var(--text-primary); }
+  .body-text { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--text-primary); }
+  .subtext { font-size: 12px; font-weight: 500; line-height: 1.5; color: var(--text-secondary); }
+  .label { font-size: 12px; font-weight: 700; line-height: 1.33; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-secondary); }
+
+  /* ── Card container (from Cyderes spec table / typography card) ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  /* ── Buttons (Cyderes system — 6 variants) ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: var(--btn-height); padding: 0 20px;
+    border-radius: var(--radius-btn);
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--teal-200); color: #131313; border-color: transparent; }
+  .btn-primary-outlined { background: transparent; border-color: var(--teal-200); color: var(--teal-200); }
+  .btn-secondary { background: var(--prussian-200); color: var(--text-primary); border-color: transparent; }
+  .btn-tertiary { background: transparent; border-color: var(--bluegray-200); color: var(--text-primary); }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--teal-200); }
+  .btn-danger { background: rgba(255,115,148,0.15); border-color: rgba(255,115,148,0.4); color: var(--red-200); }
+
+  /* ── Badge / pill (derived from Danger button pattern: accent at 15% bg) ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 100px;
+    font-size: 12px; font-weight: 600; line-height: 1.5;
+  }
+  .badge-critical { background: rgba(255,115,148,0.15); color: var(--red-200); }
+  .badge-high     { background: rgba(255,159,121,0.15); color: var(--orange-200); }
+  .badge-medium   { background: rgba(226,200,133,0.15); color: var(--yellow-200); }
+  .badge-low      { background: rgba(155,226,133,0.15); color: var(--green-200); }
+  .badge-info     { background: rgba(97,201,211,0.15); color: var(--teal-200); }
+
+  /* ── Severity dot ── */
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .dot-critical { background: var(--red-200); }
+  .dot-high     { background: var(--orange-200); }
+  .dot-medium   { background: var(--yellow-200); }
+  .dot-low      { background: var(--green-200); }
+
+  /* ── Page shell ── */
+  .page { display: flex; flex-direction: column; min-height: 100vh; padding: 32px; gap: 24px; max-width: 1440px; margin: 0 auto; }
+
+  /* ================================================================
+     PAGE HEADER
+     ================================================================ */
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-divider);
+  }
+  .page-header-left { display: flex; align-items: baseline; gap: 16px; }
+  .page-header-right { display: flex; align-items: center; gap: 12px; }
+
+  /* ── Form controls (derived from system tokens) ── */
+  .select-control, .input-control {
+    height: 40px; padding: 0 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-btn);
+    color: var(--text-primary);
+    font-family: inherit; font-size: 14px; font-weight: 400;
+    display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+  }
+  .select-control { cursor: pointer; }
+  .input-control { min-width: 220px; }
+  .input-control::placeholder { color: var(--text-tertiary); }
+
+  .chevron-down {
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--text-secondary);
+    margin-left: 4px;
+  }
+
+  /* ── Search icon (SVG placeholder) ── */
+  .search-icon { color: var(--text-secondary); flex-shrink: 0; }
+
+  /* ================================================================
+     KPI SUMMARY ROW
+     ================================================================ */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+  .kpi-card {
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .kpi-card .kpi-label {
+    font-size: 12px; font-weight: 500; line-height: 1.5;
+    color: var(--text-secondary);
+  }
+  .kpi-card .kpi-value {
+    font-size: 28px; font-weight: 600; line-height: 1.2;
+    color: var(--text-primary);
+  }
+  .kpi-card .kpi-trend {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500;
+  }
+  .kpi-card .kpi-trend.up-bad { color: var(--red-200); }
+  .kpi-card .kpi-trend.down-good { color: var(--green-200); }
+  .kpi-card .kpi-trend.neutral { color: var(--text-secondary); }
+  .kpi-accent-bar {
+    width: 100%; height: 3px; border-radius: 2px; margin-top: auto;
+  }
+
+  /* ================================================================
+     MAIN CONTENT — 2-col: visualizations + right panel
+     ================================================================ */
+  .main-content {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+    flex: 1;
+  }
+  .main-left { display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── Visualization placeholders (2×2 grid) ── */
+  .viz-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    flex: 1;
+  }
+  .viz-placeholder {
+    padding: 24px;
+    display: flex; flex-direction: column;
+    min-height: 280px;
+  }
+  .viz-placeholder .viz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .viz-placeholder .viz-title {
+    font-size: 16px; font-weight: 600; color: var(--text-primary);
+  }
+  .viz-placeholder .viz-subtitle {
+    font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-top: 4px;
+  }
+  .viz-placeholder .viz-body {
+    flex: 1;
+    border: 1px dashed var(--border-divider);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-tertiary);
+    font-size: 14px; font-weight: 500;
+  }
+  .viz-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  /* ================================================================
+     RIGHT PANEL — Remediation Insights
+     ================================================================ */
+  .right-panel {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .right-panel-card {
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .insight-item {
+    display: flex; gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-divider);
+  }
+  .insight-item:last-child { border-bottom: none; }
+  .insight-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+  .insight-content { flex: 1; }
+  .insight-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .insight-desc { font-size: 12px; font-weight: 400; color: var(--text-secondary); line-height: 1.5; }
+  .insight-meta { font-size: 11px; font-weight: 500; color: var(--text-tertiary); margin-top: 6px; }
+
+  /* ── Quick action list ── */
+  .action-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-divider);
+  }
+  .action-item:last-child { border-bottom: none; }
+  .action-left { display: flex; align-items: center; gap: 10px; }
+  .action-number {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: rgba(97,201,211,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--teal-200);
+  }
+  .action-text { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .action-impact { font-size: 11px; font-weight: 600; }
+
+  /* ================================================================
+     LOWER OPERATIONAL AREA — Exposures Table
+     ================================================================ */
+  .table-section { display: flex; flex-direction: column; gap: 0; }
+  .table-header-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-divider);
+  }
+  .table-header-bar .left { display: flex; align-items: baseline; gap: 12px; }
+  .table-header-bar .right { display: flex; align-items: center; gap: 8px; }
+  .table-count {
+    background: rgba(97,201,211,0.12);
+    color: var(--teal-200);
+    font-size: 11px; font-weight: 700;
+    padding: 2px 10px; border-radius: 100px;
+  }
+
+  /* ── Table ── */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 12px 24px;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.6px; text-transform: uppercase;
+    color: var(--text-secondary);
+    text-align: left;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-divider);
+  }
+  tbody td {
+    padding: 14px 24px;
+    font-size: 14px; font-weight: 400;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-divider);
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td.name { color: var(--text-primary); font-weight: 500; }
+  tbody td .severity-cell { display: flex; align-items: center; gap: 8px; }
+  tbody td .asset-type { display: flex; align-items: center; gap: 8px; }
+  .table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-divider);
+  }
+  .pagination { display: flex; align-items: center; gap: 4px; }
+  .page-btn {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-btn);
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent; border: none; cursor: pointer;
+  }
+  .page-btn.active { background: var(--bluegray-200); color: var(--text-primary); }
+
+  /* ── SVG icons inline ── */
+  svg { vertical-align: middle; }
+
+  /* ── Filter chip ── */
+  .filter-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 32px; padding: 0 12px;
+    background: rgba(76,84,145,0.2);
+    border: 1px solid var(--border-card);
+    border-radius: 100px;
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .filter-chip.active { border-color: var(--teal-200); color: var(--teal-200); background: rgba(97,201,211,0.08); }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ============================================================
+       1. PAGE HEADER
+       ============================================================ -->
+  <header class="page-header">
+    <div class="page-header-left">
+      <h1 class="h1">Exposure Management</h1>
+      <span class="subtext" style="color: var(--text-tertiary);">Real-time attack surface visibility</span>
+    </div>
+    <div class="page-header-right">
+      <!-- Environment Selector -->
+      <div class="select-control">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="3" stroke="var(--text-secondary)" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" stroke="var(--text-secondary)" stroke-width="1.5"/></svg>
+        <span>Production</span>
+        <span class="chevron-down"></span>
+      </div>
+
+      <!-- Date Range -->
+      <div class="select-control">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="11" rx="2" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M1.5 6.5h13" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M5 1v3M11 1v3" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Last 30 Days</span>
+        <span class="chevron-down"></span>
+      </div>
+
+      <!-- Search -->
+      <div class="input-control">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" stroke="var(--text-secondary)" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="var(--text-secondary)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span style="color: var(--text-tertiary);">Search exposures...</span>
+      </div>
+
+      <!-- Filters -->
+      <button class="btn btn-tertiary" style="height: 40px; padding: 0 16px; font-size: 13px;">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Filters
+      </button>
+
+      <!-- Export -->
+      <button class="btn btn-secondary" style="height: 40px; padding: 0 16px; font-size: 13px;">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Export
+      </button>
+    </div>
+  </header>
+
+  <!-- Filter chips row -->
+  <div style="display: flex; align-items: center; gap: 8px; margin-top: -8px;">
+    <span class="subtext" style="margin-right: 4px;">Active filters:</span>
+    <div class="filter-chip active">
+      <span class="dot dot-critical" style="width:6px;height:6px;"></span>
+      Critical
+    </div>
+    <div class="filter-chip active">
+      <span class="dot dot-high" style="width:6px;height:6px;"></span>
+      High
+    </div>
+    <div class="filter-chip">Medium</div>
+    <div class="filter-chip">Low</div>
+    <div class="filter-chip">
+      <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Add Filter
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       2. KPI SUMMARY ROW
+       ============================================================ -->
+  <section class="kpi-row">
+
+    <!-- KPI 1: Total Exposed Assets -->
+    <div class="card kpi-card">
+      <span class="kpi-label">Total Exposed Assets</span>
+      <span class="kpi-value">12,847</span>
+      <span class="kpi-trend up-bad">
+        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 9V3m0 0L3 6m3-3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        +3.2% from last period
+      </span>
+      <div class="kpi-accent-bar" style="background: var(--teal-200);"></div>
+    </div>
+
+    <!-- KPI 2: Critical Exposures -->
+    <div class="card kpi-card">
+      <span class="kpi-label">Critical Exposures</span>
+      <span class="kpi-value" style="color: var(--red-200);">342</span>
+      <span class="kpi-trend up-bad">
+        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 9V3m0 0L3 6m3-3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        +12 new this week
+      </span>
+      <div class="kpi-accent-bar" style="background: var(--red-200);"></div>
+    </div>
+
+    <!-- KPI 3: Internet-Facing Assets -->
+    <div class="card kpi-card">
+      <span class="kpi-label">Internet-Facing Assets</span>
+      <span class="kpi-value">1,205</span>
+      <span class="kpi-trend down-good">
+        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 3v6m0 0L3 6m3 3l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        −2.1% from last period
+      </span>
+      <div class="kpi-accent-bar" style="background: var(--orange-200);"></div>
+    </div>
+
+    <!-- KPI 4: Privileged Identities at Risk -->
+    <div class="card kpi-card">
+      <span class="kpi-label">Privileged Identities at Risk</span>
+      <span class="kpi-value" style="color: var(--yellow-200);">89</span>
+      <span class="kpi-trend neutral">
+        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M2 6h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        No change
+      </span>
+      <div class="kpi-accent-bar" style="background: var(--yellow-200);"></div>
+    </div>
+
+    <!-- KPI 5: Unpatched Critical Vulns -->
+    <div class="card kpi-card">
+      <span class="kpi-label">Unpatched Critical Vulnerabilities</span>
+      <span class="kpi-value">567</span>
+      <span class="kpi-trend down-good">
+        <svg width="12" height="12" fill="none" viewBox="0 0 12 12"><path d="M6 3v6m0 0L3 6m3 3l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        −8.4% from last period
+      </span>
+      <div class="kpi-accent-bar" style="background: var(--purple-200);"></div>
+    </div>
+
+  </section>
+
+
+  <!-- ============================================================
+       3. MAIN CONTENT — Visualizations + Right Panel
+       ============================================================ -->
+  <div class="main-content">
+
+    <!-- LEFT: Visualization area -->
+    <div class="main-left">
+      <div class="viz-grid">
+
+        <!-- Viz 1: Attack Path -->
+        <div class="card viz-placeholder">
+          <div class="viz-header">
+            <div>
+              <div class="viz-title">Attack Path Visualization</div>
+              <div class="viz-subtitle">Interactive graph of exploitable paths to critical assets</div>
+            </div>
+            <button class="btn btn-ghost" style="height:32px; padding:0 12px; font-size:12px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Expand
+            </button>
+          </div>
+          <div class="viz-body">
+            <div style="text-align:center;">
+              <div class="viz-icon" style="background: rgba(97,201,211,0.1); margin: 0 auto 12px;">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5" stroke="var(--teal-200)" stroke-width="1.5"/><circle cx="18" cy="6" r="2.5" stroke="var(--teal-200)" stroke-width="1.5"/><circle cx="12" cy="18" r="2.5" stroke="var(--teal-200)" stroke-width="1.5"/><path d="M8 7.5l2.5 8M16 7.5l-2.5 8M8.5 6h7" stroke="var(--teal-200)" stroke-width="1" stroke-dasharray="3 2"/></svg>
+              </div>
+              Attack path visualization will render here
+            </div>
+          </div>
+        </div>
+
+        <!-- Viz 2: Security Asset Graph -->
+        <div class="card viz-placeholder">
+          <div class="viz-header">
+            <div>
+              <div class="viz-title">Security Asset Graph</div>
+              <div class="viz-subtitle">Asset relationships and dependency mapping</div>
+            </div>
+            <button class="btn btn-ghost" style="height:32px; padding:0 12px; font-size:12px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Expand
+            </button>
+          </div>
+          <div class="viz-body">
+            <div style="text-align:center;">
+              <div class="viz-icon" style="background: rgba(141,94,182,0.1); margin: 0 auto 12px;">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" stroke="var(--purple-200)" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="2" stroke="var(--purple-200)" stroke-width="1.5"/><rect x="8.5" y="14" width="7" height="7" rx="2" stroke="var(--purple-200)" stroke-width="1.5"/><path d="M10 8l2 6M14 8l-2 6" stroke="var(--purple-200)" stroke-width="1" stroke-dasharray="3 2"/></svg>
+              </div>
+              Asset graph visualization will render here
+            </div>
+          </div>
+        </div>
+
+        <!-- Viz 3: Risk Heatmap -->
+        <div class="card viz-placeholder">
+          <div class="viz-header">
+            <div>
+              <div class="viz-title">Risk Heatmap</div>
+              <div class="viz-subtitle">Severity × likelihood matrix across asset categories</div>
+            </div>
+            <button class="btn btn-ghost" style="height:32px; padding:0 12px; font-size:12px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Expand
+            </button>
+          </div>
+          <div class="viz-body">
+            <div style="text-align:center;">
+              <div class="viz-icon" style="background: rgba(255,115,148,0.1); margin: 0 auto 12px;">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="5" rx="1" fill="var(--green-200)" opacity="0.5"/><rect x="9.5" y="3" width="5" height="5" rx="1" fill="var(--yellow-200)" opacity="0.5"/><rect x="16" y="3" width="5" height="5" rx="1" fill="var(--orange-200)" opacity="0.5"/><rect x="3" y="9.5" width="5" height="5" rx="1" fill="var(--yellow-200)" opacity="0.5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" fill="var(--orange-200)" opacity="0.5"/><rect x="16" y="9.5" width="5" height="5" rx="1" fill="var(--red-200)" opacity="0.5"/><rect x="3" y="16" width="5" height="5" rx="1" fill="var(--orange-200)" opacity="0.5"/><rect x="9.5" y="16" width="5" height="5" rx="1" fill="var(--red-200)" opacity="0.5"/><rect x="16" y="16" width="5" height="5" rx="1" fill="var(--red-200)" opacity="0.7"/></svg>
+              </div>
+              Risk heatmap visualization will render here
+            </div>
+          </div>
+        </div>
+
+        <!-- Viz 4: Exposure Timeline -->
+        <div class="card viz-placeholder">
+          <div class="viz-header">
+            <div>
+              <div class="viz-title">Exposure Timeline</div>
+              <div class="viz-subtitle">Trend analysis of exposure metrics over time</div>
+            </div>
+            <button class="btn btn-ghost" style="height:32px; padding:0 12px; font-size:12px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Expand
+            </button>
+          </div>
+          <div class="viz-body">
+            <div style="text-align:center;">
+              <div class="viz-icon" style="background: rgba(179,224,255,0.1); margin: 0 auto 12px;">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M3 18l5-5 4 3 9-10" stroke="var(--blue-200)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 18l5-5 4 3 9-10" stroke="var(--blue-200)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.2" style="transform: translateY(3px)"/></svg>
+              </div>
+              Timeline visualization will render here
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============================================================
+           4. LOWER OPERATIONAL — Prioritized Exposures Table
+           ============================================================ -->
+      <div class="card table-section">
+        <div class="table-header-bar">
+          <div class="left">
+            <span style="font-size: 16px; font-weight: 600; color: var(--text-primary);">Prioritized Exposures</span>
+            <span class="table-count">342</span>
+          </div>
+          <div class="right">
+            <div class="filter-chip" style="height: 28px;">All Types</div>
+            <div class="filter-chip active" style="height: 28px;">
+              <span class="dot dot-critical" style="width:6px;height:6px;"></span>
+              Critical First
+            </div>
+            <button class="btn btn-ghost" style="height:28px; padding:0 10px; font-size:12px;">
+              <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M1.5 3.5h11M1.5 7h8M1.5 10.5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Sort
+            </button>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 28%;">Exposure</th>
+              <th style="width: 12%;">Severity</th>
+              <th style="width: 16%;">Asset</th>
+              <th style="width: 12%;">Category</th>
+              <th style="width: 12%;">CVSS</th>
+              <th style="width: 10%;">Age</th>
+              <th style="width: 10%;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name">CVE-2024-21762 — FortiOS Out-of-Bound Write</td>
+              <td><div class="severity-cell"><span class="dot dot-critical"></span><span class="badge badge-critical">Critical</span></div></td>
+              <td><div class="asset-type"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1" y="3" width="12" height="8" rx="2" stroke="var(--text-secondary)" stroke-width="1.2"/><path d="M5 13h4" stroke="var(--text-secondary)" stroke-width="1.2" stroke-linecap="round"/></svg> fw-edge-01</div></td>
+              <td style="color: var(--text-secondary);">Network</td>
+              <td><span style="color: var(--red-200); font-weight: 600;">9.8</span></td>
+              <td>14d</td>
+              <td><button class="btn btn-primary" style="height:28px; padding:0 12px; font-size:12px; font-weight: 600;">Remediate</button></td>
+            </tr>
+            <tr>
+              <td class="name">Exposed S3 Bucket — Public ACL Misconfiguration</td>
+              <td><div class="severity-cell"><span class="dot dot-critical"></span><span class="badge badge-critical">Critical</span></div></td>
+              <td><div class="asset-type"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 1L1.5 4v6L7 13l5.5-3V4L7 1z" stroke="var(--text-secondary)" stroke-width="1.2"/></svg> s3-prod-data</div></td>
+              <td style="color: var(--text-secondary);">Cloud</td>
+              <td><span style="color: var(--red-200); font-weight: 600;">9.6</span></td>
+              <td>3d</td>
+              <td><button class="btn btn-primary" style="height:28px; padding:0 12px; font-size:12px; font-weight: 600;">Remediate</button></td>
+            </tr>
+            <tr>
+              <td class="name">CVE-2024-3094 — XZ Utils Backdoor</td>
+              <td><div class="severity-cell"><span class="dot dot-high"></span><span class="badge badge-high">High</span></div></td>
+              <td><div class="asset-type"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="2" y="1" width="10" height="12" rx="2" stroke="var(--text-secondary)" stroke-width="1.2"/><path d="M5 4h4M5 7h4" stroke="var(--text-secondary)" stroke-width="1.2" stroke-linecap="round"/></svg> srv-app-12</div></td>
+              <td style="color: var(--text-secondary);">Server</td>
+              <td><span style="color: var(--orange-200); font-weight: 600;">8.8</span></td>
+              <td>7d</td>
+              <td><button class="btn btn-primary-outlined" style="height:28px; padding:0 12px; font-size:12px;">Review</button></td>
+            </tr>
+            <tr>
+              <td class="name">Stale Admin Credentials — Service Account Overprovisioned</td>
+              <td><div class="severity-cell"><span class="dot dot-high"></span><span class="badge badge-high">High</span></div></td>
+              <td><div class="asset-type"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><circle cx="7" cy="5" r="3" stroke="var(--text-secondary)" stroke-width="1.2"/><path d="M2 13c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5" stroke="var(--text-secondary)" stroke-width="1.2"/></svg> svc-deploy-ci</div></td>
+              <td style="color: var(--text-secondary);">Identity</td>
+              <td><span style="color: var(--orange-200); font-weight: 600;">8.1</span></td>
+              <td>21d</td>
+              <td><button class="btn btn-primary-outlined" style="height:28px; padding:0 12px; font-size:12px;">Review</button></td>
+            </tr>
+            <tr>
+              <td class="name">Unencrypted Data at Rest — PostgreSQL Production DB</td>
+              <td><div class="severity-cell"><span class="dot dot-medium"></span><span class="badge badge-medium">Medium</span></div></td>
+              <td><div class="asset-type"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><ellipse cx="7" cy="4" rx="5" ry="2" stroke="var(--text-secondary)" stroke-width="1.2"/><path d="M2 4v6c0 1.1 2.2 2 5 2s5-.9 5-2V4" stroke="var(--text-secondary)" stroke-width="1.2"/><path d="M2 7c0 1.1 2.2 2 5 2s5-.9 5-2" stroke="var(--text-secondary)" stroke-width="1.2"/></svg> db-prod-pg01</div></td>
+              <td style="color: var(--text-secondary);">Database</td>
+              <td><span style="color: var(--yellow-200); font-weight: 600;">6.5</span></td>
+              <td>45d</td>
+              <td><button class="btn btn-ghost" style="height:28px; padding:0 12px; font-size:12px;">View</button></td>
+            </tr>
+            <tr>
+              <td class="name">TLS 1.0 Enabled — Legacy API Gateway</td>
+              <td><div class="severity-cell"><span class="dot dot-medium"></span><span class="badge badge-medium">Medium</span></div></td>
+              <td><div class="asset-type"><svg width="14" height="14" fill="none" viewBox="0 0 14 14"><rect x="1" y="3" width="12" height="8" rx="2" stroke="var(--text-secondary)" stroke-width="1.2"/><path d="M5 13h4" stroke="var(--text-secondary)" stroke-width="1.2" stroke-linecap="round"/></svg> gw-api-legacy</div></td>
+              <td style="color: var(--text-secondary);">Network</td>
+              <td><span style="color: var(--yellow-200); font-weight: 600;">5.3</span></td>
+              <td>60d</td>
+              <td><button class="btn btn-ghost" style="height:28px; padding:0 12px; font-size:12px;">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="table-footer">
+          <span class="subtext">Showing 1–6 of 342 exposures</span>
+          <div class="pagination">
+            <div class="page-btn">‹</div>
+            <div class="page-btn active">1</div>
+            <div class="page-btn">2</div>
+            <div class="page-btn">3</div>
+            <div class="page-btn">…</div>
+            <div class="page-btn">57</div>
+            <div class="page-btn">›</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end main-left -->
+
+
+    <!-- ============================================================
+         5. RIGHT PANEL — Remediation Insights
+         ============================================================ -->
+    <div class="right-panel">
+
+      <!-- Remediation Priority -->
+      <div class="card right-panel-card">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:16px; font-weight:600; color:var(--text-primary);">Remediation Priority</span>
+          <button class="btn btn-ghost" style="height:28px; padding:0 8px; font-size:12px;">View All</button>
+        </div>
+        <div style="font-size:12px; font-weight:500; color:var(--text-secondary);">Top actions by risk reduction impact</div>
+
+        <div>
+          <div class="action-item">
+            <div class="action-left">
+              <div class="action-number">1</div>
+              <div>
+                <div class="action-text">Patch FortiOS edge devices</div>
+                <div style="font-size:11px; color:var(--text-tertiary); margin-top:2px;">12 assets affected</div>
+              </div>
+            </div>
+            <div class="action-impact" style="color: var(--red-200);">−38 risk</div>
+          </div>
+          <div class="action-item">
+            <div class="action-left">
+              <div class="action-number">2</div>
+              <div>
+                <div class="action-text">Restrict S3 bucket ACLs</div>
+                <div style="font-size:11px; color:var(--text-tertiary); margin-top:2px;">3 buckets exposed</div>
+              </div>
+            </div>
+            <div class="action-impact" style="color: var(--red-200);">−31 risk</div>
+          </div>
+          <div class="action-item">
+            <div class="action-left">
+              <div class="action-number">3</div>
+              <div>
+                <div class="action-text">Rotate stale service credentials</div>
+                <div style="font-size:11px; color:var(--text-tertiary); margin-top:2px;">89 identities</div>
+              </div>
+            </div>
+            <div class="action-impact" style="color: var(--orange-200);">−24 risk</div>
+          </div>
+          <div class="action-item">
+            <div class="action-left">
+              <div class="action-number">4</div>
+              <div>
+                <div class="action-text">Upgrade TLS on legacy gateways</div>
+                <div style="font-size:11px; color:var(--text-tertiary); margin-top:2px;">6 endpoints</div>
+              </div>
+            </div>
+            <div class="action-impact" style="color: var(--yellow-200);">−18 risk</div>
+          </div>
+          <div class="action-item">
+            <div class="action-left">
+              <div class="action-number">5</div>
+              <div>
+                <div class="action-text">Enable encryption at rest</div>
+                <div style="font-size:11px; color:var(--text-tertiary); margin-top:2px;">4 databases</div>
+              </div>
+            </div>
+            <div class="action-impact" style="color: var(--yellow-200);">−15 risk</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exposure Breakdown -->
+      <div class="card right-panel-card">
+        <span style="font-size:16px; font-weight:600; color:var(--text-primary);">Exposure Breakdown</span>
+        <div style="font-size:12px; font-weight:500; color:var(--text-secondary);">Distribution by severity</div>
+
+        <!-- Severity bar chart (horizontal) -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:12px; font-weight:600; color:var(--red-200);">Critical</span>
+              <span style="font-size:12px; font-weight:600; color:var(--text-primary);">342</span>
+            </div>
+            <div style="height:6px; border-radius:3px; background:rgba(255,115,148,0.15);">
+              <div style="height:100%; width:27%; border-radius:3px; background:var(--red-200);"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:12px; font-weight:600; color:var(--orange-200);">High</span>
+              <span style="font-size:12px; font-weight:600; color:var(--text-primary);">1,024</span>
+            </div>
+            <div style="height:6px; border-radius:3px; background:rgba(255,159,121,0.15);">
+              <div style="height:100%; width:80%; border-radius:3px; background:var(--orange-200);"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:12px; font-weight:600; color:var(--yellow-200);">Medium</span>
+              <span style="font-size:12px; font-weight:600; color:var(--text-primary);">4,891</span>
+            </div>
+            <div style="height:6px; border-radius:3px; background:rgba(226,200,133,0.15);">
+              <div style="height:100%; width:100%; border-radius:3px; background:var(--yellow-200);"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:12px; font-weight:600; color:var(--green-200);">Low</span>
+              <span style="font-size:12px; font-weight:600; color:var(--text-primary);">6,590</span>
+            </div>
+            <div style="height:6px; border-radius:3px; background:rgba(155,226,133,0.15);">
+              <div style="height:100%; width:52%; border-radius:3px; background:var(--green-200);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card right-panel-card">
+        <span style="font-size:16px; font-weight:600; color:var(--text-primary);">Recent Activity</span>
+
+        <div>
+          <div class="insight-item">
+            <div class="insight-icon" style="background: rgba(155,226,133,0.12);">
+              <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M4 8.5l2.5 2.5L12 5" stroke="var(--green-200)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="insight-content">
+              <div class="insight-title">CVE-2024-1086 Patched</div>
+              <div class="insight-desc">Linux kernel vulnerability remediated across 34 servers</div>
+              <div class="insight-meta">2 hours ago · Auto-remediation</div>
+            </div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-icon" style="background: rgba(255,115,148,0.12);">
+              <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 3v5M8 11v1" stroke="var(--red-200)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="insight-content">
+              <div class="insight-title">New Critical Exposure</div>
+              <div class="insight-desc">Public-facing RDP detected on srv-win-07</div>
+              <div class="insight-meta">5 hours ago · Scan discovery</div>
+            </div>
+          </div>
+          <div class="insight-item">
+            <div class="insight-icon" style="background: rgba(97,201,211,0.12);">
+              <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 2v12M2 8h12" stroke="var(--teal-200)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="insight-content">
+              <div class="insight-title">Policy Updated</div>
+              <div class="insight-desc">TLS 1.0 deprecation policy applied to 12 gateways</div>
+              <div class="insight-meta">1 day ago · Policy engine</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end right-panel -->
+
+  </div><!-- end main-content -->
+
+</div><!-- end page -->
+
+</body>
+</html>
