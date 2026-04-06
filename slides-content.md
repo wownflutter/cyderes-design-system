@@ -67,76 +67,32 @@ Create each slide as a 1440x900 artboard. Clean, minimal layout. Dark navy/charc
 
 ---
 
-## Slide 5 — Before/After: Libraries & Vulnerabilities
-**Title:** Surface 1: Vulnerability Library
+## Slide 5 — Before/After: The Transformation (All Four Surfaces)
+**Title:** Before → After: Four Surfaces, One Design Philosophy
 
-**Before (left):**
-- Dense table, every vulnerability equal weight
-- No context about what actually matters
-- CISO and developer see identical view
-- Raw severity counts with no business impact
+**Layout:** 2x4 grid — Before column (left) / After column (right), four rows
 
-**After (right):**
-- Priority-driven list with exploitability context
-- Role-aware: CISO sees business risk, developer sees fix path
-- Grouped by actionability, not just severity
-- Clear "what to do next" for each item
+**Row 1 — Vulnerability Library**
+Before: Dense table, every vulnerability equal weight. No context about what matters. CISO and developer see identical view.
+After: Priority-driven list with exploitability context. Role-aware — CISO sees business risk, developer sees fix path. Clear "what to do next."
 
----
+**Row 2 — Executive Dashboard**
+Before: Static severity bars, meaningless letter grade, flat trend chart, "Contrast News" in prime real estate.
+After: Operational dashboard — what needs attention NOW. Urgency signals replace vanity metrics. Every element answers "so what?"
 
-## Slide 6 — Before/After: Dashboard
-**Title:** Surface 2: Executive Dashboard
+**Row 3 — SOC Analyst View**
+Before: Didn't exist as a dedicated surface. Attack events buried in endless identical "SUSPICIOUS" rows. No grouping, no prioritization. Pure noise.
+After: Purpose-built for a persona that didn't exist in the product. Grouped attack patterns. Context-rich: source, target, frequency, blast radius.
 
-**Before (left):**
-- Static severity bars
-- Letter grade (meaningless for action)
-- Flat open/closed trend chart
-- "Contrast News" feed in prime real estate
+**Row 4 — Incident Detail**
+Before: Raw code traces, no "what does this mean" context, technical data with no narrative.
+After: Contextual incident story, impact assessment visible immediately, clear remediation guidance tailored to viewer's role.
 
-**After (right):**
-- Operational dashboard — what needs attention NOW
-- Urgency signals replace vanity metrics
-- Trend data tied to action items
-- Every element answers "so what?"
+**Key callout:** "We didn't improve existing surfaces — we invented new ones for personas that didn't exist in the product yet."
 
 ---
 
-## Slide 7 — Before/After: Attack Events (SOC View)
-**Title:** Surface 3: SOC Analyst View
-
-**Before (left):**
-- Didn't exist as a dedicated surface
-- Attack events buried in endless identical rows
-- "SUSPICIOUS" badges repeated 20+ with no grouping
-- Three horizontal bars labeled "dangerous data received" — technically accurate, completely non-actionable
-
-**After (right):**
-- Purpose-built for a persona that didn't exist in the product
-- Grouped and prioritized attack patterns
-- Context-rich: source, target, frequency, blast radius
-- Clear escalation paths and response actions
-
-**Key callout:** "We didn't improve an existing surface — we invented one for a persona that didn't exist in the product yet."
-
----
-
-## Slide 8 — Before/After: Incident Detail
-**Title:** Surface 4: Incident Detail
-
-**Before (left):**
-- Raw code traces
-- No "what does this mean" context
-- Technical data with no narrative
-
-**After (right):**
-- Contextual incident story
-- Impact assessment visible immediately
-- Clear remediation guidance
-- Tailored to viewer's role
-
----
-
-## Slide 9 — ADR Strategic Context
+## Slide 6 — ADR Strategic Context
 **Title:** Architecture Decision Records
 
 **Content:**
@@ -149,7 +105,7 @@ Create each slide as a 1440x900 artboard. Clean, minimal layout. Dark navy/charc
 
 ---
 
-## Slide 10 — Design Principles → Sydecar
+## Slide 7 — Design Principles → Sydecar
 **Title:** What This Means for Sydecar
 
 **Layout:** Two columns — Principle on left, Sydecar application on right
@@ -168,7 +124,7 @@ Create each slide as a 1440x900 artboard. Clean, minimal layout. Dark navy/charc
 
 ---
 
-## Slide 11 — Closing
+## Slide 8 — Closing
 **Title:** The Through Line
 
 **Content:**
@@ -178,6 +134,6 @@ Sydecar is at the same inflection point. Expanding categories. New user needs. D
 
 ---
 
-## Slide 12 — Thank You / Discussion
+## Slide 9 — Thank You / Discussion
 **Title:** Let's Talk
 **Subtitle:** [Your Name] — [Email] — [Portfolio URL]
