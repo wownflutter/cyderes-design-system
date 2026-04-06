@@ -108,19 +108,30 @@ After: Contextual incident story, impact assessment visible immediately, clear r
 ## Slide 7 — Design Principles → Sydecar
 **Title:** What This Means for Sydecar
 
-**Layout:** Two columns — Principle on left, Sydecar application on right
+**Core Observation:**
+Sydecar's platform is data-rich but decision-passive. A fund manager running 4 active SPVs, 228 LPs, and multiple capital calls has no intelligent signal about what needs their attention right now. The data exists — the system doesn't activate it. That's the design opportunity.
 
-**Principle 1: Data should be actionable, not just visible**
-→ Sydecar's fund dashboard shows four numbers with no urgency signal. The investor list repeats "NEEDS TO RESPOND" badges identically. The activity feed is chronological with no prioritization. The data is there but it's inert — same pattern we solved at Contrast.
+**Layout:** Two columns — Northstar Principle (left) / Applied to Sydecar (right), five rows
 
-**Principle 2: Surfaces should serve the role, not just display the record**
-→ A fund manager with 228 members, multiple active SPVs, and capital calls in progress needs help understanding what requires attention right now. It's a filing cabinet today — it could be a decision support tool.
+**Row 1:**
+Principle: Signal over noise — Not all vulnerabilities are equal — surface what actually matters by exploitability, not static severity.
+Applied: Deal urgency over deal volume — Not all investors are equal — a fund manager with 228 LPs needs to know who is late, who is close to closing, and which SPV is at risk of missing its window. Today every row looks the same.
 
-**Principle 3: Intelligence over information**
-→ The members table has rich data (invest rate, median check, interests) but no intelligence applied. Same opportunity: make the platform tell you what matters, not just show you what exists.
+**Row 2:**
+Principle: Design for different minds — Developers think in code, CISOs think in risk. One system, multiple role-aligned lenses.
+Applied: Fund managers think in deals, LPs think in exposure — The deal lead needs operational control. The LP needs clarity and trust. Today they get the same information architecture — one that serves neither role as well as it could.
 
-**Principle 4: New categories need new personas**
-→ Sydecar is expanding into new categories. At Contrast, we designed for a persona (SOC analyst) that didn't exist in the product. That's exactly the muscle this role needs.
+**Row 3:**
+Principle: Context is critical — Never surface an alert without explainable logic. Users need to understand why something matters before they can act on it.
+Applied: Money without meaning creates anxiety — Showing $204,081 "left to receive" without context about whether that's good, bad, or urgent leaves the user to do mental math alone. Context transforms a number into a decision.
+
+**Row 4:**
+Principle: Trustworthy AI guidance — When the system recommends, explain the why. Preserve human override at every step.
+Applied: Compliance complexity needs a guide, not a gatekeeper — KYC, accreditation, K-1 timing, layered SPV attestation — these are opaque to most users. AI that explains what's required and why, with the human remaining in control, is the Shopify model applied to private markets.
+
+**Row 5:**
+Principle: Agentic, not passive — A dashboard that reports is not the same as a system that accelerates decisions. Design for action, not observation.
+Applied: From filing cabinet to deal operating system — The activity feed today is a log of what happened. The opportunity is a system that tells you what to do next — which LP to follow up with, which capital call is at risk, which deal is close to closing and needs one nudge.
 
 ---
 
